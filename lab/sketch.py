@@ -30,39 +30,22 @@ SENTENCES = ["you are not alone on this train", "l'été arrive, où es-tu ?", "
 VOWELS = {
     "e": "B05",                # blue tit trill (Gab's favourite: "the trill is fantastic")
     "a": ("XC433160", 9.15, 9.95),             # nuthatch, rising "tui tui tui"
-    "o": ("XC446151", 28.41, 28.62),           # blackbird, low round trill (13 Nov: the nuthatch "dididi" melted into "a" in a real room)
+    "o": ("XC433160", 1.95, 2.65),             # nuthatch, fast low "dididi"
     "i": ("XC543697", 15.15, 15.75),           # wren, high trill
     "u": ("XC543697", 16.05, 16.6),            # wren, middle trill
     "é": ("XC543697", 17.85, 18.25),           # wren, short bright trill
     "y": ("XC538310", 15.55, 16.15),           # chaffinch, high section
     "è": ("XC538310", 16.85, 17.4),            # chaffinch, middle section
 }
-# consonants: chosen on 13 Nov by lab/choose_consonants.py, judged by Gab's living room (echo measured
-# from his recordings): the 20 single notes that stay most distinct there. Earlier: three low
+# consonants (13 Nov evening: restored after a few hours of room-chosen notes that sounded like "a small
+# R2D2"; the errors they were meant to fix came from the Listen page losing sound): short single notes, existing syllables (blue tit, great tit, robin), and three low
 # blackbird notes for b, w and z (13 Nov: the nuthatch notes first used for b and w were the very note
 # the "a" trill repeats, and B04 is the B03 look-alike a room confuses; the blackbird sits alone,
 # below 2.2 kHz)
 CONSONANTS = {
-    "t": "B06",
-    "n": ("XC446151", 6.560, 6.658),
-    "s": ("XC533763", 1.542, 1.695),
-    "r": ("XC446151", 36.961, 37.114),
-    "l": "R02",
-    "d": ("XC461185", 13.291, 13.459),
-    "c": "B09",
-    "m": "B11",
-    "p": ("XC446151", 3.051, 3.172),
-    "h": ("XC461185", 4.703, 4.809),
-    "v": "R03",
-    "g": ("XC446151", 36.044, 36.197),
-    "f": ("XC531169", 32.027, 32.154),
-    "b": "B12",
-    "q": "B07",
-    "j": ("XC541754", 52.759, 52.872),
-    "w": "B10",
-    "k": ("XC538310", 27.339, 27.417),
-    "x": "B04",
-    "z": ("XC533763", 38.807, 38.896),
+    "t": "B16", "n": "B02", "s": "B15", "r": "B14", "l": ("XC541754", 15.375, 15.46), "d": "B06", "c": "B10", "m": "B07",
+    "p": "B03", "h": ("XC461185", 13.29, 13.45), "v": "B12", "g": "R03", "f": "R01", "b": ("XC533763", 1.54, 1.69),
+    "w": ("XC446151", 6.555, 6.65), "k": "B09", "j": "B11", "q": "B08", "x": "B13", "z": ("XC533763", 76.66, 76.82),
 }
 GAP_IN_WORD = 0.025
 WORD_GAP = (0.55, 0.85)

@@ -15,7 +15,7 @@
   "o": {
    "file": "o.wav",
    "vowel": true,
-   "dur": 0.1967
+   "dur": 0.2726
   },
   "i": {
    "file": "i.wav",
@@ -45,102 +45,102 @@
   "t": {
    "file": "t.wav",
    "vowel": false,
-   "dur": 0.0948
+   "dur": 0.0474
   },
   "n": {
    "file": "n.wav",
    "vowel": false,
-   "dur": 0.0913
+   "dur": 0.0625
   },
   "s": {
    "file": "s.wav",
    "vowel": false,
-   "dur": 0.12
+   "dur": 0.0681
   },
   "r": {
    "file": "r.wav",
    "vowel": false,
-   "dur": 0.1197
+   "dur": 0.0602
   },
   "l": {
    "file": "l.wav",
    "vowel": false,
-   "dur": 0.0672
+   "dur": 0.0902
   },
   "d": {
    "file": "d.wav",
    "vowel": false,
-   "dur": 0.1249
+   "dur": 0.0943
   },
   "c": {
    "file": "c.wav",
    "vowel": false,
-   "dur": 0.1223
+   "dur": 0.1213
   },
   "m": {
    "file": "m.wav",
    "vowel": false,
-   "dur": 0.1223
+   "dur": 0.1068
   },
   "p": {
    "file": "p.wav",
    "vowel": false,
-   "dur": 0.1092
+   "dur": 0.0969
   },
   "h": {
    "file": "h.wav",
    "vowel": false,
-   "dur": 0.0949
+   "dur": 0.1199
   },
   "v": {
    "file": "v.wav",
    "vowel": false,
-   "dur": 0.1219
+   "dur": 0.1226
   },
   "g": {
    "file": "g.wav",
    "vowel": false,
-   "dur": 0.1249
+   "dur": 0.1237
   },
   "f": {
    "file": "f.wav",
    "vowel": false,
-   "dur": 0.1203
+   "dur": 0.126
   },
   "b": {
    "file": "b.wav",
+   "vowel": false,
+   "dur": 0.1246
+  },
+  "w": {
+   "file": "w.wav",
+   "vowel": false,
+   "dur": 0.086
+  },
+  "k": {
+   "file": "k.wav",
+   "vowel": false,
+   "dur": 0.122
+  },
+  "j": {
+   "file": "j.wav",
    "vowel": false,
    "dur": 0.1241
   },
   "q": {
    "file": "q.wav",
    "vowel": false,
-   "dur": 0.1066
-  },
-  "j": {
-   "file": "j.wav",
-   "vowel": false,
-   "dur": 0.1039
-  },
-  "w": {
-   "file": "w.wav",
-   "vowel": false,
-   "dur": 0.1181
-  },
-  "k": {
-   "file": "k.wav",
-   "vowel": false,
-   "dur": 0.0673
+   "dur": 0.122
   },
   "x": {
    "file": "x.wav",
    "vowel": false,
-   "dur": 0.1131
+   "dur": 0.1223
   },
   "z": {
    "file": "z.wav",
    "vowel": false,
-   "dur": 0.0792
+   "dur": 0.1226
   }
  },
  "frames": {
@@ -205,7 +205,8 @@
    "url": "https://xeno-canto.org/315114",
    "letters": [
     "e",
-    "q"
+    "n",
+    "m"
    ]
   },
   "XC433160": {
@@ -214,20 +215,8 @@
    "licence": "CC BY-SA 4.0",
    "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
    "letters": [
-    "a"
-   ]
-  },
-  "XC446151": {
-   "species": "Common Blackbird",
-   "recordist": "James Ray",
-   "licence": "CC BY-SA 4.0",
-   "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
-   "letters": [
-    "o",
-    "n",
-    "r",
-    "p",
-    "g"
+    "a",
+    "o"
    ]
   },
   "XC543697": {
@@ -248,76 +237,18 @@
    "url": "https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_-_Common_Chaffinch_XC538310.mp3",
    "letters": [
     "y",
-    "è",
-    "k"
+    "è"
    ]
   },
-  "XC778131": {
-   "species": "Eurasian Blue Tit",
-   "recordist": "Paul Driver",
-   "licence": "CC BY-NC-SA 4.0",
-   "url": "https://xeno-canto.org/778131",
-   "letters": [
-    "t"
-   ]
-  },
-  "XC533763": {
-   "species": "Common Blackbird",
-   "recordist": "Marie-Lan Taÿ Pamart",
-   "licence": "CC BY-SA 4.0",
-   "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
-   "letters": [
-    "s",
-    "z"
-   ]
-  },
-  "XC857749": {
+  "XC760778": {
    "species": "European Robin",
-   "recordist": "Olivier Swift, Hélène Cartaud",
+   "recordist": "Benjamin Allegrini",
    "licence": "CC BY-NC-SA 4.0",
-   "url": "https://xeno-canto.org/857749",
+   "url": "https://xeno-canto.org/760778",
    "letters": [
-    "l",
-    "m",
-    "b"
-   ]
-  },
-  "XC461185": {
-   "species": "Eurasian Wren",
-   "recordist": "Marie-Lan Taÿ Pamart",
-   "licence": "CC BY-SA 4.0",
-   "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
-   "letters": [
-    "d",
-    "h"
-   ]
-  },
-  "XC880931": {
-   "species": "Great Tit",
-   "recordist": "Lee Alder",
-   "licence": "CC BY-NC-SA 4.0",
-   "url": "https://xeno-canto.org/880931",
-   "letters": [
-    "c"
-   ]
-  },
-  "XC303416": {
-   "species": "Great Tit",
-   "recordist": "Timo Schnabel",
-   "licence": "CC BY-NC-SA 4.0",
-   "url": "https://xeno-canto.org/303416",
-   "letters": [
-    "v",
-    "w"
-   ]
-  },
-  "XC531169": {
-   "species": "Yellowhammer",
-   "recordist": "Benoît Van Hecke",
-   "licence": "CC BY-SA 4.0",
-   "url": "https://commons.wikimedia.org/wiki/File:Emberiza_citrinella_-_Yellowhammer_XC531169.mp3",
-   "letters": [
-    "f"
+    "t",
+    "s",
+    "r"
    ]
   },
   "XC541754": {
@@ -326,7 +257,27 @@
    "licence": "CC BY-SA 4.0",
    "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
    "letters": [
-    "j"
+    "l"
+   ]
+  },
+  "XC778131": {
+   "species": "Eurasian Blue Tit",
+   "recordist": "Paul Driver",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/778131",
+   "letters": [
+    "d"
+   ]
+  },
+  "XC303416": {
+   "species": "Great Tit",
+   "recordist": "Timo Schnabel",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/303416",
+   "letters": [
+    "c",
+    "g",
+    "f"
    ]
   },
   "XC637984": {
@@ -335,7 +286,56 @@
    "licence": "CC BY-NC-SA 4.0",
    "url": "https://xeno-canto.org/637984",
    "letters": [
+    "p"
+   ]
+  },
+  "XC461185": {
+   "species": "Eurasian Wren",
+   "recordist": "Marie-Lan Taÿ Pamart",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
+   "letters": [
+    "h"
+   ]
+  },
+  "XC857749": {
+   "species": "European Robin",
+   "recordist": "Olivier Swift, Hélène Cartaud",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/857749",
+   "letters": [
+    "v",
+    "j",
     "x"
+   ]
+  },
+  "XC533763": {
+   "species": "Common Blackbird",
+   "recordist": "Marie-Lan Taÿ Pamart",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
+   "letters": [
+    "b",
+    "z"
+   ]
+  },
+  "XC446151": {
+   "species": "Common Blackbird",
+   "recordist": "James Ray",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+   "letters": [
+    "w"
+   ]
+  },
+  "XC880931": {
+   "species": "Great Tit",
+   "recordist": "Lee Alder",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/880931",
+   "letters": [
+    "k",
+    "q"
    ]
   },
   "XC478019": {

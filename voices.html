@@ -41,7 +41,7 @@
   <section class="voices" id="voices" aria-label="Voices"></section>
 </main>
 <script type="module">
-import { loadVoice, sing, drawPicture } from "./js/birdsong.js?v=6";
+import { loadVoice, sing, drawPicture } from "./js/birdsong.js?v=7";
 const $ = id => document.getElementById(id);
 let ctx = null, src = null, pressed = null;
 const list = await (await fetch("birds/voices/index.json?v=vt1")).json();

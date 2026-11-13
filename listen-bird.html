@@ -65,7 +65,7 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, Decoder, encodeWav, drawPicture, parseWav } from "./js/birdsong.js?v=6";
+import { loadVoice, Decoder, encodeWav, drawPicture, parseWav } from "./js/birdsong.js?v=7";
 const $ = id => document.getElementById(id);
 const OPEN_MIN = 0.45, CLOSE_MIN = 0.45, WINDOW_S = 22, KEEP_S = 45;
 let V, dec, ctx, stream, proc, sr = 48000;
@@ -158,7 +158,7 @@ function stopListening() {
 }
 
 // decoding runs in a background worker; the page only collects sound and shows results
-const worker = new Worker(`js/decode-worker.js?v=2${VOICE ? "&voice=" + VOICE : ""}`, { type: "module" });
+const worker = new Worker(`js/decode-worker.js?v=3${VOICE ? "&voice=" + VOICE : ""}`, { type: "module" });
 let scanId = 0;
 function scan() {
   if (busy || !ctx) return;

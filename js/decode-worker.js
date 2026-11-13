@@ -1,5 +1,5 @@
 // Decodes in the background, so the page (and its microphone) never waits for it.
-import { loadVoice, Decoder } from "./birdsong.js?v=6";
+import { loadVoice, Decoder } from "./birdsong.js?v=7";
 
 let dec = null;
 const VOICE = (new URLSearchParams(self.location.search).get("voice") || "").match(/^[a-z-]{1,30}$/)?.[0] || null;

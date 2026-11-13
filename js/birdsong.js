@@ -34,7 +34,7 @@ export function parseWav(ab) {
   return null;
 }
 
-export async function loadVoice(base = "birds/voice/", v = "2") {
+export async function loadVoice(base = "birds/voice/", v = "3") {
   const voice = await (await fetch(`${base}voice.json?v=${v}`)).json();
   const sr = voice.sample_rate;
   const snd = {};
