@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3">
+<link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
 <main>
@@ -53,32 +53,33 @@
     <h2>Score</h2>
     <div class="scorewrap" id="wrap"><canvas id="score"></canvas></div>
     <div class="key">
-      <span><i class="sw" style="background:var(--short)"></i>short call, 16 most common letters</span>
-      <span><i class="sw" style="background:var(--long)"></i>long call, the rest</span>
+      <span><i class="sw" style="background:var(--vowel)"></i>vowel, two notes</span>
+      <span><i class="sw" style="background:var(--short)"></i>short consonant</span>
+      <span><i class="sw" style="background:var(--long)"></i>long consonant or sign</span>
       <span><i class="sw" style="background:var(--frame)"></i>opening and closing calls</span>
     </div>
   </section>
 
   <section aria-label="Alphabet">
     <h2>The alphabet</h2>
-    <p class="lede">Tap a letter to hear its call. Each code reads band · direction · shape.</p>
+    <p class="lede">Tap a letter to hear its call. Each code reads band · direction · type.</p>
     <div class="grid" id="grid"></div>
   </section>
 
   <section aria-label="How it is built">
     <h2>How a call is built</h2>
     <dl>
-      <dt>Pitch band</dt><dd>Four bands between 2 and 5 kHz, where small songbirds sing. B1 is the lowest.</dd>
-      <dt>Direction</dt><dd>The call rises (↑) or falls (↓) across 700 Hz.</dd>
-      <dt>Shape</dt><dd>A straight sweep, or a hook that turns back at the end, like a “tsee-u”.</dd>
-      <dt>Length</dt><dd>70 ms for the 16 most common letters, 130 ms for the others, so everyday text sings faster.</dd>
+      <dt>Vowels</dt><dd>A two-note call, rising (“chi-wee”) or falling (“pee-oo”). Only vowels use two notes, so a misheard vowel still reads as a vowel. a e i o u y, plus é and è.</dd>
+      <dt>Consonants</dt><dd>One call that rises (↑) or falls (↓), either a smooth sweep or a trill (a fast wobble, like a bird’s trill).</dd>
+      <dt>Pitch band</dt><dd>Four bands at 2.9, 3.6, 4.3 and 5.0 kHz. The most common letters (e a t n s r) sit in the middle two, which small speakers carry best.</dd>
+      <dt>Length</dt><dd>Short for common consonants, long for rare ones and punctuation.</dd>
       <dt>Spaces</dt><dd>A pause between words, like a bird taking breath.</dd>
-      <dt>Frame</dt><dd>A high opening call (above 5 kHz) and a low closing trill (below 2 kHz). The listener uses the opening call to learn the tempo and pitch.</dd>
-      <dt>Accents</dt><dd>Folded to the base letter for now: é → e, ü → u, ß → ss. Digits are left out.</dd>
+      <dt>Frame</dt><dd>A high opening call (above 5.5 kHz) and a low closing trill (below 2.5 kHz). The listener uses the opening call to learn the tempo and pitch.</dd>
+      <dt>Accents</dt><dd>é and è have their own calls. Other accents fold to the base letter (à → a, ü → u, ß → ss). Digits are left out.</dd>
     </dl>
   </section>
 </main>
-<script src="js/vendor/lame.min.js?v=3" defer></script>
-<script type="module" src="js/send.js?v=3"></script>
+<script src="js/vendor/lame.min.js?v=4" defer></script>
+<script type="module" src="js/send.js?v=4"></script>
 </body>
 </html>

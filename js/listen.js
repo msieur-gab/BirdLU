@@ -1,11 +1,13 @@
-import { build, renderSamples } from "./chirp.js?v=3";
-import { Decoder, decodeBuffer, cer, addEcho, addNoise } from "./decoder.js?v=3";
+import { build, renderSamples, encodeWav } from "./chirp.js?v=4";
+import { Decoder, decodeBuffer, cer, addEcho, addNoise } from "./decoder.js?v=4";
 
 const $ = id => document.getElementById(id);
 const btn = $("listen"), pill = $("state"), live = $("live"), inbox = $("inbox");
 const spectro = $("spectro"), levelEl = $("level"), rateEl = $("rate"), seglog = $("seglog");
 
 let ctx = null, stream = null, node = null, src = null, decoder = null, wakeLock = null;
+let rec = null; // { chunks, length, sampleRate } while keeping a recording
+const MAX_REC_SECONDS = 300;
 const segLines = [];
 
 function setState(state, text) { pill.dataset.state = state; pill.textContent = text; }
@@ -28,7 +30,7 @@ function addToInbox(m, source) {
 }
 
 function logSeg(s) {
-  segLines.push(`${s.t0.toFixed(2)}s  ${String(Math.round(s.center)).padStart(5)} Hz  ${s.dir.padEnd(4)}  turn ${String(Math.round(s.turn)).padStart(4)}  ${Math.round(s.dur * 1000)} ms`);
+  segLines.push(`${s.t0.toFixed(2)}s  ${String(Math.round(s.center)).padStart(5)} Hz  ${s.dir.padEnd(4)}  wobble ${String(Math.round(s.wobble)).padStart(4)}  ${Math.round(s.dur * 1000)} ms`);
   if (segLines.length > 40) segLines.shift();
   seglog.textContent = segLines.join("\n");
 }
@@ -88,7 +90,12 @@ async function start() {
       letter: (ch, info, text) => showLive(text, true),
       message: m => { addToInbox(m, "microphone"); showLive(m.text, false); }
     } });
-    const feed = d => decoder.push(d);
+    rec = $("keepRec").checked ? { chunks: [], length: 0, sampleRate: ctx.sampleRate } : null;
+    $("recOut").textContent = rec ? "Recording what the phone hears (up to 5 minutes)." : "";
+    const feed = d => {
+      decoder.push(d);
+      if (rec && rec.length < MAX_REC_SECONDS * rec.sampleRate) { rec.chunks.push(d); rec.length += d.length; }
+    };
     if (ctx.audioWorklet) {
       const url = URL.createObjectURL(new Blob([WORKLET], { type: "application/javascript" }));
       await ctx.audioWorklet.addModule(url);
@@ -116,8 +123,21 @@ async function start() {
   }
 }
 
+function offerRecording() {
+  if (!rec || !rec.length) return;
+  const all = new Float32Array(rec.length); let o = 0;
+  for (const c of rec.chunks) { all.set(c, o); o += c.length; }
+  const blob = encodeWav(all, rec.sampleRate), url = URL.createObjectURL(blob);
+  const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
+  const a = document.createElement("a"); a.href = url; a.download = `birdlu-heard-${stamp}.wav`;
+  a.textContent = `Download what the phone heard (${Math.round(rec.length / rec.sampleRate)} s, ${Math.round(blob.size / 1024)} KB)`;
+  const out = $("recOut"); out.textContent = ""; out.append(a);
+  rec = null;
+}
+
 function stop() {
   if (decoder) decoder.end();
+  offerRecording();
   try { if (node) node.disconnect(); if (src) src.disconnect(); } catch (e) { /* already gone */ }
   if (stream) stream.getTracks().forEach(t => t.stop());
   if (ctx) ctx.close();

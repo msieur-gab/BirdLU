@@ -1,4 +1,4 @@
-import { ALPHA, BANDS, SPAN, OPEN, CLOSE, symNote, sweep, build, Player, renderOffline, encodeWav, encodeMp3 } from "./chirp.js?v=3";
+import { ALPHA, BANDS, SPAN, PAIR, OPEN, CLOSE, symbolNotes, freqAt, build, Player, renderOffline, encodeWav, encodeMp3 } from "./chirp.js?v=4";
 
 const $ = id => document.getElementById(id);
 const msg = $("msg"), playBtn = $("play"), loopIn = $("loop"), stats = $("stats"), skippedEl = $("skipped");
@@ -60,7 +60,7 @@ const PPS = 240, PAD = 28, H = 250, FMIN = 1000, FMAX = 8000;
 const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const xOf = t => PAD + t * PPS;
 const yOf = f => { const top = 18, bot = H - 34; return bot - (f - FMIN) / (FMAX - FMIN) * (bot - top); };
-const colorFor = kind => kind === "short" ? css("--short") : kind === "long" ? css("--long") : css("--frame");
+const colorFor = kind => kind === "short" ? css("--short") : kind === "long" ? css("--long") : kind === "vowel" ? css("--vowel") : css("--frame");
 
 function drawScore(playT) {
   if (!sched) return;
@@ -77,7 +77,8 @@ function drawScore(playT) {
 
   c.font = "10px " + css("--mono");
   BANDS.forEach((b, i) => {
-    const yTop = yOf((b + SPAN / 2) * pitch), yBot = yOf((b - SPAN / 2) * pitch);
+    const half = SPAN / 2;
+    const yTop = yOf((b + half) * pitch), yBot = yOf((b - half) * pitch);
     c.fillStyle = line; c.globalAlpha = 0.45; c.fillRect(0, yTop, W, yBot - yTop);
     c.globalAlpha = 1; c.fillStyle = muted;
     c.fillText("B" + (i + 1) + " " + (b * pitch / 1000).toFixed(1) + "k", 4, yBot - 3);
@@ -94,15 +95,15 @@ function drawScore(playT) {
     c.globalAlpha = done ? 1 : 0.4;
     c.strokeStyle = colorFor(e.kind); c.lineWidth = now ? 5 : 3;
     c.beginPath();
-    for (let i = 0; i <= 24; i++) {
-      const u = i / 24, x = xOf(e.t + e.dur * u), y = yOf(sweep(e.f0, e.f1, e.shape, u) * pitch);
+    for (let i = 0; i <= 48; i++) {
+      const u = i / 48, x = xOf(e.t + e.dur * u), y = yOf(freqAt(e, u) * pitch);
       if (i === 0) c.moveTo(x, y); else c.lineTo(x, y);
     }
     c.stroke();
     if (e.kind !== "frame") {
       c.fillStyle = now ? colorFor(e.kind) : ink;
       c.font = (now ? "600 " : "500 ") + "13px " + css("--mono");
-      c.textAlign = "center"; c.fillText(e.label, xOf(e.t + e.dur / 2), H - 10); c.textAlign = "start";
+      if (e.label) { c.textAlign = "center"; c.fillText(e.label, xOf(e.t + (e.span || e.dur) / 2), H - 10); c.textAlign = "start"; }
     } else if (e.label) {
       c.fillStyle = muted; c.font = "11px " + css("--body"); c.fillText(e.label, xOf(e.t), H - 10);
     }
@@ -119,17 +120,17 @@ function drawGlyph(cv, notes, kind, w) {
   const dpr = devicePixelRatio || 1, h = 40;
   cv.width = w * dpr; cv.height = h * dpr;
   const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
-  const fmin = kind === "frame" ? 1200 : 1950, fmax = kind === "frame" ? 6600 : 5250;
+  const fmin = kind === "frame" ? 1600 : 2350, fmax = kind === "frame" ? 6700 : 5650;
   let total = 0; notes.forEach(n => total += n.gap || n.dur);
-  const scale = (w - 8) / Math.max(total, 0.13);
+  const scale = (w - 8) / Math.max(total, 0.16);
   const y = f => h - 4 - (f - fmin) / (fmax - fmin) * (h - 8);
   c.strokeStyle = colorFor(kind); c.lineWidth = 2.5; c.lineCap = "round";
   let t = 0;
   notes.forEach(n => {
     if (n.gap) { t += n.gap; return; }
     c.beginPath();
-    for (let i = 0; i <= 20; i++) {
-      const u = i / 20, x = 4 + (t + n.dur * u) * scale, yy = y(sweep(n.f0, n.f1, n.shape, u));
+    for (let i = 0; i <= 40; i++) {
+      const u = i / 40, x = 4 + (t + n.dur * u) * scale, yy = y(freqAt(n, u));
       if (i === 0) c.moveTo(x, yy); else c.lineTo(x, yy);
     }
     c.stroke(); t += n.dur;
@@ -149,9 +150,9 @@ function addCell(label, code, notes, kind, w, aria, isFrame) {
   grid.appendChild(b);
   glyphs.push({ cv, notes, kind, w });
 }
-ALPHA.forEach(s => addCell(s.ch, `B${s.band + 1} ${s.dir === "up" ? "↑" : "↓"} ${s.shape}`, [symNote(s)], s.len, 76, "Play the call for " + s.ch));
-addCell("Opening call", "above 5 kHz", OPEN, "frame", 160, "Play the opening call", true);
-addCell("Closing call", "below 2 kHz", CLOSE, "frame", 160, "Play the closing call", true);
+ALPHA.forEach(s => addCell(s.ch, `B${s.band + 1} ${s.dir === "up" ? "↑" : "↓"} ${s.texture === "pair" ? "two notes" : s.texture}`, symbolNotes(s), s.kind, 76, "Play the call for " + s.ch));
+addCell("Opening call", "above 5.5 kHz", OPEN, "frame", 160, "Play the opening call", true);
+addCell("Closing call", "below 2.5 kHz", CLOSE, "frame", 160, "Play the closing call", true);
 const drawGlyphs = () => glyphs.forEach(g => drawGlyph(g.cv, g.notes, g.kind, g.w));
 
 // ---------- export ----------

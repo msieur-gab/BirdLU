@@ -1,7 +1,7 @@
 // Run: node test/simulate.mjs
 // Sings messages, degrades them (noise, echo, tempo, pitch), decodes, reports the error rate.
-import { build, renderSamples } from "../js/chirp.js";
-import { decodeBuffer, cer, addEcho, addNoise } from "../js/decoder.js";
+import { build, renderSamples } from "../js/chirp.js?v=4";
+import { decodeBuffer, cer, addEcho, addNoise, addSpeaker } from "../js/decoder.js?v=4";
 
 const SR = 48000;
 const MESSAGES = [
@@ -9,7 +9,8 @@ const MESSAGES = [
   "the quick brown fox jumps over the lazy dog",
   "slow letters travel with the line",
   "is anyone else watching the river?",
-  "write back, it's a long way to ulm!"
+  "write back, it's a long way to ulm!",
+  "l'été arrive, où es-tu?"
 ];
 
 const CONDITIONS = [
@@ -23,7 +24,11 @@ const CONDITIONS = [
   { name: "voices 6 dB", noise: ["voices", 6] },
   { name: "small room echo", echo: [0.25, 0.6] },
   { name: "hall echo", echo: [0.35, 1.6] },
-  { name: "hall + voices 10 dB", echo: [0.35, 1.6], noise: ["voices", 10] }
+  { name: "hall + voices 10 dB", echo: [0.35, 1.6], noise: ["voices", 10] },
+  { name: "small speaker", speaker: 2.5 },
+  { name: "speaker pushed hard", speaker: 6 },
+  { name: "speaker + small room", speaker: 2.5, echo: [0.25, 0.6] },
+  { name: "speaker + room + voices", speaker: 2.5, echo: [0.25, 0.6], noise: ["voices", 12] }
 ];
 
 let all = [];
@@ -33,6 +38,7 @@ for (const c of CONDITIONS) {
   MESSAGES.forEach((m, k) => {
     const sched = build(m, c.tempo || 1);
     let x = renderSamples(sched, SR, c.pitch || 1);
+    if (c.speaker) x = addSpeaker(x, SR, c.speaker);
     if (c.echo) x = addEcho(x, SR, c.echo[0], c.echo[1]);
     if (c.noise) x = addNoise(x, SR, c.noise[0], c.noise[1], 7 + k);
     const got = decodeBuffer(x, SR);

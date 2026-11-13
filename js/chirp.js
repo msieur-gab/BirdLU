@@ -1,81 +1,113 @@
-// Chirp alphabet — shared by the sender, the listener and the tests.
-// Every letter is one bird-like call defined by four properties:
-// pitch band (4), direction (up/down), shape (straight/hook), length (short/long).
+// Chirp alphabet v2 — shared by the sender, the listener and the tests.
+//
+// Consonants are single calls: pitch band (4) × direction (up/down) × texture (sweep/trill) × length (short/long).
+// Vowels are their own family: a two-note call ("chi-wee" / "pee-oo"), pitch band × direction.
+// The most common letters sit in the middle bands (3.6 and 4.3 kHz), which small speakers carry best.
 
-export const ORDER = "etaoinsrhldcumfpgwybvkxjqz.,?!'-".split("");
-export const BANDS = [2400, 3200, 4000, 4800]; // band centres in Hz (B1..B4)
-export const SPAN = 700;                          // sweep width in Hz
-export const DUR = { short: 0.070, long: 0.130 }; // seconds
-export const GAP = 0.045, PAUSE = 0.200, FRAME_GAP = 0.14;
-export const HOOK_AT = 0.72, HOOK_BACK = 0.45;
+export const BANDS = [2900, 3600, 4300, 5000]; // band centres in Hz (B1..B4)
+export const SPAN = 500;                          // sweep width of a consonant in Hz
+export const DUR = {
+  sweep: { short: 0.080, long: 0.140 },
+  trill: { short: 0.100, long: 0.160 },
+  note: 0.045, noteGap: 0.018
+};
+export const TRILL = { rate: 30, depth: 200 };    // wobble in Hz/s and ±Hz
+export const PAIR = { offset: 330, glide: 60 };   // vowel notes sit at centre ± offset
+export const GAP = 0.060, PAUSE = 0.220, FRAME_GAP = 0.14;
 
-function makeSym(i) {
-  const j = i % 16;
-  return {
-    ch: ORDER[i], index: i, len: i < 16 ? "short" : "long", band: j >> 2,
-    dir: ((j >> 1) & 1) ? "down" : "up", shape: (j & 1) ? "hook" : "straight"
-  };
+const CONSONANTS = ["t","n","s","r","h","l","d","c","m","f","p","g","w","b","v","k",".",",","j","x","z","q","?","!","'","-"];
+const VOWELS = [["e",1,"up"],["a",2,"up"],["i",1,"down"],["o",2,"down"],["u",0,"up"],["y",3,"up"],["é",0,"down"],["è",3,"down"]];
+
+function consonantSlots() {
+  const slots = [];
+  for (const len of ["short", "long"])
+    for (const texture of ["sweep", "trill"])
+      for (const group of [[1, 2], [0, 3]])
+        for (const band of group)
+          for (const dir of ["up", "down"]) slots.push({ len, texture, band, dir });
+  return slots;
 }
-export const ALPHA = ORDER.map((_, i) => makeSym(i));
+
+export const ALPHA = [
+  ...VOWELS.map(([ch, band, dir]) => ({ ch, kind: "vowel", texture: "pair", band, dir, len: "short" })),
+  ...consonantSlots().slice(0, CONSONANTS.length).map((s, i) => ({ ch: CONSONANTS[i], kind: s.len, ...s }))
+];
 export const BY_CH = Object.fromEntries(ALPHA.map(s => [s.ch, s]));
+export const ORDER = ALPHA.map(s => s.ch);
 
-/** Find the symbol for measured properties. */
-export function lookup(band, dir, shape, len) {
-  return ALPHA.find(s => s.band === band && s.dir === dir && s.shape === shape && s.len === len) || null;
+/** Find the letter for measured properties. */
+export function lookup(texture, band, dir, len) {
+  return ALPHA.find(s => s.texture === texture && s.band === band && s.dir === dir && (texture === "pair" || s.len === len)) || null;
 }
 
-export function symNote(s) {
-  const c = BANDS[s.band];
-  const f0 = s.dir === "up" ? c - SPAN / 2 : c + SPAN / 2;
-  const f1 = s.dir === "up" ? c + SPAN / 2 : c - SPAN / 2;
-  return { f0, f1, shape: s.shape, dur: DUR[s.len] };
-}
-
-// Frame calls sit outside the letter bands: opening above 5 kHz, closing below 2 kHz.
-export const OPEN = [
-  { f0: 5600, f1: 6300, shape: "straight", dur: 0.045 }, { gap: 0.035 },
-  { f0: 5600, f1: 6300, shape: "straight", dur: 0.045 }, { gap: 0.035 },
-  { f0: 6300, f1: 5300, shape: "straight", dur: 0.160 }
-];
-export const CLOSE = [
-  { f0: 1900, f1: 1600, shape: "straight", dur: 0.060 }, { gap: 0.040 },
-  { f0: 1800, f1: 1500, shape: "straight", dur: 0.060 }, { gap: 0.040 },
-  { f0: 1700, f1: 1400, shape: "straight", dur: 0.090 }
-];
-export const OPEN_LAST_DUR = 0.160;
-
-/** Frequency of a call at position u (0..1). */
-export function sweep(f0, f1, shape, u) {
-  if (shape === "hook") {
-    if (u < HOOK_AT) { const p = 1 - Math.pow(1 - u / HOOK_AT, 2); return f0 + (f1 - f0) * p; }
-    const v = (u - HOOK_AT) / (1 - HOOK_AT);
-    return f1 - (f1 - f0) * HOOK_BACK * Math.sin(v * Math.PI / 2);
+/** The notes that make up a letter (one for consonants, two for vowels). */
+export function symbolNotes(s) {
+  const c = BANDS[s.band], up = s.dir === "up";
+  if (s.texture === "pair") {
+    const lo = c - PAIR.offset, hi = c + PAIR.offset, g = PAIR.glide;
+    const a = up ? { f0: lo - g, f1: lo + g } : { f0: hi + g, f1: hi - g };
+    const b = up ? { f0: hi - g, f1: hi + g } : { f0: lo + g, f1: lo - g };
+    return [{ ...a, dur: DUR.note }, { gap: DUR.noteGap }, { ...b, dur: DUR.note }];
   }
-  return f0 + (f1 - f0) * u;
+  const f0 = up ? c - SPAN / 2 : c + SPAN / 2, f1 = up ? c + SPAN / 2 : c - SPAN / 2;
+  return [{ f0, f1, dur: DUR[s.texture][s.len], trill: s.texture === "trill" }];
 }
+export const symNote = s => symbolNotes(s)[0];
 
-export function envelope(u) { return Math.pow(Math.sin(Math.PI * u), 0.7); }
+// Frame calls sit outside the letter bands: opening above 5.5 kHz, closing below 2.5 kHz.
+export const OPEN = [
+  { f0: 5800, f1: 6400, dur: 0.045 }, { gap: 0.035 },
+  { f0: 5800, f1: 6400, dur: 0.045 }, { gap: 0.035 },
+  { f0: 6400, f1: 5600, dur: 0.160 }
+];
+export const OPEN_CENTERS = [6100, 6100, 6000];
+export const CLOSE = [
+  { f0: 2300, f1: 2000, dur: 0.060 }, { gap: 0.040 },
+  { f0: 2200, f1: 1900, dur: 0.060 }, { gap: 0.040 },
+  { f0: 2100, f1: 1800, dur: 0.090 }
+];
+export const CLOSE_BELOW = 2500;
+
+/** Frequency of a note at position u (0..1). */
+export function freqAt(n, u) {
+  const f = n.f0 + (n.f1 - n.f0) * u;
+  return n.trill ? f + TRILL.depth * Math.sin(2 * Math.PI * TRILL.rate * u * n.dur) : f;
+}
+/** Kept for older callers: plain sweep. */
+export function sweep(f0, f1, shape, u) { return f0 + (f1 - f0) * u; }
+
+/** Crisp bird-like envelope: ~10 ms attack, ~15 ms release. */
+export function envelope(u, dur = 0.1) {
+  const t = u * dur, a = Math.min(0.010, dur * 0.25), r = Math.min(0.015, dur * 0.3);
+  if (t < a) return Math.pow(Math.sin(Math.PI / 2 * t / a), 2);
+  if (t > dur - r) return Math.pow(Math.sin(Math.PI / 2 * Math.max(0, dur - t) / r), 2);
+  return 1;
+}
 
 export function normalize(text) {
-  return text.toLowerCase()
-    .replace(/ß/g, "ss").replace(/æ/g, "ae").replace(/œ/g, "oe")
-    .normalize("NFD").replace(/[̀-ͯ]/g, "")
-    .replace(/[’‘`´]/g, "'").replace(/[–—]/g, "-");
+  let out = "";
+  for (const ch of text.toLowerCase()) {
+    if (ch === "é" || ch === "è") { out += ch; continue; }
+    out += ch.replace(/ß/g, "ss").replace(/æ/g, "ae").replace(/œ/g, "oe")
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/[’‘`´]/g, "'").replace(/[–—]/g, "-");
+  }
+  return out;
 }
 
-/** Turn text into a timed list of calls. */
+/** Turn text into a timed list of notes. */
 export function build(text, tempo = 1) {
   const events = [], pauses = [], skipped = [];
   let t = 0;
-  const push = (n, kind, label) => {
-    events.push({ f0: n.f0, f1: n.f1, shape: n.shape, dur: n.dur / tempo, t, kind, label });
+  const push = (n, kind, label, span) => {
+    events.push({ f0: n.f0, f1: n.f1, trill: !!n.trill, dur: n.dur / tempo, t, kind, label, span: span ? span / tempo : 0 });
     t += n.dur / tempo;
   };
-  const frame = (notes, label) => notes.forEach((n, i) => {
-    if (n.gap) t += n.gap / tempo; else push(n, "frame", i === 0 ? label : "");
-  });
-
-  frame(OPEN, "opening");
+  const seq = (notes, kind, label) => {
+    const span = notes.reduce((a, n) => a + (n.gap || n.dur), 0);
+    notes.forEach((n, i) => { if (n.gap) t += n.gap / tempo; else push(n, kind, i === 0 ? label : "", i === 0 ? span : 0); });
+  };
+  seq(OPEN, "frame", "opening");
   t += FRAME_GAP / tempo;
   let first = true, pendingPause = false, letters = 0, sent = "";
   for (const ch of normalize(text)) {
@@ -87,10 +119,10 @@ export function build(text, tempo = 1) {
       else t += GAP / tempo;
     }
     pendingPause = false; first = false; letters++; sent += s.ch;
-    push(symNote(s), s.len, s.ch);
+    seq(symbolNotes(s), s.kind, s.ch);
   }
   t += FRAME_GAP / tempo;
-  frame(CLOSE, "closing");
+  seq(CLOSE, "frame", "closing");
   return { events, pauses, skipped, letters, total: t, text: sent };
 }
 
@@ -101,10 +133,9 @@ export function renderSamples(sched, sr, pitch = 1, lead = 0.3, tail = 0.5) {
     const start = Math.round((lead + e.t) * sr), n = Math.round(e.dur * sr);
     let phase = 0, phase2 = 0;
     for (let i = 0; i < n; i++) {
-      const u = i / (n - 1);
-      const f = sweep(e.f0, e.f1, e.shape, u) * pitch;
+      const u = i / (n - 1), f = freqAt(e, u) * pitch;
       phase += 2 * Math.PI * f / sr; phase2 += 4 * Math.PI * f / sr;
-      out[start + i] += envelope(u) * (Math.sin(phase) + 0.06 * Math.sin(phase2)) * 0.45;
+      out[start + i] += envelope(u, e.dur) * (Math.sin(phase) + 0.06 * Math.sin(phase2)) * 0.45;
     }
   }
   return out;
@@ -141,11 +172,11 @@ export class Player {
   }
   setRoom(r) { this.room = r; if (this.wet) { this.wet.gain.value = r; this.dry.gain.value = 1 - r * 0.45; } }
   note(dest, n, t0, pitch) {
-    const ctx = this.ctx, N = 64, ny = ctx.sampleRate / 2 - 200;
+    const ctx = this.ctx, N = n.trill ? 256 : 96, ny = ctx.sampleRate / 2 - 200;
     const fc = new Float32Array(N), fh = new Float32Array(N), env = new Float32Array(N);
     for (let i = 0; i < N; i++) {
-      const u = i / (N - 1), f = sweep(n.f0, n.f1, n.shape, u) * pitch;
-      fc[i] = f; fh[i] = Math.min(f * 2, ny); env[i] = envelope(u);
+      const u = i / (N - 1), f = freqAt(n, u) * pitch;
+      fc[i] = f; fh[i] = Math.min(f * 2, ny); env[i] = envelope(u, n.dur);
     }
     const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), h = ctx.createGain();
     g.gain.value = 0; h.gain.value = 0.06;

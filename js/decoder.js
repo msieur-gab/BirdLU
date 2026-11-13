@@ -2,12 +2,13 @@
 // 1. Track the dominant pitch every few milliseconds (FFT peak).
 // 2. Cut the track into calls at silences, loudness dips and pitch jumps.
 // 3. Wait for the opening call; use it to calibrate pitch and tempo.
-// 4. Measure band, direction, shape and length of each call and look up its letter.
+// 4. Pair short notes into vowels; measure band, direction, texture (sweep or trill)
+//    and length of each consonant call; look up the letter.
 // 5. Stop at the low closing trill (or after a long silence).
 
-import { BANDS, SPAN, lookup } from "./chirp.js?v=3";
+import { BANDS, DUR, OPEN_CENTERS, CLOSE_BELOW, TRILL, lookup } from "./chirp.js?v=4";
 
-const OPEN_CENTERS = [5950, 5950, 5800];
+const D3 = 0.160; // last opening note, the time unit everything is measured against
 const F_LO = 1200, F_HI = 7400;
 
 function fft(re, im) {
@@ -47,6 +48,7 @@ export class Decoder {
     this.frameIndex = 0;
     this.snrOn = opts.snrOn ?? 12;
     this.dip = opts.dip ?? 9;
+    this.follow = opts.follow ?? false; this.followHz = opts.followHz ?? 250; this.followDb = opts.followDb ?? 8;
     this.on = Object.assign({ state() {}, letter() {}, message() {}, segment() {}, frame() {} }, opts.on || {});
     this.reset();
   }
@@ -54,7 +56,7 @@ export class Decoder {
   reset() {
     this.seg = null; this.inactive = 0; this.levelRef = -200; this.levelRefT = 0;
     this.history = []; this.state = "idle"; this.cal = null; this.text = ""; this.letters = [];
-    this.lastEnd = null;
+    this.lastEnd = null; this.pending = null;
   }
 
   get frequencies() { // bin centre frequencies of the spectrum passed to on.frame
@@ -80,6 +82,15 @@ export class Decoder {
     for (let i = 0; i < power.length; i++) {
       const k = kLo + i, p = re[k] * re[k] + im[k] * im[k];
       power[i] = p; if (p > pMax) { pMax = p; kMax = i; }
+    }
+    // While inside a call, follow it: prefer the strongest peak near the previous pitch
+    // unless something else is much louder (echo of earlier notes is usually weaker).
+    if (this.seg && this.follow) {
+      const last = this.seg.frames[this.seg.frames.length - 1].f;
+      const kc = Math.round(last * N / this.sr) - kLo, w = Math.ceil(this.followHz * N / this.sr);
+      let kn = -1, pn = 0;
+      for (let i = Math.max(0, kc - w); i <= Math.min(power.length - 1, kc + w); i++) if (power[i] > pn) { pn = power[i]; kn = i; }
+      if (kn >= 0 && pn > pMax * Math.pow(10, -this.followDb / 10)) { kMax = kn; pMax = pn; }
     }
     const sorted = Float64Array.from(power).sort();
     const floor = sorted[sorted.length >> 1] + 1e-12;
@@ -113,7 +124,8 @@ export class Decoder {
     } else if (s) {
       if (++this.inactive >= 2) this.close();
     }
-    if (this.state === "receiving" && !this.seg && this.lastEnd !== null && t - this.lastEnd > 7 * this.cal.d3) {
+    const lastT = this.pending ? this.pending.t1 : this.lastEnd;
+    if (this.state === "receiving" && !this.seg && lastT !== null && t - lastT > 7 * this.cal.d3) {
       this.finish(false);
     }
   }
@@ -128,13 +140,18 @@ export class Decoder {
     });
     let iMin = 0, iMax = 0;
     fs.forEach((v, i) => { if (v < fs[iMin]) iMin = i; if (v > fs[iMax]) iMax = i; });
-    const tail = fs.slice(-3).sort((a, b) => a - b)[1];
+    // straight-line fit of pitch over time: slope gives direction, residual reveals a trill
+    const n = fr.length, ts = fr.map(p => p.t), tm = ts.reduce((a, b) => a + b, 0) / n, fm = fs.reduce((a, b) => a + b, 0) / n;
+    let sxy = 0, sxx = 0;
+    for (let i = 0; i < n; i++) { sxy += (ts[i] - tm) * (fs[i] - fm); sxx += (ts[i] - tm) ** 2; }
+    const slope = sxx > 0 ? sxy / sxx : 0;
+    let res = 0;
+    for (let i = 0; i < n; i++) res += (fs[i] - (fm + slope * (ts[i] - tm))) ** 2;
     const seg = {
-      t0: fr[0].t, t1: fr[fr.length - 1].t, dur: fr[fr.length - 1].t - fr[0].t + this.dt,
-      fmin: fs[iMin], fmax: fs[iMax], center: (fs[iMin] + fs[iMax]) / 2,
-      dir: iMax > iMin ? "up" : "down", tail, maxDb: s.maxDb
+      t0: fr[0].t, t1: fr[n - 1].t, dur: fr[n - 1].t - fr[0].t + this.dt,
+      fmin: fs[iMin], fmax: fs[iMax], center: fm, f0: fs[0], f1: fs[n - 1],
+      dir: slope >= 0 ? "up" : "down", slope, wobble: Math.sqrt(res / n), maxDb: s.maxDb
     };
-    seg.turn = seg.dir === "up" ? seg.fmax - tail : tail - seg.fmin;
     if (seg.maxDb > this.levelRef - 15 * (seg.t1 - this.levelRefT)) { this.levelRef = seg.maxDb; this.levelRefT = seg.t1; }
     this.on.segment(seg);
     if (this.state === "idle") this.seekOpening(seg); else this.readLetter(seg);
@@ -147,41 +164,74 @@ export class Decoder {
     const ok = a.dir === "up" && b.dir === "up" && c.dir === "down"
       && a.dur / c.dur > 0.12 && a.dur / c.dur < 0.45 && b.dur / c.dur > 0.12 && b.dur / c.dur < 0.45
       && b.t0 - a.t1 < 0.6 * c.dur && c.t0 - b.t1 < 0.6 * c.dur
-      && Math.abs(a.center - b.center) / a.center < 0.12
+      && Math.abs(a.center - b.center) / a.center < 0.05
       && c.center / a.center > 0.85 && c.center / a.center < 1.1
-      && a.center > 4300;
+      && a.center > 4700;
     if (!ok) return;
     const pitch = (a.center + b.center + c.center) / OPEN_CENTERS.reduce((x, y) => x + y);
     this.cal = { pitch, d3: c.dur };
-    this.state = "receiving"; this.text = ""; this.letters = []; this.lastEnd = c.t1; this.history = [];
+    this.state = "receiving"; this.text = ""; this.letters = []; this.lastEnd = c.t1; this.history = []; this.pending = null;
     this.on.state("receiving", this.cal);
   }
 
   readLetter(seg) {
-    const { pitch, d3 } = this.cal;
-    if (seg.dur < 0.2 * d3) return; // click or blip
-    if (seg.center < 2050 * pitch) { this.finish(true); return; } // closing trill
-    const gap = seg.t0 - this.lastEnd;
-    if (gap < 0.15 * d3 && seg.dur < 0.45 * d3) { this.lastEnd = seg.t1; return; } // echo fragment of the previous call
-    this.lastEnd = seg.t1;
-    const rel = seg.center / pitch;
-    let band = 0;
-    BANDS.forEach((c, i) => { if (Math.abs(rel - c) < Math.abs(rel - BANDS[band])) band = i; });
-    const offBand = Math.abs(rel - BANDS[band]) > SPAN * 0.75;
-    const shape = seg.turn > 0.2 * SPAN * pitch ? "hook" : "straight";
-    const len = seg.dur > 0.62 * d3 ? "long" : "short";
-    const sym = offBand || seg.dur > 1.6 * d3 ? null : lookup(band, seg.dir, shape, len);
+    const { pitch, d3 } = this.cal, u = d3 / D3; // u: measured seconds per design second
+    if (seg.dur < 0.15 * d3) return; // click or blip
+    if (seg.center < CLOSE_BELOW * pitch) { this.flush(); this.finish(true); return; }
+    const p = this.pending;
+    if (p) {
+      const gap = seg.t0 - p.t1;
+      // echo fragment: starts right after the previous call, at the pitch where it ended
+      if (gap < 0.012 * u && Math.abs(seg.f0 - p.f1) < 200 * pitch) { p.t1 = seg.t1; return; }
+      const short = x => x.dur < (DUR.note + 0.035) * u;
+      if (short(p) && short(seg) && gap < (DUR.noteGap + 0.03) * u && Math.abs(seg.center - p.center) > 350 * pitch) {
+        this.pending = null;
+        this.emit([p, seg]);
+        return;
+      }
+      this.flush();
+    }
+    this.pending = seg;
+  }
+
+  flush() { const p = this.pending; this.pending = null; if (p) this.emit([p]); }
+
+  emit(segs) {
+    const { pitch, d3 } = this.cal, u = d3 / D3;
+    const first = segs[0], last = segs[segs.length - 1];
+    const nearest = f => { let b = 0; BANDS.forEach((c, i) => { if (Math.abs(f - c) < Math.abs(f - BANDS[b])) b = i; }); return b; };
+    let sym = null, info;
+    if (segs.length === 2) {
+      const center = (first.center + last.center) / 2 / pitch;
+      const band = nearest(center), dir = last.center > first.center ? "up" : "down";
+      sym = lookup("pair", band, dir);
+      info = { texture: "pair", band, dir };
+    } else {
+      const s = first, rel = s.center / pitch, band = nearest(rel);
+      const texture = s.wobble > 0.35 * TRILL.depth * pitch ? "trill" : "sweep";
+      const mid = (DUR[texture].short + DUR[texture].long) / 2 * u;
+      const len = s.dur > mid ? "long" : "short";
+      // a short note with no partner is an echo tail (or half a vowel we cannot rebuild): skip it
+      if (s.dur < (DUR.note + 0.02) * u) return;
+      const lone = false;
+      const off = Math.abs(rel - BANDS[band]) > 450;
+      sym = lone || off || s.dur > 1.6 * d3 ? null : lookup(texture, band, s.dir, len);
+      info = { texture, band, dir: s.dir, len };
+    }
     const ch = sym ? sym.ch : "•";
+    const gap = first.t0 - this.lastEnd;
+    this.lastEnd = last.t1;
     const space = this.letters.length > 0 && gap > 0.8 * d3;
     if (space) this.text += " ";
     this.text += ch;
-    const info = { ch, space, band, dir: seg.dir, shape, len, seg };
-    this.letters.push(info);
-    this.on.letter(ch, info, this.text);
+    const entry = { ch, space, ...info, segs };
+    this.letters.push(entry);
+    this.on.letter(ch, entry, this.text);
   }
 
   finish(complete) {
     if (this.state !== "receiving") return;
+    this.flush();
     const msg = { text: this.text, complete, pitch: this.cal.pitch, letters: this.letters };
     this.state = "idle"; this.history = []; this.lastEnd = null;
     this.on.state("idle");
@@ -265,5 +315,19 @@ export function addNoise(x, sr, kind = "white", snrDb = 20, seed = 1) {
   const g = sigRms / (nr * Math.pow(10, snrDb / 20));
   const out = new Float32Array(x.length);
   for (let i = 0; i < x.length; i++) out[i] = x[i] + n[i] * g;
+  return out;
+}
+
+/** Small loudspeaker: weak below ~600 Hz, rolls off above ~7 kHz, a resonance near 1 kHz and soft clipping when pushed. */
+export function addSpeaker(x, sr, drive = 2.5) {
+  const out = new Float32Array(x.length);
+  const aH = Math.exp(-2 * Math.PI * 600 / sr), aL = Math.exp(-2 * Math.PI * 7000 / sr);
+  let hpIn = 0, hp = 0, hp2In = 0, hp2 = 0, lp = 0;
+  for (let i = 0; i < x.length; i++) {
+    const h1 = aH * (hp + x[i] - hpIn); hpIn = x[i]; hp = h1;
+    const h2 = aH * (hp2 + h1 - hp2In); hp2In = h1; hp2 = h2;
+    lp = (1 - aL) * h2 + aL * lp;
+    out[i] = Math.tanh(lp * drive) / drive;
+  }
   return out;
 }
