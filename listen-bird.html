@@ -38,6 +38,7 @@
       <dt>Opening call</dt><dd id="openScore">–</dd>
       <dt>Closing call</dt><dd id="closeScore">–</dd>
       <dt>Microphone</dt><dd id="settings">–</dd>
+      <dt>Sound lost</dt><dd id="lost">–</dd>
     </dl>
     <p class="note" id="status"></p>
   </section>
@@ -64,11 +65,14 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, Decoder, encodeWav, drawPicture, parseWav } from "./js/birdsong.js?v=5";
+import { loadVoice, Decoder, encodeWav, drawPicture, parseWav } from "./js/birdsong.js?v=6";
 const $ = id => document.getElementById(id);
 const OPEN_MIN = 0.45, CLOSE_MIN = 0.45, WINDOW_S = 22, KEEP_S = 45;
 let V, dec, ctx, stream, proc, sr = 48000;
 let chunks = [], total = 0, consumed = 0, busy = false, timer = 0, lastMsg = null;
+// sound the page failed to receive: [position in the recording, samples]; filled with silence so
+// the timing of the letters stays right
+let gaps = [], lostTotal = 0, nextFrame = null, captureKind = "";
 
 const echoText = rt => rt ? `${rt.toFixed(2)} s` : "not measured";
 function pill(state, text) { $("pill").dataset.state = state; $("pill").textContent = text; }
@@ -100,18 +104,41 @@ async function start() {
   const flag = (k, label) => s[k] === undefined ? `${label} ?` : s[k] ? `<span class="warn">${label} ON</span>` : `${label} off`;
   $("settings").innerHTML = `${flag("echoCancellation", "echo cancel")} · ${flag("noiseSuppression", "noise suppr.")} · ${flag("autoGainControl", "auto gain")} · ${sr} Hz`;
   const srcNode = ctx.createMediaStreamSource(stream);
-  proc = ctx.createScriptProcessor(4096, 1, 1);
-  proc.onaudioprocess = e => {
-    const d = e.inputBuffer.getChannelData(0).slice();
+  chunks = []; total = 0; consumed = 0; gaps = []; lostTotal = 0; nextFrame = null;
+  let lastMeter = 0;
+  const receive = (frame, d) => {
+    if (nextFrame !== null && frame > nextFrame) {
+      const miss = frame - nextFrame;
+      gaps.push([total, miss]); lostTotal += miss;
+      chunks.push({ data: new Float32Array(miss) }); total += miss;
+    }
+    nextFrame = frame + d.length;
     chunks.push({ data: d }); total += d.length;
     let have = chunks.reduce((a, c) => a + c.data.length, 0);
     while (have - chunks[0].data.length > KEEP_S * sr) { have -= chunks[0].data.length; chunks.shift(); }
+    const now = performance.now();
+    if (now - lastMeter < 80) return;
+    lastMeter = now;
     let e2 = 0; for (const v of d) e2 += v * v;
     const db = 10 * Math.log10(e2 / d.length + 1e-12);
     $("lvl").textContent = `${db.toFixed(0)} dBFS`;
     $("meter").style.width = Math.max(0, Math.min(100, (db + 80) * 1.4)) + "%";
+    $("lost").textContent = `${Math.round(lostTotal / sr * 1000)} ms in ${gaps.length} gaps (${captureKind})`;
   };
-  srcNode.connect(proc); proc.connect(ctx.destination);
+  try {
+    await ctx.audioWorklet.addModule("js/capture-worklet.js?v=1");
+    proc = new AudioWorkletNode(ctx, "bird-capture", { numberOfInputs: 1, numberOfOutputs: 1 });
+    proc.port.onmessage = e => receive(e.data.frame, e.data.data);
+    const mute = ctx.createGain(); mute.gain.value = 0;     // keeps the node running, plays nothing
+    srcNode.connect(proc); proc.connect(mute); mute.connect(ctx.destination);
+    captureKind = "audio thread";
+  } catch (err) {
+    // older browsers: the page's own thread, which can lose sound while decoding
+    proc = ctx.createScriptProcessor(4096, 1, 1);
+    proc.onaudioprocess = e => receive(Math.round(e.playbackTime * sr), e.inputBuffer.getChannelData(0).slice());
+    srcNode.connect(proc); proc.connect(ctx.destination);
+    captureKind = "page thread";
+  }
   try { await navigator.wakeLock?.request("screen"); } catch (e) {}
   pill("listening", "Listening");
   $("start").textContent = "Stop"; $("start").setAttribute("aria-pressed", "true");
@@ -128,37 +155,40 @@ function stopListening() {
   $("start").textContent = "Start listening"; $("start").setAttribute("aria-pressed", "false");
 }
 
+// decoding runs in a background worker; the page only collects sound and shows results
+const worker = new Worker("js/decode-worker.js?v=1", { type: "module" });
+let scanId = 0;
 function scan() {
   if (busy || !ctx) return;
+  const { x, start } = recent(WINDOW_S, consumed);
+  if (x.length < sr * 1.5) return;
   busy = true;
-  try {
-    const { x, start } = recent(WINDOW_S, consumed);
-    if (x.length < sr * 1.5) return;
-    const f = dec.findFrames(x, sr);
-    $("openScore").textContent = `${f.openScore.toFixed(2)}${f.openScore >= OPEN_MIN ? " ✓ heard" : ""}`;
-    $("closeScore").textContent = f.close === null ? "–" : `${f.closeScore.toFixed(2)}${f.closeScore >= CLOSE_MIN ? " ✓ heard" : ""}`;
-    if (f.openScore < OPEN_MIN) { pill("listening", "Listening"); return; }
-    pill("receiving", "Hearing a letter…");
-    if (f.close === null || f.closeScore < CLOSE_MIN || f.closeEnd > x.length / sr - 0.3) return;
-    const a = Math.max(0, Math.round((f.open - 0.3) * sr)), b = Math.min(x.length, Math.round((f.closeEnd + 0.4) * sr));
-    const slice = x.slice(a, b);
-    const t0 = performance.now();
-    const r = dec.decode(slice, sr);
-    const r0 = dec.decode(slice, sr, { echo: false });
-    consumed = start + b;
-    lastMsg = slice;
-    $("saveMsg").disabled = false;
-    drawPicture($("pic"), slice, sr, []);
-    const li = document.createElement("li");
-    li.innerHTML = `<span class="text"></span><span class="meta before"></span><span class="meta"></span>`;
-    li.querySelector(".text").textContent = r.text || "(could not read the letters)";
-    li.querySelector(".before").textContent = `without echo removal: ${r0.text || "(nothing)"}`;
-    li.querySelector(".meta:not(.before)").textContent = `${new Date().toLocaleTimeString()} · opening ${r.info.openScore.toFixed(2)} · closing ${r.info.closeScore.toFixed(2)} · echo ${echoText(r.info.rt60)} · ${Math.round(performance.now() - t0)} ms`;
-    if (!r.text) li.classList.add("partial");
-    $("inbox").prepend(li);
-    pill("listening", "Listening");
-  } finally { busy = false; }
+  worker.postMessage({ type: "scan", id: ++scanId, x, sr, start, openMin: OPEN_MIN, closeMin: CLOSE_MIN }, [x.buffer]);
 }
+worker.onmessage = e => {
+  const { f, start, r, r0, a, b, slice, ms } = e.data;
+  busy = false;
+  if (!ctx) return;
+  $("openScore").textContent = `${f.openScore.toFixed(2)}${f.openScore >= OPEN_MIN ? " ✓ heard" : ""}`;
+  $("closeScore").textContent = f.close === null ? "–" : `${f.closeScore.toFixed(2)}${f.closeScore >= CLOSE_MIN ? " ✓ heard" : ""}`;
+  if (f.openScore < OPEN_MIN) { pill("listening", "Listening"); return; }
+  pill("receiving", "Hearing a letter…");
+  if (!r) return;
+  consumed = start + b;
+  lastMsg = slice;
+  $("saveMsg").disabled = false;
+  drawPicture($("pic"), slice, sr, []);
+  const li = document.createElement("li");
+  li.innerHTML = `<span class="text"></span><span class="meta before"></span><span class="meta"></span>`;
+  li.querySelector(".text").textContent = r.text || "(could not read the letters)";
+  li.querySelector(".before").textContent = `without echo removal: ${r0.text || "(nothing)"}`;
+  const lostHere = gaps.filter(([p]) => p >= start + a && p < start + b).reduce((s2, [, n]) => s2 + n, 0);
+  li.querySelector(".meta:not(.before)").textContent = `${new Date().toLocaleTimeString()} · opening ${r.info.openScore.toFixed(2)} · closing ${r.info.closeScore.toFixed(2)} · echo ${echoText(r.info.rt60)} · sound lost ${Math.round(lostHere / sr * 1000)} ms · decoded in ${ms} ms`;
+  if (!r.text) li.classList.add("partial");
+  $("inbox").prepend(li);
+  pill("listening", "Listening");
+};
+worker.onerror = e => { busy = false; $("status").textContent = "The decoder stopped: " + (e.message || "error"); };
 
 $("start").addEventListener("click", () => ctx ? stopListening() : start());
 const save = (samples, name) => { const a = document.createElement("a"); a.href = URL.createObjectURL(encodeWav(samples, sr)); a.download = name; a.click(); };
