@@ -27,6 +27,11 @@
       <label class="check"><input type="checkbox" id="loop"> Repeat every 3 s</label>
       <span class="stats" id="stats"></span>
     </div>
+    <div class="row">
+      <button class="secondary" id="saveMp3">Save as MP3</button>
+      <button class="secondary" id="saveWav">Save as WAV</button>
+      <span class="stats" id="saveNote">Saved with the current tempo, pitch and room. Upload it in Listen to test.</span>
+    </div>
     <p class="note" id="skipped"></p>
     <div class="controls">
       <div class="ctl">
@@ -73,6 +78,7 @@
     </dl>
   </section>
 </main>
+<script src="js/vendor/lame.min.js" defer></script>
 <script type="module" src="js/send.js"></script>
 </body>
 </html>

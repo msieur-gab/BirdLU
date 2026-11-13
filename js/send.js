@@ -1,4 +1,4 @@
-import { ALPHA, BANDS, SPAN, OPEN, CLOSE, symNote, sweep, build, Player } from "./chirp.js";
+import { ALPHA, BANDS, SPAN, OPEN, CLOSE, symNote, sweep, build, Player, renderOffline, encodeWav, encodeMp3 } from "./chirp.js";
 
 const $ = id => document.getElementById(id);
 const msg = $("msg"), playBtn = $("play"), loopIn = $("loop"), stats = $("stats"), skippedEl = $("skipped");
@@ -153,6 +153,28 @@ ALPHA.forEach(s => addCell(s.ch, `B${s.band + 1} ${s.dir === "up" ? "↑" : "↓
 addCell("Opening call", "above 5 kHz", OPEN, "frame", 160, "Play the opening call", true);
 addCell("Closing call", "below 2 kHz", CLOSE, "frame", 160, "Play the closing call", true);
 const drawGlyphs = () => glyphs.forEach(g => drawGlyph(g.cv, g.notes, g.kind, g.w));
+
+// ---------- export ----------
+function fileName(ext) {
+  const slug = sched.text.trim().split(/\s+/).slice(0, 5).join("-").replace(/[^a-z0-9-]/g, "") || "letter";
+  return `birdlu-${slug}.${ext}`;
+}
+async function save(kind) {
+  const note = $("saveNote"), p = params();
+  note.textContent = "Rendering…";
+  try {
+    const { samples, sampleRate } = await renderOffline(sched, { pitch: p.pitch, room: p.room, sampleRate: 44100 });
+    const blob = kind === "mp3" ? encodeMp3(samples, sampleRate) : encodeWav(samples, sampleRate);
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = fileName(kind); document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    note.textContent = `Saved ${a.download} (${Math.round(blob.size / 1024)} KB).`;
+  } catch (e) {
+    note.textContent = kind === "mp3" ? "The MP3 encoder did not load. Try Save as WAV." : "This browser could not render the audio.";
+  }
+}
+$("saveMp3").addEventListener("click", () => save("mp3"));
+$("saveWav").addEventListener("click", () => save("wav"));
 
 playBtn.addEventListener("click", () => { if (playing || loopTimer) stop(); else play(); });
 msg.addEventListener("input", () => { stop(); refresh(); });

@@ -2,7 +2,7 @@
 
 Letters sung as bird calls. One device sings a message, another listens through its microphone and writes it back out. No network, no pairing — only sound.
 
-- **Send** (`send.html`) — type a message, hear it as a chirp alphabet, read it as a score.
+- **Send** (`send.html`) — type a message, hear it as a chirp alphabet, read it as a score, save it as MP3 or WAV.
 - **Listen** (`listen.html`) — decode calls from the microphone, a recording, or an in-page simulation with noise and echo.
 
 ## The chirp alphabet
@@ -34,6 +34,10 @@ node test/simulate.mjs -v   # with sent/heard pairs
 ```
 
 Current baseline (synthetic audio): 0 % in quiet, hiss, train rumble, nearby voices and small rooms; ~2 % in a museum-sized hall; ~5 % hall + voices; fails when voices are louder than the calls (6 dB). Errors in halls are mostly missed hooks and calls stretched by echo — the place where a small trained classifier would help next.
+
+## Third-party
+
+MP3 export uses [lamejs](https://github.com/zhuker/lamejs) 1.2.1 (LGPL-3.0), vendored in `js/vendor/` with its licence.
 
 ## Run locally
 

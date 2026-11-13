@@ -110,13 +110,18 @@ export function renderSamples(sched, sr, pitch = 1, lead = 0.3, tail = 0.5) {
   return out;
 }
 
-/** WebAudio player shared by the pages. */
+/** WebAudio player shared by the pages. Pass an OfflineAudioContext to render to a file. */
 export class Player {
-  constructor() { this.ctx = null; this.room = 0.25; }
+  constructor(ctx = null) { this.ctx = ctx; this.room = 0.25; if (ctx) this.wire(); }
   ensure() {
     if (this.ctx) return this.ctx;
     const AC = window.AudioContext || window.webkitAudioContext;
-    const ctx = this.ctx = new AC();
+    this.ctx = new AC();
+    this.wire();
+    return this.ctx;
+  }
+  wire() {
+    const ctx = this.ctx;
     this.master = ctx.createGain(); this.master.gain.value = 0.45;
     this.dry = ctx.createGain(); this.wet = ctx.createGain();
     const conv = ctx.createConvolver(); conv.buffer = this.makeIR(1.8);
@@ -124,7 +129,6 @@ export class Player {
     this.master.connect(this.dry); this.master.connect(conv); conv.connect(this.wet);
     this.dry.connect(comp); this.wet.connect(comp); comp.connect(ctx.destination);
     this.setRoom(this.room);
-    return ctx;
   }
   makeIR(sec) {
     const ctx = this.ctx, len = Math.floor(ctx.sampleRate * sec);
@@ -135,7 +139,7 @@ export class Player {
     }
     return b;
   }
-  setRoom(r) { this.room = r; if (this.ctx) { this.wet.gain.value = r; this.dry.gain.value = 1 - r * 0.45; } }
+  setRoom(r) { this.room = r; if (this.wet) { this.wet.gain.value = r; this.dry.gain.value = 1 - r * 0.45; } }
   note(dest, n, t0, pitch) {
     const ctx = this.ctx, N = 64, ny = ctx.sampleRate / 2 - 200;
     const fc = new Float32Array(N), fh = new Float32Array(N), env = new Float32Array(N);
@@ -151,12 +155,17 @@ export class Player {
     o.connect(g); o2.connect(h); h.connect(g); g.connect(dest);
     o.start(t0); o2.start(t0); o.stop(t0 + n.dur + 0.02); o2.stop(t0 + n.dur + 0.02);
   }
+  /** Schedule a whole message from time t0 on a fresh bus; returns the bus. */
+  schedule(sched, pitch, t0) {
+    const bus = this.ctx.createGain(); bus.connect(this.master);
+    sched.events.forEach(e => this.note(bus, e, t0 + e.t, pitch));
+    return bus;
+  }
   /** Play a schedule; returns { t0, stop() }. */
   play(sched, pitch = 1) {
     this.ensure(); this.ctx.resume();
-    const bus = this.ctx.createGain(); bus.connect(this.master);
     const t0 = this.ctx.currentTime + 0.08;
-    sched.events.forEach(e => this.note(bus, e, t0 + e.t, pitch));
+    const bus = this.schedule(sched, pitch, t0);
     return { t0, stop() { try { bus.disconnect(); } catch (e) { /* already stopped */ } } };
   }
   /** Play raw notes (with gaps) once, e.g. a single letter. */
@@ -167,4 +176,44 @@ export class Player {
     notes.forEach(n => { if (n.gap) t += n.gap; else { this.note(bus, n, t, pitch); t += n.dur; } });
   }
   now() { return this.ctx ? this.ctx.currentTime : 0; }
+}
+
+/** Render a message to samples exactly as it plays (same synth, same room). */
+export async function renderOffline(sched, { pitch = 1, room = 0, sampleRate = 44100, lead = 0.5, tail = 0.8 } = {}) {
+  const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  const len = Math.ceil((lead + sched.total + tail + (room > 0 ? 1.8 : 0)) * sampleRate);
+  const ctx = new OAC(1, len, sampleRate);
+  const p = new Player(ctx);
+  p.setRoom(room);
+  p.schedule(sched, pitch, lead);
+  const buf = await ctx.startRendering();
+  return { samples: buf.getChannelData(0), sampleRate };
+}
+
+function toInt16(samples) {
+  const out = new Int16Array(samples.length);
+  for (let i = 0; i < samples.length; i++) { const v = Math.max(-1, Math.min(1, samples[i])); out[i] = v < 0 ? v * 0x8000 : v * 0x7fff; }
+  return out;
+}
+
+/** 16-bit mono WAV (exact, larger). */
+export function encodeWav(samples, sampleRate) {
+  const pcm = toInt16(samples), buf = new ArrayBuffer(44 + pcm.length * 2), v = new DataView(buf);
+  const str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  str(0, "RIFF"); v.setUint32(4, 36 + pcm.length * 2, true); str(8, "WAVE");
+  str(12, "fmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sampleRate, true); v.setUint32(28, sampleRate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  str(36, "data"); v.setUint32(40, pcm.length * 2, true);
+  new Int16Array(buf, 44).set(pcm);
+  return new Blob([buf], { type: "audio/wav" });
+}
+
+/** MP3 (smaller, plays everywhere). Needs js/vendor/lame.min.js loaded (global lamejs). */
+export function encodeMp3(samples, sampleRate, kbps = 160) {
+  const lame = globalThis.lamejs;
+  if (!lame || !lame.Mp3Encoder) throw new Error("MP3 encoder not loaded");
+  const enc = new lame.Mp3Encoder(1, sampleRate, kbps), pcm = toInt16(samples), parts = [];
+  for (let i = 0; i < pcm.length; i += 1152) { const b = enc.encodeBuffer(pcm.subarray(i, i + 1152)); if (b.length) parts.push(b); }
+  const end = enc.flush(); if (end.length) parts.push(end);
+  return new Blob(parts, { type: "audio/mpeg" });
 }
