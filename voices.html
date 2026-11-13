@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Voices</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .voices{display:grid;gap:12px}
+  .voice{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px;min-width:0}
+  .voice .head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+  .voice b{font:600 1.2rem var(--mono);color:var(--vowel)}
+  .voice .about{color:var(--muted);font-size:.9rem}
+  .voice .links{font:400 .8rem var(--mono);color:var(--muted)}
+  .voice button[aria-pressed="true"]{border-color:var(--short);color:var(--short)}
+  .scroll{overflow-x:auto;border-radius:8px;background:#fff}
+  .scroll canvas{display:block}
+  .presets{display:flex;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="voices.html" aria-current="page">Voices</a><a href="sketch.html">Sketch</a></nav>
+  <header>
+    <h1>Which voice sounds most like a <em>bird</em>?</h1>
+    <p class="lede">The same message sung by five voices. The trills (vowels), the opening and the closing are the same in all of them; only the short notes (consonants) change. All five read back without error on clean sound; a real test tells how they survive a room.</p>
+  </header>
+  <section class="panel" aria-label="Message">
+    <label for="text">Message</label>
+    <textarea id="text" spellcheck="false">meet me at the old bridge at noon</textarea>
+    <div class="presets">
+      <button class="secondary preset" type="button">meet me at the old bridge at noon</button>
+      <button class="secondary preset" type="button">you are not alone on this train</button>
+      <button class="secondary preset" type="button">l'été arrive, où es-tu ?</button>
+    </div>
+    <p class="note" id="status">Loading the voices…</p>
+  </section>
+  <section class="voices" id="voices" aria-label="Voices"></section>
+</main>
+<script type="module">
+import { loadVoice, sing, drawPicture } from "./js/birdsong.js?v=6";
+const $ = id => document.getElementById(id);
+let ctx = null, src = null, pressed = null;
+const list = await (await fetch("birds/voices/index.json?v=vt1")).json();
+const voices = {};
+await Promise.all(list.map(async v => { voices[v.name] = await loadVoice(`birds/voices/${v.name}/`, "vt1"); }));
+$("status").textContent = "";
+
+function stop() {
+  if (src) { try { src.stop(); } catch (e) {} src = null; }
+  if (pressed) { pressed.setAttribute("aria-pressed", "false"); pressed.textContent = "Play"; pressed = null; }
+}
+async function play(name, btn) {
+  const was = pressed === btn;
+  stop();
+  if (was) return;
+  if (!ctx) ctx = new AudioContext();
+  await ctx.resume();
+  const V = voices[name], msg = sing($("text").value, V, 1);
+  const buf = ctx.createBuffer(1, msg.samples.length, V.sr);
+  buf.copyToChannel(msg.samples, 0);
+  src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination);
+  const me = src;
+  src.onended = () => { if (src === me) stop(); };
+  src.start();
+  pressed = btn; btn.setAttribute("aria-pressed", "true"); btn.textContent = "Stop";
+}
+function render() {
+  const box = $("voices");
+  box.innerHTML = "";
+  for (const v of list) {
+    const el = document.createElement("article");
+    el.className = "voice";
+    el.innerHTML = `<div class="head"><b></b><span class="about"></span></div>
+      <div class="row"><button class="secondary" type="button">Play</button></div>
+      <div class="scroll"><canvas></canvas></div>
+      <span class="links">Real test: <a class="send">Send with this voice</a> · <a class="listen">Listen with this voice</a></span>`;
+    el.querySelector("b").textContent = v.name;
+    el.querySelector(".about").textContent = v.about;
+    el.querySelector(".send").href = `send-bird.html?voice=${v.name}`;
+    el.querySelector(".listen").href = `listen-bird.html?voice=${v.name}`;
+    const btn = el.querySelector("button");
+    btn.addEventListener("click", () => play(v.name, btn));
+    box.appendChild(el);
+    const msg = sing($("text").value, voices[v.name], 1);
+    drawPicture(el.querySelector("canvas"), msg.samples, voices[v.name].sr, msg.marks, 110);
+  }
+}
+render();
+$("text").addEventListener("change", () => { stop(); render(); });
+document.querySelectorAll(".preset").forEach(b => b.addEventListener("click", () => { $("text").value = b.textContent; stop(); render(); }));
+</script>
+</body>
+</html>

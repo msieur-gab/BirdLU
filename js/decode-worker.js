@@ -2,7 +2,8 @@
 import { loadVoice, Decoder } from "./birdsong.js?v=6";
 
 let dec = null;
-const ready = loadVoice("../birds/voice/").then(V => { dec = new Decoder(V); });
+const VOICE = (new URLSearchParams(self.location.search).get("voice") || "").match(/^[a-z-]{1,30}$/)?.[0] || null;
+const ready = (VOICE ? loadVoice(`../birds/voices/${VOICE}/`, "vt1") : loadVoice("../birds/voice/")).then(V => { dec = new Decoder(V); });
 
 self.onmessage = async e => {
   const m = e.data;

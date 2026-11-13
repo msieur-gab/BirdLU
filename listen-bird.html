@@ -69,6 +69,8 @@ import { loadVoice, Decoder, encodeWav, drawPicture, parseWav } from "./js/birds
 const $ = id => document.getElementById(id);
 const OPEN_MIN = 0.45, CLOSE_MIN = 0.45, WINDOW_S = 22, KEEP_S = 45;
 let V, dec, ctx, stream, proc, sr = 48000;
+// ?voice=<name> listens for a test voice from birds/voices/ (the Send page must use the same one)
+const VOICE = (new URLSearchParams(location.search).get("voice") || "").match(/^[a-z-]{1,30}$/)?.[0] || null;
 let chunks = [], total = 0, consumed = 0, busy = false, timer = 0, lastMsg = null;
 // sound the page failed to receive: [position in the recording, samples]; filled with silence so
 // the timing of the letters stays right
@@ -77,7 +79,7 @@ let gaps = [], lostTotal = 0, nextFrame = null, captureKind = "";
 const echoText = rt => rt ? `${rt.toFixed(2)} s` : "not measured";
 function pill(state, text) { $("pill").dataset.state = state; $("pill").textContent = text; }
 
-try { V = await loadVoice(); dec = new Decoder(V); }
+try { V = VOICE ? await loadVoice(`birds/voices/${VOICE}/`, "vt1") : await loadVoice(); dec = new Decoder(V); if (VOICE) $("status").textContent = `Voice: ${VOICE}`; }
 catch (e) { $("status").textContent = "Could not load the bird voice."; throw e; }
 
 function recent(seconds, from = 0) {
@@ -156,7 +158,7 @@ function stopListening() {
 }
 
 // decoding runs in a background worker; the page only collects sound and shows results
-const worker = new Worker("js/decode-worker.js?v=1", { type: "module" });
+const worker = new Worker(`js/decode-worker.js?v=2${VOICE ? "&voice=" + VOICE : ""}`, { type: "module" });
 let scanId = 0;
 function scan() {
   if (busy || !ctx) return;

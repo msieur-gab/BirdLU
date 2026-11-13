@@ -22,7 +22,7 @@
   <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html" aria-current="page">Send</a><a href="listen-bird.html">Listen</a><a href="sketch.html">Sketch</a><a href="birds.html">Birds</a></nav>
   <header>
     <h1>Send a <em>bird</em> letter</h1>
-    <p class="lede">Type a message: a bird voice sings it. A chiffchaff saying its name opens it, the same call reversed and slowing closes it. Play it from the computer; open Listen on the phone.</p>
+    <p class="lede">Type a message: a bird voice sings it. A chiffchaff saying its name opens it, the same call reversed and slowing closes it. Play it from the computer; open Listen on the phone.<span id="lede-voice"></span></p>
   </header>
 
   <section class="panel" aria-label="Message">
@@ -58,6 +58,8 @@
 import { loadVoice, sing, Decoder, drawPicture, encodeWav } from "./js/birdsong.js?v=6";
 const $ = id => document.getElementById(id);
 let V, dec, msg, ctx, src = null, raf = 0, timer = 0, pps = 140;
+// ?voice=<name> sings with a test voice from birds/voices/ (the Listen page must use the same one)
+const VOICE = (new URLSearchParams(location.search).get("voice") || "").match(/^[a-z-]{1,30}$/)?.[0] || null;
 
 function build() {
   msg = sing($("text").value, V, 1);
@@ -106,7 +108,8 @@ async function play() {
 }
 
 try {
-  V = await loadVoice();
+  V = VOICE ? await loadVoice(`birds/voices/${VOICE}/`, "vt1") : await loadVoice();
+  if (VOICE) $("lede-voice").textContent = ` Voice: ${VOICE}.`;
   dec = new Decoder(V);
   $("status").textContent = "";
 } catch (e) { $("status").textContent = "Could not load the bird voice."; throw e; }

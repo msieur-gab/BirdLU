@@ -1,0 +1,22 @@
+[
+ {
+  "name": "today",
+  "about": "Today's consonants, chosen by the room (the reference: a small R2D2)."
+ },
+ {
+  "name": "earlier",
+  "about": "The consonants from before today's change."
+ },
+ {
+  "name": "melodic",
+  "about": "Today's notes, gentler sweeps, pitches on a scale tuned to the opening."
+ },
+ {
+  "name": "melodic-alive",
+  "about": "Melodic, with a less perfect line: more wobble, a little overtone."
+ },
+ {
+  "name": "earlier-melodic",
+  "about": "The earlier notes, made melodic and alive."
+ }
+]
