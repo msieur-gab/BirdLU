@@ -5,7 +5,8 @@ Run:  .venv/bin/python lab/add_signs.py
 import json, os, shutil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CHOICE = {".": 1, "?": 1, "!": 3, ",": 2, "'": 1, "-": 2, ":": 1, "@": 2, "#": 2}
+CHOICE = {".": 1, "?": 1, "!": 3, ",": 2, "'": 1, "-": 1, ":": 1, "@": 1, "#": 2}   # "-" and "@" moved to
+# candidate 1 the same day: candidate 2 of each sat at the "r" note's pitch ("arrive" → "ar-ive")
 
 
 def main():

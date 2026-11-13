@@ -182,7 +182,7 @@
    "vowel": false,
    "sign": true,
    "dur": 0.069,
-   "source": "XC533763 45.91 (Common Blackbird)"
+   "source": "XC541754 6.65 (Song Thrush)"
   },
   ":": {
    "file": "sign-colon.wav",
@@ -196,7 +196,7 @@
    "vowel": false,
    "sign": true,
    "dur": 0.127,
-   "source": "XC489896 3.77 (Common Chaffinch)"
+   "source": "XC541754 40.64 (Song Thrush)"
   },
   "#": {
    "file": "sign-number.wav",
@@ -321,7 +321,9 @@
    "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
    "letters": [
     "l",
-    ","
+    ",",
+    "-",
+    "@"
    ]
   },
   "XC778131": {
@@ -382,7 +384,6 @@
     "b",
     "z",
     ".",
-    "-",
     "#"
    ]
   },
@@ -425,15 +426,6 @@
    "url": "https://commons.wikimedia.org/wiki/File:Emberiza_citrinella_-_Yellowhammer_XC531169.mp3",
    "letters": [
     "?"
-   ]
-  },
-  "XC489896": {
-   "species": "Common Chaffinch",
-   "recordist": "Hannu Varkki",
-   "licence": "CC BY-SA 4.0",
-   "url": "https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_-_Common_Chaffinch_XC489896.mp3",
-   "letters": [
-    "@"
    ]
   }
  },

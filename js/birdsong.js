@@ -37,7 +37,7 @@ export function parseWav(ab) {
 /** Decoded text as people write it: "#c" back to "3". */
 export const readable = text => text.replace(/#([a-j])/g, (_, c) => String(DIGITS.indexOf(c)));
 
-export async function loadVoice(base = "birds/voice/", v = "4") {
+export async function loadVoice(base = "birds/voice/", v = "5") {
   const voice = await (await fetch(`${base}voice.json?v=${v}`)).json();
   const sr = voice.sample_rate;
   const snd = {};
