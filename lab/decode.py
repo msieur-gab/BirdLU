@@ -182,7 +182,7 @@ class Decoder:
         cl, d = closing(v, snd)
         self.tpl_close = template(mix([(a * sr_tpl, x, g) for a, x, g in cl], int((d + 0.05) * sr_tpl)), sr_tpl)
 
-    def decode(self, x, sr, bias_ratio=0.72, letter_cost=1.0, new_cost=0.5, onset_gain=6.0, onset_full_db=8.0, repeat_cost=3.0, verbose=False):
+    def decode(self, x, sr, bias_ratio=0.72, letter_cost=4.0, new_cost=0.5, onset_gain=10.0, onset_full_db=8.0, repeat_cost=3.0, verbose=False):
         db, level = features(x, sr)
         S = shape(db)
         fps = 1 / HOP_S
@@ -316,7 +316,22 @@ CONDITIONS = {
     "hall 3 m":     dict(distance=3.0, rt60=1.6, critical=2.5, noise=QUIET),
     "street 1.5 m": dict(distance=1.5, rt60=0.3, critical=3.0, noise=[("traffic", 15), ("hiss", 35)]),
     "station 2 m":  dict(distance=2.0, rt60=1.2, critical=2.0, noise=[("traffic", 12), ("voices", 18), ("hiss", 35)]),
+    # Gab's living room, Bluetooth speaker at 2 m: the echo measured from his recordings (lab/rooms/)
+    "real room, laptop": dict(ir="living-room-bt-2m-laptop.npy", snr=30),
+    "real room, phone":  dict(ir="living-room-bt-2m-phone.npy", snr=30),
 }
+
+
+def heard(y, cond, sr, seed):
+    """What the phone records (48 kHz): through a simulated room, or through a measured one."""
+    if "ir" in cond:
+        from scipy.signal import fftconvolve
+        h = np.load(os.path.join(ROOT, "lab", "rooms", cond["ir"]))
+        x = resample_poly(y, 160, 147)
+        z = fftconvolve(x, h)[: len(x)]
+        rms = np.sqrt(np.mean(z ** 2))
+        return z + np.random.default_rng(seed).normal(0, rms * 10 ** (-cond["snr"] / 20), len(z))
+    return resample_poly(transmit(y, cond, sr, seed=seed), 160, 147)
 
 
 def main(repeats=1, verbose=False):
@@ -328,8 +343,7 @@ def main(repeats=1, verbose=False):
         for r in range(repeats):
             for si, text in enumerate(SENTENCES):
                 y, sung = sing(text, v, snd, seed=10 * r + si)
-                h = transmit(y, cond, sr, seed=100 * r + si)
-                h = resample_poly(h, 160, 147)  # the phone records at 48 kHz
+                h = heard(y, cond, sr, seed=100 * r + si)
                 got, info = dec.decode(h, 48000)
                 e = edit_distance(got, sung)
                 err += e; n += len(sung)
@@ -342,3 +356,85 @@ def main(repeats=1, verbose=False):
 
 if __name__ == "__main__":
     main(int(sys.argv[1]) if len(sys.argv) > 1 else 1, "-v" in sys.argv)
+
+
+# ---------- the Send page's exact message (to compare a real recording with what was sent) ----------
+
+def mulberry32(seed):
+    """The same small random generator as js/birdsong.js."""
+    a = seed & 0xFFFFFFFF
+
+    def imul(x, y):
+        return ((x & 0xFFFFFFFF) * (y & 0xFFFFFFFF)) & 0xFFFFFFFF
+
+    def r():
+        nonlocal a
+        a = (a + 0x6D2B79F5) & 0xFFFFFFFF
+        t = imul(a ^ (a >> 15), 1 | a)
+        t = ((t + imul(t ^ (t >> 7), 61 | t)) & 0xFFFFFFFF) ^ t
+        return ((t ^ (t >> 14)) & 0xFFFFFFFF) / 4294967296
+    return r
+
+
+def sing_js(text, v, snd, seed=1):
+    """Exactly what send-bird.html plays (same random draws, same order): float32 at the voice rate."""
+    R = mulberry32(seed)
+    T, sr = v["timing"], v["sample_rate"]
+    between = lambda a, b: a + (b - a) * R()
+    words = [[c for c in w if c in v["letters"]] for w in normalize(text).split()]
+    words = [w for w in words if w]
+    parts, t, truth = [], T["lead"], []
+    op, dur = opening(v, snd)
+    parts += [(t + a, x, g) for a, x, g in op]
+    t += dur + T["after_open"]
+    for wi, w in enumerate(words):
+        for ci, c in enumerate(w):
+            g = 10 ** ((R() * 2 - 1) * T["level_jitter_db"] / 20)
+            truth.append((c, t))
+            parts.append((t, snd[c], g))
+            t += len(snd[c]) / sr
+            if ci < len(w) - 1:
+                t += T["gap_in_word"] * between(*T["gap_jitter"])
+        if wi < len(words) - 1:
+            t += between(*T["word_gap"])
+    t += T["before_close"]
+    cl, dur = closing(v, snd)
+    parts += [(t + a, x, g) for a, x, g in cl]
+    t += dur + 0.5
+    y = np.zeros(int(np.ceil(t * sr)))
+    for a, x, g in parts:
+        o = int(round(a * sr))
+        y[o:o + len(x)] += x[: max(0, len(y) - o)] * g
+    sing_js.truth = truth
+    return y / (np.max(np.abs(y)) or 1) * 0.9
+
+
+def measure_room(paths, text, seed=1, length_s=0.8):
+    """The echo (speaker + room + microphone) measured from real recordings of a Send-page message:
+    what was sent is known exactly, so dividing what was heard by it, frequency by frequency, leaves
+    the room. Returns the median over recordings, normalised, at 48 kHz."""
+    from scipy.signal import correlate
+    v, snd, sr = load_voice()
+    y = sing_js(text, v, snd, seed)
+    irs = []
+    for p in paths:
+        x, fs = sf.read(p)
+        if x.ndim > 1:
+            x = x.mean(axis=1)
+        yy = resample_poly(y, fs // 100, sr // 100) if fs != sr else y
+        c = correlate(x, yy, mode="full", method="fft")
+        lag = int(np.argmax(np.abs(c)) - (len(yy) - 1))
+        X = np.zeros(len(x))
+        a, b = max(0, lag), min(len(x), lag + len(yy))
+        X[a:b] = yy[a - lag:b - lag]
+        n = 1 << int(np.ceil(np.log2(len(x) + fs)))
+        Xf, Yf = np.fft.rfft(X, n), np.fft.rfft(x, n)
+        f = np.fft.rfftfreq(n, 1 / fs)
+        band = (f > 1000) & (f < 9000)
+        eps = np.percentile(np.abs(Xf[band]) ** 2, 30)
+        Hf = Yf * np.conj(Xf) / (np.abs(Xf) ** 2 + eps)
+        Hf[~band] = 0
+        h = np.fft.irfft(Hf, n)
+        h = np.concatenate([h[-int(0.005 * fs):], h[:int(length_s * fs)]])
+        irs.append(h / np.max(np.abs(h)))
+    return np.median(np.stack(irs), axis=0), 48000

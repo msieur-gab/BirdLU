@@ -8,10 +8,10 @@
     "wav": "1.mp3",
     "wav_forest": "1-forest.mp3",
     "png": "1.png",
-    "dur": 17.51,
+    "dur": 16.74,
     "plot": [
-     0.0191,
-     0.9946
+     0.02,
+     0.9944
     ],
     "marks": [
      {
@@ -29,14 +29,14 @@
      {
       "letter": "o",
       "t0": 2.381,
-      "t1": 2.924,
+      "t1": 2.628,
       "vowel": true,
       "word": 0
      },
      {
       "letter": "u",
-      "t0": 2.958,
-      "t1": 3.501,
+      "t0": 2.662,
+      "t1": 3.205,
       "vowel": true,
       "word": 0
      },
@@ -46,26 +46,26 @@
        "you"
       ],
       "t0": 1.758,
-      "t1": 3.524
+      "t1": 3.228
      },
      {
       "letter": "a",
-      "t0": 4.323,
-      "t1": 5.074,
+      "t0": 4.027,
+      "t1": 4.778,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "r",
-      "t0": 5.1,
-      "t1": 5.183,
+      "t0": 4.804,
+      "t1": 4.967,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "e",
-      "t0": 5.213,
-      "t1": 5.578,
+      "t0": 4.997,
+      "t1": 5.362,
       "vowel": true,
       "word": 1
      },
@@ -75,27 +75,27 @@
        "a",
        "re"
       ],
-      "t0": 4.323,
-      "t1": 5.599
+      "t0": 4.027,
+      "t1": 5.383
      },
      {
       "letter": "n",
-      "t0": 6.386,
-      "t1": 6.465,
+      "t0": 6.17,
+      "t1": 6.277,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "o",
-      "t0": 6.49,
-      "t1": 7.032,
+      "t0": 6.301,
+      "t1": 6.548,
       "vowel": true,
       "word": 2
      },
      {
       "letter": "t",
-      "t0": 7.056,
-      "t1": 7.121,
+      "t0": 6.571,
+      "t1": 6.689,
       "vowel": false,
       "word": 2
      },
@@ -104,41 +104,41 @@
       "syllables": [
        "not"
       ],
-      "t0": 6.386,
-      "t1": 7.141
+      "t0": 6.17,
+      "t1": 6.709
      },
      {
       "letter": "a",
-      "t0": 7.916,
-      "t1": 8.668,
+      "t0": 7.484,
+      "t1": 8.236,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "l",
-      "t0": 8.693,
-      "t1": 8.798,
+      "t0": 8.261,
+      "t1": 8.344,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "o",
-      "t0": 8.832,
-      "t1": 9.375,
+      "t0": 8.378,
+      "t1": 8.625,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "n",
-      "t0": 9.401,
-      "t1": 9.48,
+      "t0": 8.651,
+      "t1": 8.758,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "e",
-      "t0": 9.499,
-      "t1": 9.863,
+      "t0": 8.776,
+      "t1": 9.141,
       "vowel": true,
       "word": 3
      },
@@ -149,20 +149,20 @@
        "lo",
        "ne"
       ],
-      "t0": 7.916,
-      "t1": 9.888
+      "t0": 7.484,
+      "t1": 9.166
      },
      {
       "letter": "o",
-      "t0": 10.473,
-      "t1": 11.016,
+      "t0": 9.751,
+      "t1": 9.998,
       "vowel": true,
       "word": 4
      },
      {
       "letter": "n",
-      "t0": 11.046,
-      "t1": 11.126,
+      "t0": 10.028,
+      "t1": 10.136,
       "vowel": false,
       "word": 4
      },
@@ -171,34 +171,34 @@
       "syllables": [
        "on"
       ],
-      "t0": 10.473,
-      "t1": 11.16
+      "t0": 9.751,
+      "t1": 10.169
      },
      {
       "letter": "t",
-      "t0": 11.721,
-      "t1": 11.787,
+      "t0": 10.731,
+      "t1": 10.849,
       "vowel": false,
       "word": 5
      },
      {
       "letter": "h",
-      "t0": 11.811,
-      "t1": 11.988,
+      "t0": 10.873,
+      "t1": 10.989,
       "vowel": false,
       "word": 5
      },
      {
       "letter": "i",
-      "t0": 12.016,
-      "t1": 12.588,
+      "t0": 11.017,
+      "t1": 11.589,
       "vowel": true,
       "word": 5
      },
      {
       "letter": "s",
-      "t0": 12.615,
-      "t1": 12.704,
+      "t0": 11.616,
+      "t1": 11.778,
       "vowel": false,
       "word": 5
      },
@@ -207,41 +207,41 @@
       "syllables": [
        "this"
       ],
-      "t0": 11.721,
-      "t1": 12.735
+      "t0": 10.731,
+      "t1": 11.81
      },
      {
       "letter": "t",
-      "t0": 13.438,
-      "t1": 13.504,
+      "t0": 12.513,
+      "t1": 12.631,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "r",
-      "t0": 13.534,
-      "t1": 13.616,
+      "t0": 12.661,
+      "t1": 12.823,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "a",
-      "t0": 13.648,
-      "t1": 14.4,
+      "t0": 12.855,
+      "t1": 13.607,
       "vowel": true,
       "word": 6
      },
      {
       "letter": "i",
-      "t0": 14.43,
-      "t1": 15.002,
+      "t0": 13.637,
+      "t1": 14.209,
       "vowel": true,
       "word": 6
      },
      {
       "letter": "n",
-      "t0": 15.033,
-      "t1": 15.113,
+      "t0": 14.24,
+      "t1": 14.348,
       "vowel": false,
       "word": 6
      },
@@ -250,13 +250,13 @@
       "syllables": [
        "train"
       ],
-      "t0": 13.438,
-      "t1": 15.13
+      "t0": 12.513,
+      "t1": 14.365
      },
      {
       "frame": "closing",
-      "t0": 15.43,
-      "t1": 16.906
+      "t0": 14.665,
+      "t1": 16.141
      }
     ],
     "credits": {
@@ -266,8 +266,7 @@
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/315114",
       "letters": [
-       "e",
-       "n"
+       "e"
       ]
      },
      "XC433160": {
@@ -276,8 +275,18 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
       "letters": [
-       "a",
-       "o"
+       "a"
+      ]
+     },
+     "XC446151": {
+      "species": "Common Blackbird",
+      "recordist": "James Ray",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+      "letters": [
+       "o",
+       "n",
+       "r"
       ]
      },
      "XC543697": {
@@ -300,22 +309,29 @@
        "y"
       ]
      },
-     "XC760778": {
-      "species": "European Robin",
-      "recordist": "Benjamin Allegrini",
+     "XC778131": {
+      "species": "Eurasian Blue Tit",
+      "recordist": "Paul Driver",
       "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/760778",
+      "url": "https://xeno-canto.org/778131",
       "letters": [
-       "t",
-       "s",
-       "r"
+       "t"
       ]
      },
-     "XC541754": {
-      "species": "Song Thrush",
-      "recordist": "Benoît Van Hecke",
+     "XC533763": {
+      "species": "Common Blackbird",
+      "recordist": "Marie-Lan Taÿ Pamart",
       "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
+      "letters": [
+       "s"
+      ]
+     },
+     "XC857749": {
+      "species": "European Robin",
+      "recordist": "Olivier Swift, Hélène Cartaud",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/857749",
       "letters": [
        "l"
       ]
@@ -344,10 +360,10 @@
     "wav": "1-synth.mp3",
     "wav_forest": "1-synth-forest.mp3",
     "png": "1-synth.png",
-    "dur": 17.21,
+    "dur": 16.59,
     "plot": [
-     0.0195,
-     0.9946
+     0.0202,
+     0.9944
     ],
     "marks": [
      {
@@ -365,14 +381,14 @@
      {
       "letter": "o",
       "t0": 2.35,
-      "t1": 2.843,
+      "t1": 2.587,
       "vowel": true,
       "word": 0
      },
      {
       "letter": "u",
-      "t0": 2.877,
-      "t1": 3.408,
+      "t0": 2.621,
+      "t1": 3.151,
       "vowel": true,
       "word": 0
      },
@@ -382,26 +398,26 @@
        "you"
       ],
       "t0": 1.781,
-      "t1": 3.431
+      "t1": 3.175
      },
      {
       "letter": "a",
-      "t0": 4.23,
-      "t1": 5.05,
+      "t0": 3.973,
+      "t1": 4.793,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "r",
-      "t0": 5.076,
-      "t1": 5.136,
+      "t0": 4.819,
+      "t1": 4.959,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "e",
-      "t0": 5.166,
-      "t1": 5.497,
+      "t0": 4.989,
+      "t1": 5.32,
       "vowel": true,
       "word": 1
      },
@@ -411,27 +427,27 @@
        "a",
        "re"
       ],
-      "t0": 4.23,
-      "t1": 5.519
+      "t0": 3.973,
+      "t1": 5.342
      },
      {
       "letter": "n",
-      "t0": 6.305,
-      "t1": 6.368,
+      "t0": 6.128,
+      "t1": 6.22,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "o",
-      "t0": 6.392,
-      "t1": 6.885,
+      "t0": 6.244,
+      "t1": 6.48,
       "vowel": true,
       "word": 2
      },
      {
       "letter": "t",
-      "t0": 6.908,
-      "t1": 6.955,
+      "t0": 6.503,
+      "t1": 6.598,
       "vowel": false,
       "word": 2
      },
@@ -440,41 +456,41 @@
       "syllables": [
        "not"
       ],
-      "t0": 6.305,
-      "t1": 6.976
+      "t0": 6.128,
+      "t1": 6.618
      },
      {
       "letter": "a",
-      "t0": 7.751,
-      "t1": 8.571,
+      "t0": 7.393,
+      "t1": 8.214,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "l",
-      "t0": 8.596,
-      "t1": 8.686,
+      "t0": 8.238,
+      "t1": 8.306,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "o",
-      "t0": 8.72,
-      "t1": 9.213,
+      "t0": 8.34,
+      "t1": 8.576,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "n",
-      "t0": 9.239,
-      "t1": 9.302,
+      "t0": 8.602,
+      "t1": 8.693,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "e",
-      "t0": 9.32,
-      "t1": 9.651,
+      "t0": 8.712,
+      "t1": 9.042,
       "vowel": true,
       "word": 3
      },
@@ -485,20 +501,20 @@
        "lo",
        "ne"
       ],
-      "t0": 7.751,
-      "t1": 9.676
+      "t0": 7.393,
+      "t1": 9.068
      },
      {
       "letter": "o",
-      "t0": 10.261,
-      "t1": 10.754,
+      "t0": 9.652,
+      "t1": 9.889,
       "vowel": true,
       "word": 4
      },
      {
       "letter": "n",
-      "t0": 10.784,
-      "t1": 10.847,
+      "t0": 9.919,
+      "t1": 10.011,
       "vowel": false,
       "word": 4
      },
@@ -507,34 +523,34 @@
       "syllables": [
        "on"
       ],
-      "t0": 10.261,
-      "t1": 10.88
+      "t0": 9.652,
+      "t1": 10.044
      },
      {
       "letter": "t",
-      "t0": 11.442,
-      "t1": 11.49,
+      "t0": 10.606,
+      "t1": 10.701,
       "vowel": false,
       "word": 5
      },
      {
       "letter": "h",
-      "t0": 11.514,
-      "t1": 11.664,
+      "t0": 10.725,
+      "t1": 10.82,
       "vowel": false,
       "word": 5
      },
      {
       "letter": "i",
-      "t0": 11.692,
-      "t1": 12.251,
+      "t0": 10.847,
+      "t1": 11.406,
       "vowel": true,
       "word": 5
      },
      {
       "letter": "s",
-      "t0": 12.277,
-      "t1": 12.346,
+      "t0": 11.433,
+      "t1": 11.573,
       "vowel": false,
       "word": 5
      },
@@ -543,41 +559,41 @@
       "syllables": [
        "this"
       ],
-      "t0": 11.442,
-      "t1": 12.377
+      "t0": 10.606,
+      "t1": 11.605
      },
      {
       "letter": "t",
-      "t0": 13.08,
-      "t1": 13.128,
+      "t0": 12.308,
+      "t1": 12.403,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "r",
-      "t0": 13.158,
-      "t1": 13.218,
+      "t0": 12.433,
+      "t1": 12.573,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "a",
-      "t0": 13.249,
-      "t1": 14.07,
+      "t0": 12.604,
+      "t1": 13.425,
       "vowel": true,
       "word": 6
      },
      {
       "letter": "i",
-      "t0": 14.1,
-      "t1": 14.659,
+      "t0": 13.455,
+      "t1": 14.014,
       "vowel": true,
       "word": 6
      },
      {
       "letter": "n",
-      "t0": 14.69,
-      "t1": 14.753,
+      "t0": 14.045,
+      "t1": 14.137,
       "vowel": false,
       "word": 6
      },
@@ -586,13 +602,13 @@
       "syllables": [
        "train"
       ],
-      "t0": 13.08,
-      "t1": 14.769
+      "t0": 12.308,
+      "t1": 14.153
      },
      {
       "frame": "closing",
-      "t0": 15.069,
-      "t1": 16.611
+      "t0": 14.453,
+      "t1": 15.995
      }
     ],
     "credits": {
@@ -602,8 +618,7 @@
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/315114",
       "letters": [
-       "e",
-       "n"
+       "e"
       ]
      },
      "XC433160": {
@@ -612,8 +627,18 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
       "letters": [
-       "a",
-       "o"
+       "a"
+      ]
+     },
+     "XC446151": {
+      "species": "Common Blackbird",
+      "recordist": "James Ray",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+      "letters": [
+       "o",
+       "n",
+       "r"
       ]
      },
      "XC543697": {
@@ -636,22 +661,29 @@
        "y"
       ]
      },
-     "XC760778": {
-      "species": "European Robin",
-      "recordist": "Benjamin Allegrini",
+     "XC778131": {
+      "species": "Eurasian Blue Tit",
+      "recordist": "Paul Driver",
       "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/760778",
+      "url": "https://xeno-canto.org/778131",
       "letters": [
-       "t",
-       "s",
-       "r"
+       "t"
       ]
      },
-     "XC541754": {
-      "species": "Song Thrush",
-      "recordist": "Benoît Van Hecke",
+     "XC533763": {
+      "species": "Common Blackbird",
+      "recordist": "Marie-Lan Taÿ Pamart",
       "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
+      "letters": [
+       "s"
+      ]
+     },
+     "XC857749": {
+      "species": "European Robin",
+      "recordist": "Olivier Swift, Hélène Cartaud",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/857749",
       "letters": [
        "l"
       ]
@@ -680,10 +712,10 @@
     "wav": "1-brisk.mp3",
     "wav_forest": "1-brisk-forest.mp3",
     "png": "1-brisk.png",
-    "dur": 11.93,
+    "dur": 12.0,
     "plot": [
-     0.0281,
-     0.9921
+     0.0279,
+     0.9878
     ],
     "marks": [
      {
@@ -701,14 +733,14 @@
      {
       "letter": "o",
       "t0": 2.14,
-      "t1": 2.413,
+      "t1": 2.337,
       "vowel": true,
       "word": 0
      },
      {
       "letter": "u",
-      "t0": 2.447,
-      "t1": 2.757,
+      "t0": 2.371,
+      "t1": 2.681,
       "vowel": true,
       "word": 0
      },
@@ -718,26 +750,26 @@
        "you"
       ],
       "t0": 1.781,
-      "t1": 2.78
+      "t1": 2.704
      },
      {
       "letter": "a",
-      "t0": 3.208,
-      "t1": 3.552,
+      "t0": 3.132,
+      "t1": 3.476,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "r",
-      "t0": 3.578,
-      "t1": 3.638,
+      "t0": 3.502,
+      "t1": 3.622,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "e",
-      "t0": 3.668,
-      "t1": 3.94,
+      "t0": 3.652,
+      "t1": 3.924,
       "vowel": true,
       "word": 1
      },
@@ -747,27 +779,27 @@
        "a",
        "re"
       ],
-      "t0": 3.208,
-      "t1": 3.962
+      "t0": 3.132,
+      "t1": 3.946
      },
      {
       "letter": "n",
-      "t0": 4.384,
-      "t1": 4.447,
+      "t0": 4.368,
+      "t1": 4.459,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "o",
-      "t0": 4.471,
-      "t1": 4.744,
+      "t0": 4.483,
+      "t1": 4.68,
       "vowel": true,
       "word": 2
      },
      {
       "letter": "t",
-      "t0": 4.767,
-      "t1": 4.814,
+      "t0": 4.703,
+      "t1": 4.798,
       "vowel": false,
       "word": 2
      },
@@ -776,41 +808,41 @@
       "syllables": [
        "not"
       ],
-      "t0": 4.384,
-      "t1": 4.834
+      "t0": 4.368,
+      "t1": 4.818
      },
      {
       "letter": "a",
-      "t0": 5.252,
-      "t1": 5.596,
+      "t0": 5.236,
+      "t1": 5.58,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "l",
-      "t0": 5.621,
-      "t1": 5.711,
+      "t0": 5.605,
+      "t1": 5.672,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "o",
-      "t0": 5.745,
-      "t1": 6.018,
+      "t0": 5.706,
+      "t1": 5.903,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "n",
-      "t0": 6.044,
-      "t1": 6.106,
+      "t0": 5.929,
+      "t1": 6.02,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "e",
-      "t0": 6.124,
-      "t1": 6.397,
+      "t0": 6.038,
+      "t1": 6.31,
       "vowel": true,
       "word": 3
      },
@@ -821,20 +853,20 @@
        "lo",
        "ne"
       ],
-      "t0": 5.252,
-      "t1": 6.422
+      "t0": 5.236,
+      "t1": 6.336
      },
      {
       "letter": "o",
-      "t0": 6.757,
-      "t1": 7.03,
+      "t0": 6.671,
+      "t1": 6.867,
       "vowel": true,
       "word": 4
      },
      {
       "letter": "n",
-      "t0": 7.06,
-      "t1": 7.123,
+      "t0": 6.898,
+      "t1": 6.989,
       "vowel": false,
       "word": 4
      },
@@ -843,34 +875,34 @@
       "syllables": [
        "on"
       ],
-      "t0": 6.757,
-      "t1": 7.156
+      "t0": 6.671,
+      "t1": 7.023
      },
      {
       "letter": "t",
-      "t0": 7.481,
-      "t1": 7.529,
+      "t0": 7.348,
+      "t1": 7.443,
       "vowel": false,
       "word": 5
      },
      {
       "letter": "h",
-      "t0": 7.553,
-      "t1": 7.673,
+      "t0": 7.467,
+      "t1": 7.562,
       "vowel": false,
       "word": 5
      },
      {
       "letter": "i",
-      "t0": 7.7,
-      "t1": 8.01,
+      "t0": 7.59,
+      "t1": 7.899,
       "vowel": true,
       "word": 5
      },
      {
       "letter": "s",
-      "t0": 8.037,
-      "t1": 8.105,
+      "t0": 7.926,
+      "t1": 8.046,
       "vowel": false,
       "word": 5
      },
@@ -879,41 +911,41 @@
       "syllables": [
        "this"
       ],
-      "t0": 7.481,
-      "t1": 8.137
+      "t0": 7.348,
+      "t1": 8.077
      },
      {
       "letter": "t",
-      "t0": 8.523,
-      "t1": 8.57,
+      "t0": 8.464,
+      "t1": 8.558,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "r",
-      "t0": 8.6,
-      "t1": 8.66,
+      "t0": 8.589,
+      "t1": 8.708,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "a",
-      "t0": 8.692,
-      "t1": 9.036,
+      "t0": 8.74,
+      "t1": 9.084,
       "vowel": true,
       "word": 6
      },
      {
       "letter": "i",
-      "t0": 9.067,
-      "t1": 9.376,
+      "t0": 9.115,
+      "t1": 9.424,
       "vowel": true,
       "word": 6
      },
      {
       "letter": "n",
-      "t0": 9.407,
-      "t1": 9.47,
+      "t0": 9.455,
+      "t1": 9.546,
       "vowel": false,
       "word": 6
      },
@@ -922,13 +954,13 @@
       "syllables": [
        "train"
       ],
-      "t0": 8.523,
-      "t1": 9.486
+      "t0": 8.464,
+      "t1": 9.563
      },
      {
       "frame": "closing",
-      "t0": 9.786,
-      "t1": 11.328
+      "t0": 9.863,
+      "t1": 11.404
      }
     ],
     "credits": {
@@ -938,8 +970,7 @@
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/315114",
       "letters": [
-       "e",
-       "n"
+       "e"
       ]
      },
      "XC433160": {
@@ -948,8 +979,18 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
       "letters": [
-       "a",
-       "o"
+       "a"
+      ]
+     },
+     "XC446151": {
+      "species": "Common Blackbird",
+      "recordist": "James Ray",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+      "letters": [
+       "o",
+       "n",
+       "r"
       ]
      },
      "XC543697": {
@@ -972,22 +1013,29 @@
        "y"
       ]
      },
-     "XC760778": {
-      "species": "European Robin",
-      "recordist": "Benjamin Allegrini",
+     "XC778131": {
+      "species": "Eurasian Blue Tit",
+      "recordist": "Paul Driver",
       "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/760778",
+      "url": "https://xeno-canto.org/778131",
       "letters": [
-       "t",
-       "s",
-       "r"
+       "t"
       ]
      },
-     "XC541754": {
-      "species": "Song Thrush",
-      "recordist": "Benoît Van Hecke",
+     "XC533763": {
+      "species": "Common Blackbird",
+      "recordist": "Marie-Lan Taÿ Pamart",
       "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
+      "letters": [
+       "s"
+      ]
+     },
+     "XC857749": {
+      "species": "European Robin",
+      "recordist": "Olivier Swift, Hélène Cartaud",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/857749",
       "letters": [
        "l"
       ]
@@ -1020,10 +1068,10 @@
     "wav": "2.mp3",
     "wav_forest": "2-forest.mp3",
     "png": "2.png",
-    "dur": 11.8,
+    "dur": 11.79,
     "plot": [
      0.0284,
-     0.9921
+     0.992
     ],
     "marks": [
      {
@@ -1034,28 +1082,28 @@
      {
       "letter": "l",
       "t0": 1.758,
-      "t1": 1.862,
+      "t1": 1.84,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "é",
-      "t0": 1.883,
-      "t1": 2.333,
+      "t0": 1.861,
+      "t1": 2.311,
       "vowel": true,
       "word": 0
      },
      {
       "letter": "t",
-      "t0": 2.35,
-      "t1": 2.415,
+      "t0": 2.328,
+      "t1": 2.446,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "é",
-      "t0": 2.445,
-      "t1": 2.895,
+      "t0": 2.475,
+      "t1": 2.925,
       "vowel": true,
       "word": 0
      },
@@ -1066,47 +1114,47 @@
        "té"
       ],
       "t0": 1.758,
-      "t1": 2.911
+      "t1": 2.942
      },
      {
       "letter": "a",
-      "t0": 3.544,
-      "t1": 4.296,
+      "t0": 3.574,
+      "t1": 4.326,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "r",
-      "t0": 4.322,
-      "t1": 4.405,
+      "t0": 4.352,
+      "t1": 4.515,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "r",
-      "t0": 4.428,
-      "t1": 4.511,
+      "t0": 4.539,
+      "t1": 4.701,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "i",
-      "t0": 4.534,
-      "t1": 5.106,
+      "t0": 4.725,
+      "t1": 5.297,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "v",
-      "t0": 5.141,
-      "t1": 5.319,
+      "t0": 5.331,
+      "t1": 5.472,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "e",
-      "t0": 5.342,
-      "t1": 5.706,
+      "t0": 5.495,
+      "t1": 5.859,
       "vowel": true,
       "word": 1
      },
@@ -1117,20 +1165,20 @@
        "ri",
        "ve"
       ],
-      "t0": 3.544,
-      "t1": 5.728
+      "t0": 3.574,
+      "t1": 5.881
      },
      {
       "letter": "o",
-      "t0": 6.432,
-      "t1": 6.975,
+      "t0": 6.584,
+      "t1": 6.831,
       "vowel": true,
       "word": 2
      },
      {
       "letter": "u",
-      "t0": 7.005,
-      "t1": 7.548,
+      "t0": 6.862,
+      "t1": 7.405,
       "vowel": true,
       "word": 2
      },
@@ -1139,34 +1187,34 @@
       "syllables": [
        "ou"
       ],
-      "t0": 6.432,
-      "t1": 7.581
+      "t0": 6.584,
+      "t1": 7.438
      },
      {
       "letter": "e",
-      "t0": 8.273,
-      "t1": 8.637,
+      "t0": 8.129,
+      "t1": 8.494,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "s",
-      "t0": 8.654,
-      "t1": 8.743,
+      "t0": 8.511,
+      "t1": 8.674,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "t",
-      "t0": 8.762,
-      "t1": 8.827,
+      "t0": 8.693,
+      "t1": 8.81,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "u",
-      "t0": 8.856,
-      "t1": 9.399,
+      "t0": 8.839,
+      "t1": 9.382,
       "vowel": true,
       "word": 3
      },
@@ -1176,13 +1224,13 @@
        "es",
        "tu"
       ],
-      "t0": 8.273,
-      "t1": 9.427
+      "t0": 8.129,
+      "t1": 9.41
      },
      {
       "frame": "closing",
-      "t0": 9.727,
-      "t1": 11.203
+      "t0": 9.71,
+      "t1": 11.186
      }
     ],
     "credits": {
@@ -1201,8 +1249,17 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
       "letters": [
-       "a",
-       "o"
+       "a"
+      ]
+     },
+     "XC446151": {
+      "species": "Common Blackbird",
+      "recordist": "James Ray",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+      "letters": [
+       "o",
+       "r"
       ]
      },
      "XC543697": {
@@ -1217,24 +1274,22 @@
        "forest background"
       ]
      },
-     "XC760778": {
-      "species": "European Robin",
-      "recordist": "Benjamin Allegrini",
+     "XC778131": {
+      "species": "Eurasian Blue Tit",
+      "recordist": "Paul Driver",
       "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/760778",
+      "url": "https://xeno-canto.org/778131",
       "letters": [
-       "t",
-       "s",
-       "r"
+       "t"
       ]
      },
-     "XC541754": {
-      "species": "Song Thrush",
-      "recordist": "Benoît Van Hecke",
+     "XC533763": {
+      "species": "Common Blackbird",
+      "recordist": "Marie-Lan Taÿ Pamart",
       "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
       "letters": [
-       "l"
+       "s"
       ]
      },
      "XC857749": {
@@ -1242,6 +1297,15 @@
       "recordist": "Olivier Swift, Hélène Cartaud",
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/857749",
+      "letters": [
+       "l"
+      ]
+     },
+     "XC303416": {
+      "species": "Great Tit",
+      "recordist": "Timo Schnabel",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/303416",
       "letters": [
        "v"
       ]
@@ -1261,7 +1325,7 @@
     "wav": "2-synth.mp3",
     "wav_forest": "2-synth-forest.mp3",
     "png": "2-synth.png",
-    "dur": 11.74,
+    "dur": 11.76,
     "plot": [
      0.0285,
      0.992
@@ -1275,28 +1339,28 @@
      {
       "letter": "l",
       "t0": 1.781,
-      "t1": 1.871,
+      "t1": 1.848,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "é",
-      "t0": 1.892,
-      "t1": 2.384,
+      "t0": 1.869,
+      "t1": 2.361,
       "vowel": true,
       "word": 0
      },
      {
       "letter": "t",
-      "t0": 2.4,
-      "t1": 2.448,
+      "t0": 2.377,
+      "t1": 2.472,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "é",
-      "t0": 2.477,
-      "t1": 2.969,
+      "t0": 2.502,
+      "t1": 2.993,
       "vowel": true,
       "word": 0
      },
@@ -1307,47 +1371,47 @@
        "té"
       ],
       "t0": 1.781,
-      "t1": 2.985
+      "t1": 3.009
      },
      {
       "letter": "a",
-      "t0": 3.617,
-      "t1": 4.438,
+      "t0": 3.642,
+      "t1": 4.462,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "r",
-      "t0": 4.464,
-      "t1": 4.524,
+      "t0": 4.488,
+      "t1": 4.628,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "r",
-      "t0": 4.548,
-      "t1": 4.608,
+      "t0": 4.652,
+      "t1": 4.792,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "i",
-      "t0": 4.631,
-      "t1": 5.19,
+      "t0": 4.815,
+      "t1": 5.374,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "v",
-      "t0": 5.225,
-      "t1": 5.375,
+      "t0": 5.408,
+      "t1": 5.53,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "e",
-      "t0": 5.398,
-      "t1": 5.729,
+      "t0": 5.553,
+      "t1": 5.884,
       "vowel": true,
       "word": 1
      },
@@ -1358,20 +1422,20 @@
        "ri",
        "ve"
       ],
-      "t0": 3.617,
-      "t1": 5.751
+      "t0": 3.642,
+      "t1": 5.906
      },
      {
       "letter": "o",
-      "t0": 6.454,
-      "t1": 6.947,
+      "t0": 6.609,
+      "t1": 6.845,
       "vowel": true,
       "word": 2
      },
      {
       "letter": "u",
-      "t0": 6.978,
-      "t1": 7.508,
+      "t0": 6.876,
+      "t1": 7.406,
       "vowel": true,
       "word": 2
      },
@@ -1380,34 +1444,34 @@
       "syllables": [
        "ou"
       ],
-      "t0": 6.454,
-      "t1": 7.542
+      "t0": 6.609,
+      "t1": 7.44
      },
      {
       "letter": "e",
-      "t0": 8.233,
-      "t1": 8.564,
+      "t0": 8.131,
+      "t1": 8.462,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "s",
-      "t0": 8.581,
-      "t1": 8.649,
+      "t0": 8.479,
+      "t1": 8.62,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "t",
-      "t0": 8.668,
-      "t1": 8.715,
+      "t0": 8.639,
+      "t1": 8.733,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "u",
-      "t0": 8.744,
-      "t1": 9.275,
+      "t0": 8.762,
+      "t1": 9.292,
       "vowel": true,
       "word": 3
      },
@@ -1417,13 +1481,13 @@
        "es",
        "tu"
       ],
-      "t0": 8.233,
-      "t1": 9.302
+      "t0": 8.131,
+      "t1": 9.32
      },
      {
       "frame": "closing",
-      "t0": 9.602,
-      "t1": 11.144
+      "t0": 9.62,
+      "t1": 11.162
      }
     ],
     "credits": {
@@ -1442,8 +1506,17 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
       "letters": [
-       "a",
-       "o"
+       "a"
+      ]
+     },
+     "XC446151": {
+      "species": "Common Blackbird",
+      "recordist": "James Ray",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+      "letters": [
+       "o",
+       "r"
       ]
      },
      "XC543697": {
@@ -1458,24 +1531,22 @@
        "forest background"
       ]
      },
-     "XC760778": {
-      "species": "European Robin",
-      "recordist": "Benjamin Allegrini",
+     "XC778131": {
+      "species": "Eurasian Blue Tit",
+      "recordist": "Paul Driver",
       "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/760778",
+      "url": "https://xeno-canto.org/778131",
       "letters": [
-       "t",
-       "s",
-       "r"
+       "t"
       ]
      },
-     "XC541754": {
-      "species": "Song Thrush",
-      "recordist": "Benoît Van Hecke",
+     "XC533763": {
+      "species": "Common Blackbird",
+      "recordist": "Marie-Lan Taÿ Pamart",
       "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
       "letters": [
-       "l"
+       "s"
       ]
      },
      "XC857749": {
@@ -1483,6 +1554,15 @@
       "recordist": "Olivier Swift, Hélène Cartaud",
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/857749",
+      "letters": [
+       "l"
+      ]
+     },
+     "XC303416": {
+      "species": "Great Tit",
+      "recordist": "Timo Schnabel",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/303416",
       "letters": [
        "v"
       ]
@@ -1502,10 +1582,10 @@
     "wav": "2-brisk.mp3",
     "wav_forest": "2-brisk-forest.mp3",
     "png": "2-brisk.png",
-    "dur": 8.88,
+    "dur": 9.04,
     "plot": [
-     0.0377,
-     0.9894
+     0.0371,
+     0.9896
     ],
     "marks": [
      {
@@ -1516,28 +1596,28 @@
      {
       "letter": "l",
       "t0": 1.781,
-      "t1": 1.871,
+      "t1": 1.848,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "é",
-      "t0": 1.892,
-      "t1": 2.168,
+      "t0": 1.869,
+      "t1": 2.145,
       "vowel": true,
       "word": 0
      },
      {
       "letter": "t",
-      "t0": 2.185,
-      "t1": 2.232,
+      "t0": 2.162,
+      "t1": 2.257,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "é",
-      "t0": 2.262,
-      "t1": 2.538,
+      "t0": 2.286,
+      "t1": 2.562,
       "vowel": true,
       "word": 0
      },
@@ -1548,47 +1628,47 @@
        "té"
       ],
       "t0": 1.781,
-      "t1": 2.554
+      "t1": 2.578
      },
      {
       "letter": "a",
-      "t0": 2.91,
-      "t1": 3.254,
+      "t0": 2.934,
+      "t1": 3.278,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "r",
-      "t0": 3.28,
-      "t1": 3.34,
-      "vowel": false,
-      "word": 1
-     },
-     {
-      "letter": "r",
-      "t0": 3.364,
+      "t0": 3.304,
       "t1": 3.424,
       "vowel": false,
       "word": 1
      },
      {
+      "letter": "r",
+      "t0": 3.448,
+      "t1": 3.567,
+      "vowel": false,
+      "word": 1
+     },
+     {
       "letter": "i",
-      "t0": 3.447,
-      "t1": 3.757,
+      "t0": 3.591,
+      "t1": 3.9,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "v",
-      "t0": 3.791,
-      "t1": 3.914,
+      "t0": 3.934,
+      "t1": 4.056,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "e",
-      "t0": 3.936,
-      "t1": 4.209,
+      "t0": 4.079,
+      "t1": 4.351,
       "vowel": true,
       "word": 1
      },
@@ -1599,20 +1679,20 @@
        "ri",
        "ve"
       ],
-      "t0": 2.91,
-      "t1": 4.231
+      "t0": 2.934,
+      "t1": 4.373
      },
      {
       "letter": "o",
-      "t0": 4.617,
-      "t1": 4.89,
+      "t0": 4.76,
+      "t1": 4.956,
       "vowel": true,
       "word": 2
      },
      {
       "letter": "u",
-      "t0": 4.92,
-      "t1": 5.23,
+      "t0": 4.987,
+      "t1": 5.297,
       "vowel": true,
       "word": 2
      },
@@ -1621,34 +1701,34 @@
       "syllables": [
        "ou"
       ],
-      "t0": 4.617,
-      "t1": 5.264
+      "t0": 4.76,
+      "t1": 5.331
      },
      {
       "letter": "e",
-      "t0": 5.645,
-      "t1": 5.917,
+      "t0": 5.712,
+      "t1": 5.984,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "s",
-      "t0": 5.934,
-      "t1": 6.002,
+      "t0": 6.001,
+      "t1": 6.121,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "t",
-      "t0": 6.021,
-      "t1": 6.069,
+      "t0": 6.14,
+      "t1": 6.235,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "u",
-      "t0": 6.097,
-      "t1": 6.408,
+      "t0": 6.264,
+      "t1": 6.574,
       "vowel": true,
       "word": 3
      },
@@ -1658,13 +1738,13 @@
        "es",
        "tu"
       ],
-      "t0": 5.645,
-      "t1": 6.435
+      "t0": 5.712,
+      "t1": 6.602
      },
      {
       "frame": "closing",
-      "t0": 6.735,
-      "t1": 8.277
+      "t0": 6.902,
+      "t1": 8.443
      }
     ],
     "credits": {
@@ -1683,8 +1763,17 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
       "letters": [
-       "a",
-       "o"
+       "a"
+      ]
+     },
+     "XC446151": {
+      "species": "Common Blackbird",
+      "recordist": "James Ray",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+      "letters": [
+       "o",
+       "r"
       ]
      },
      "XC543697": {
@@ -1699,24 +1788,22 @@
        "forest background"
       ]
      },
-     "XC760778": {
-      "species": "European Robin",
-      "recordist": "Benjamin Allegrini",
+     "XC778131": {
+      "species": "Eurasian Blue Tit",
+      "recordist": "Paul Driver",
       "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/760778",
+      "url": "https://xeno-canto.org/778131",
       "letters": [
-       "t",
-       "s",
-       "r"
+       "t"
       ]
      },
-     "XC541754": {
-      "species": "Song Thrush",
-      "recordist": "Benoît Van Hecke",
+     "XC533763": {
+      "species": "Common Blackbird",
+      "recordist": "Marie-Lan Taÿ Pamart",
       "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
       "letters": [
-       "l"
+       "s"
       ]
      },
      "XC857749": {
@@ -1724,6 +1811,15 @@
       "recordist": "Olivier Swift, Hélène Cartaud",
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/857749",
+      "letters": [
+       "l"
+      ]
+     },
+     "XC303416": {
+      "species": "Great Tit",
+      "recordist": "Timo Schnabel",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/303416",
       "letters": [
        "v"
       ]
@@ -1747,10 +1843,10 @@
     "wav": "3.mp3",
     "wav_forest": "3-forest.mp3",
     "png": "3.png",
-    "dur": 20.4,
+    "dur": 19.12,
     "plot": [
-     0.0164,
-     0.9954
+     0.0175,
+     0.9951
     ],
     "marks": [
      {
@@ -1761,21 +1857,21 @@
      {
       "letter": "t",
       "t0": 1.758,
-      "t1": 1.823,
+      "t1": 1.875,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "h",
-      "t0": 1.843,
-      "t1": 2.02,
+      "t0": 1.895,
+      "t1": 2.011,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "e",
-      "t0": 2.047,
-      "t1": 2.411,
+      "t0": 2.038,
+      "t1": 2.402,
       "vowel": true,
       "word": 0
      },
@@ -1785,40 +1881,40 @@
        "the"
       ],
       "t0": 1.758,
-      "t1": 2.435
+      "t1": 2.426
      },
      {
       "letter": "q",
-      "t0": 3.128,
-      "t1": 3.345,
+      "t0": 3.119,
+      "t1": 3.246,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "u",
-      "t0": 3.374,
-      "t1": 3.917,
+      "t0": 3.275,
+      "t1": 3.818,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "i",
-      "t0": 3.94,
-      "t1": 4.512,
+      "t0": 3.841,
+      "t1": 4.413,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "c",
-      "t0": 4.536,
-      "t1": 4.677,
+      "t0": 4.437,
+      "t1": 4.636,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "k",
-      "t0": 4.706,
-      "t1": 4.905,
+      "t0": 4.665,
+      "t1": 4.753,
       "vowel": false,
       "word": 1
      },
@@ -1827,41 +1923,41 @@
       "syllables": [
        "quick"
       ],
-      "t0": 3.128,
-      "t1": 4.926
+      "t0": 3.119,
+      "t1": 4.773
      },
      {
       "letter": "b",
-      "t0": 5.67,
-      "t1": 5.833,
+      "t0": 5.518,
+      "t1": 5.697,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "r",
-      "t0": 5.854,
-      "t1": 5.937,
+      "t0": 5.717,
+      "t1": 5.88,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "o",
-      "t0": 5.971,
-      "t1": 6.514,
+      "t0": 5.915,
+      "t1": 6.161,
       "vowel": true,
       "word": 2
      },
      {
       "letter": "w",
-      "t0": 6.535,
-      "t1": 6.643,
+      "t0": 6.183,
+      "t1": 6.324,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "n",
-      "t0": 6.67,
-      "t1": 6.75,
+      "t0": 6.35,
+      "t1": 6.458,
       "vowel": false,
       "word": 2
      },
@@ -1870,27 +1966,27 @@
       "syllables": [
        "brown"
       ],
-      "t0": 5.67,
-      "t1": 6.78
+      "t0": 5.518,
+      "t1": 6.488
      },
      {
       "letter": "f",
-      "t0": 7.339,
-      "t1": 7.518,
+      "t0": 7.047,
+      "t1": 7.184,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "o",
-      "t0": 7.54,
-      "t1": 8.083,
+      "t0": 7.207,
+      "t1": 7.453,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "x",
-      "t0": 8.111,
-      "t1": 8.4,
+      "t0": 7.482,
+      "t1": 7.614,
       "vowel": false,
       "word": 3
      },
@@ -1899,41 +1995,41 @@
       "syllables": [
        "fox"
       ],
-      "t0": 7.339,
-      "t1": 8.419
+      "t0": 7.047,
+      "t1": 7.633
      },
      {
       "letter": "j",
-      "t0": 9.158,
-      "t1": 9.36,
+      "t0": 8.372,
+      "t1": 8.494,
       "vowel": false,
       "word": 4
      },
      {
       "letter": "u",
-      "t0": 9.39,
-      "t1": 9.933,
+      "t0": 8.524,
+      "t1": 9.067,
       "vowel": true,
       "word": 4
      },
      {
       "letter": "m",
-      "t0": 9.952,
-      "t1": 10.078,
+      "t0": 9.086,
+      "t1": 9.288,
       "vowel": false,
       "word": 4
      },
      {
       "letter": "p",
-      "t0": 10.107,
-      "t1": 10.224,
+      "t0": 9.316,
+      "t1": 9.447,
       "vowel": false,
       "word": 4
      },
      {
       "letter": "s",
-      "t0": 10.256,
-      "t1": 10.344,
+      "t0": 9.478,
+      "t1": 9.641,
       "vowel": false,
       "word": 4
      },
@@ -1942,34 +2038,34 @@
       "syllables": [
        "jumps"
       ],
-      "t0": 9.158,
-      "t1": 10.374
+      "t0": 8.372,
+      "t1": 9.671
      },
      {
       "letter": "o",
-      "t0": 11.188,
-      "t1": 11.731,
+      "t0": 10.485,
+      "t1": 10.732,
       "vowel": true,
       "word": 5
      },
      {
       "letter": "v",
-      "t0": 11.763,
-      "t1": 11.941,
+      "t0": 10.764,
+      "t1": 10.904,
       "vowel": false,
       "word": 5
      },
      {
       "letter": "e",
-      "t0": 11.966,
-      "t1": 12.33,
+      "t0": 10.929,
+      "t1": 11.293,
       "vowel": true,
       "word": 5
      },
      {
       "letter": "r",
-      "t0": 12.359,
-      "t1": 12.442,
+      "t0": 11.322,
+      "t1": 11.485,
       "vowel": false,
       "word": 5
      },
@@ -1979,27 +2075,27 @@
        "o",
        "ver"
       ],
-      "t0": 11.188,
-      "t1": 12.474
+      "t0": 10.485,
+      "t1": 11.517
      },
      {
       "letter": "t",
-      "t0": 13.107,
-      "t1": 13.172,
+      "t0": 12.15,
+      "t1": 12.268,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "h",
-      "t0": 13.195,
-      "t1": 13.372,
+      "t0": 12.291,
+      "t1": 12.407,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "e",
-      "t0": 13.391,
-      "t1": 13.756,
+      "t0": 12.426,
+      "t1": 12.79,
       "vowel": true,
       "word": 6
      },
@@ -2008,34 +2104,34 @@
       "syllables": [
        "the"
       ],
-      "t0": 13.107,
-      "t1": 13.786
+      "t0": 12.15,
+      "t1": 12.82
      },
      {
       "letter": "l",
-      "t0": 14.561,
-      "t1": 14.666,
+      "t0": 13.596,
+      "t1": 13.679,
       "vowel": false,
       "word": 7
      },
      {
       "letter": "a",
-      "t0": 14.699,
-      "t1": 15.451,
+      "t0": 13.712,
+      "t1": 14.464,
       "vowel": true,
       "word": 7
      },
      {
       "letter": "z",
-      "t0": 15.483,
-      "t1": 15.655,
+      "t0": 14.496,
+      "t1": 14.595,
       "vowel": false,
       "word": 7
      },
      {
       "letter": "y",
-      "t0": 15.689,
-      "t1": 16.278,
+      "t0": 14.629,
+      "t1": 15.218,
       "vowel": true,
       "word": 7
      },
@@ -2045,27 +2141,27 @@
        "la",
        "zy"
       ],
-      "t0": 14.561,
-      "t1": 16.306
+      "t0": 13.596,
+      "t1": 15.246
      },
      {
       "letter": "d",
-      "t0": 17.147,
-      "t1": 17.264,
+      "t0": 16.087,
+      "t1": 16.264,
       "vowel": false,
       "word": 8
      },
      {
       "letter": "o",
-      "t0": 17.295,
-      "t1": 17.838,
+      "t0": 16.295,
+      "t1": 16.542,
       "vowel": true,
       "word": 8
      },
      {
       "letter": "g",
-      "t0": 17.86,
-      "t1": 18.001,
+      "t0": 16.564,
+      "t1": 16.727,
       "vowel": false,
       "word": 8
      },
@@ -2074,13 +2170,13 @@
       "syllables": [
        "dog"
       ],
-      "t0": 17.147,
-      "t1": 18.02
+      "t0": 16.087,
+      "t1": 16.746
      },
      {
       "frame": "closing",
-      "t0": 18.32,
-      "t1": 19.796
+      "t0": 17.046,
+      "t1": 18.522
      }
     ],
     "credits": {
@@ -2091,8 +2187,7 @@
       "url": "https://xeno-canto.org/315114",
       "letters": [
        "e",
-       "n",
-       "m"
+       "q"
       ]
      },
      "XC433160": {
@@ -2101,8 +2196,20 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
       "letters": [
-       "a",
-       "o"
+       "a"
+      ]
+     },
+     "XC446151": {
+      "species": "Common Blackbird",
+      "recordist": "James Ray",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+      "letters": [
+       "o",
+       "n",
+       "r",
+       "p",
+       "g"
       ]
      },
      "XC543697": {
@@ -2122,27 +2229,8 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_-_Common_Chaffinch_XC538310.mp3",
       "letters": [
-       "y"
-      ]
-     },
-     "XC760778": {
-      "species": "European Robin",
-      "recordist": "Benjamin Allegrini",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/760778",
-      "letters": [
-       "t",
-       "s",
-       "r"
-      ]
-     },
-     "XC541754": {
-      "species": "Song Thrush",
-      "recordist": "Benoît Van Hecke",
-      "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
-      "letters": [
-       "l"
+       "y",
+       "k"
       ]
      },
      "XC778131": {
@@ -2151,47 +2239,7 @@
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/778131",
       "letters": [
-       "d"
-      ]
-     },
-     "XC303416": {
-      "species": "Great Tit",
-      "recordist": "Timo Schnabel",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/303416",
-      "letters": [
-       "c",
-       "g",
-       "f"
-      ]
-     },
-     "XC637984": {
-      "species": "Eurasian Blue Tit",
-      "recordist": "Georg Amann",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/637984",
-      "letters": [
-       "p"
-      ]
-     },
-     "XC461185": {
-      "species": "Eurasian Wren",
-      "recordist": "Marie-Lan Taÿ Pamart",
-      "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
-      "letters": [
-       "h"
-      ]
-     },
-     "XC857749": {
-      "species": "European Robin",
-      "recordist": "Olivier Swift, Hélène Cartaud",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/857749",
-      "letters": [
-       "v",
-       "j",
-       "x"
+       "t"
       ]
      },
      "XC533763": {
@@ -2200,17 +2248,29 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
       "letters": [
-       "b",
+       "s",
        "z"
       ]
      },
-     "XC446151": {
-      "species": "Common Blackbird",
-      "recordist": "James Ray",
-      "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+     "XC857749": {
+      "species": "European Robin",
+      "recordist": "Olivier Swift, Hélène Cartaud",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/857749",
       "letters": [
-       "w"
+       "l",
+       "m",
+       "b"
+      ]
+     },
+     "XC461185": {
+      "species": "Eurasian Wren",
+      "recordist": "Marie-Lan Taÿ Pamart",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
+      "letters": [
+       "d",
+       "h"
       ]
      },
      "XC880931": {
@@ -2219,8 +2279,44 @@
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/880931",
       "letters": [
-       "k",
-       "q"
+       "c"
+      ]
+     },
+     "XC303416": {
+      "species": "Great Tit",
+      "recordist": "Timo Schnabel",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/303416",
+      "letters": [
+       "v",
+       "w"
+      ]
+     },
+     "XC531169": {
+      "species": "Yellowhammer",
+      "recordist": "Benoît Van Hecke",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Emberiza_citrinella_-_Yellowhammer_XC531169.mp3",
+      "letters": [
+       "f"
+      ]
+     },
+     "XC541754": {
+      "species": "Song Thrush",
+      "recordist": "Benoît Van Hecke",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+      "letters": [
+       "j"
+      ]
+     },
+     "XC637984": {
+      "species": "Eurasian Blue Tit",
+      "recordist": "Georg Amann",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/637984",
+      "letters": [
+       "x"
       ]
      },
      "XC478019": {
@@ -2238,10 +2334,10 @@
     "wav": "3-synth.mp3",
     "wav_forest": "3-synth-forest.mp3",
     "png": "3-synth.png",
-    "dur": 19.57,
+    "dur": 18.53,
     "plot": [
-     0.0171,
-     0.9952
+     0.0181,
+     0.9949
     ],
     "marks": [
      {
@@ -2252,21 +2348,21 @@
      {
       "letter": "t",
       "t0": 1.781,
-      "t1": 1.829,
+      "t1": 1.876,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "h",
-      "t0": 1.848,
-      "t1": 1.999,
+      "t0": 1.896,
+      "t1": 1.991,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "e",
-      "t0": 2.025,
-      "t1": 2.356,
+      "t0": 2.017,
+      "t1": 2.348,
       "vowel": true,
       "word": 0
      },
@@ -2276,40 +2372,40 @@
        "the"
       ],
       "t0": 1.781,
-      "t1": 2.38
+      "t1": 2.372
      },
      {
       "letter": "q",
-      "t0": 3.073,
-      "t1": 3.21,
+      "t0": 3.065,
+      "t1": 3.172,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "u",
-      "t0": 3.24,
-      "t1": 3.771,
+      "t0": 3.202,
+      "t1": 3.732,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "i",
-      "t0": 3.793,
-      "t1": 4.352,
+      "t0": 3.755,
+      "t1": 4.314,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "c",
-      "t0": 4.376,
-      "t1": 4.497,
+      "t0": 4.337,
+      "t1": 4.498,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "k",
-      "t0": 4.527,
-      "t1": 4.687,
+      "t0": 4.528,
+      "t1": 4.595,
       "vowel": false,
       "word": 1
      },
@@ -2318,41 +2414,41 @@
       "syllables": [
        "quick"
       ],
-      "t0": 3.073,
-      "t1": 4.708
+      "t0": 3.065,
+      "t1": 4.616
      },
      {
       "letter": "b",
-      "t0": 5.452,
-      "t1": 5.598,
+      "t0": 5.36,
+      "t1": 5.513,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "r",
-      "t0": 5.619,
-      "t1": 5.679,
+      "t0": 5.534,
+      "t1": 5.674,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "o",
-      "t0": 5.713,
-      "t1": 6.206,
+      "t0": 5.708,
+      "t1": 5.944,
       "vowel": true,
       "word": 2
      },
      {
       "letter": "w",
-      "t0": 6.228,
-      "t1": 6.314,
+      "t0": 5.966,
+      "t1": 6.084,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "n",
-      "t0": 6.34,
-      "t1": 6.403,
+      "t0": 6.111,
+      "t1": 6.202,
       "vowel": false,
       "word": 2
      },
@@ -2361,27 +2457,27 @@
       "syllables": [
        "brown"
       ],
-      "t0": 5.452,
-      "t1": 6.433
+      "t0": 5.36,
+      "t1": 6.232
      },
      {
       "letter": "f",
-      "t0": 6.993,
-      "t1": 7.156,
+      "t0": 6.791,
+      "t1": 6.912,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "o",
-      "t0": 7.179,
-      "t1": 7.672,
+      "t0": 6.934,
+      "t1": 7.171,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "x",
-      "t0": 7.7,
-      "t1": 7.954,
+      "t0": 7.199,
+      "t1": 7.312,
       "vowel": false,
       "word": 3
      },
@@ -2390,41 +2486,41 @@
       "syllables": [
        "fox"
       ],
-      "t0": 6.993,
-      "t1": 7.973
+      "t0": 6.791,
+      "t1": 7.331
      },
      {
       "letter": "j",
-      "t0": 8.712,
-      "t1": 8.866,
+      "t0": 8.07,
+      "t1": 8.174,
       "vowel": false,
       "word": 4
      },
      {
       "letter": "u",
-      "t0": 8.896,
-      "t1": 9.426,
+      "t0": 8.204,
+      "t1": 8.734,
       "vowel": true,
       "word": 4
      },
      {
       "letter": "m",
-      "t0": 9.445,
-      "t1": 9.552,
+      "t0": 8.754,
+      "t1": 8.906,
       "vowel": false,
       "word": 4
      },
      {
       "letter": "p",
-      "t0": 9.58,
-      "t1": 9.677,
+      "t0": 8.934,
+      "t1": 9.043,
       "vowel": false,
       "word": 4
      },
      {
       "letter": "s",
-      "t0": 9.709,
-      "t1": 9.777,
+      "t0": 9.074,
+      "t1": 9.215,
       "vowel": false,
       "word": 4
      },
@@ -2433,34 +2529,34 @@
       "syllables": [
        "jumps"
       ],
-      "t0": 8.712,
-      "t1": 9.807
+      "t0": 8.07,
+      "t1": 9.245
      },
      {
       "letter": "o",
-      "t0": 10.621,
-      "t1": 11.114,
+      "t0": 10.058,
+      "t1": 10.295,
       "vowel": true,
       "word": 5
      },
      {
       "letter": "v",
-      "t0": 11.146,
-      "t1": 11.296,
+      "t0": 10.327,
+      "t1": 10.449,
       "vowel": false,
       "word": 5
      },
      {
       "letter": "e",
-      "t0": 11.321,
-      "t1": 11.652,
+      "t0": 10.473,
+      "t1": 10.804,
       "vowel": true,
       "word": 5
      },
      {
       "letter": "r",
-      "t0": 11.681,
-      "t1": 11.741,
+      "t0": 10.833,
+      "t1": 10.973,
       "vowel": false,
       "word": 5
      },
@@ -2470,27 +2566,27 @@
        "o",
        "ver"
       ],
-      "t0": 10.621,
-      "t1": 11.773
+      "t0": 10.058,
+      "t1": 11.005
      },
      {
       "letter": "t",
-      "t0": 12.406,
-      "t1": 12.453,
+      "t0": 11.638,
+      "t1": 11.733,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "h",
-      "t0": 12.476,
-      "t1": 12.626,
+      "t0": 11.756,
+      "t1": 11.851,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "e",
-      "t0": 12.645,
-      "t1": 12.976,
+      "t0": 11.869,
+      "t1": 12.2,
       "vowel": true,
       "word": 6
      },
@@ -2499,34 +2595,34 @@
       "syllables": [
        "the"
       ],
-      "t0": 12.406,
-      "t1": 13.006
+      "t0": 11.638,
+      "t1": 12.23
      },
      {
       "letter": "l",
-      "t0": 13.782,
-      "t1": 13.872,
+      "t0": 13.006,
+      "t1": 13.073,
       "vowel": false,
       "word": 7
      },
      {
       "letter": "a",
-      "t0": 13.905,
-      "t1": 14.726,
+      "t0": 13.106,
+      "t1": 13.927,
       "vowel": true,
       "word": 7
      },
      {
       "letter": "z",
-      "t0": 14.758,
-      "t1": 14.91,
+      "t0": 13.959,
+      "t1": 14.038,
       "vowel": false,
       "word": 7
      },
      {
       "letter": "y",
-      "t0": 14.944,
-      "t1": 15.479,
+      "t0": 14.072,
+      "t1": 14.608,
       "vowel": true,
       "word": 7
      },
@@ -2536,27 +2632,27 @@
        "la",
        "zy"
       ],
-      "t0": 13.782,
-      "t1": 15.507
+      "t0": 13.006,
+      "t1": 14.635
      },
      {
       "letter": "d",
-      "t0": 16.348,
-      "t1": 16.442,
+      "t0": 15.476,
+      "t1": 15.632,
       "vowel": false,
       "word": 8
      },
      {
       "letter": "o",
-      "t0": 16.473,
-      "t1": 16.966,
+      "t0": 15.663,
+      "t1": 15.9,
       "vowel": true,
       "word": 8
      },
      {
       "letter": "g",
-      "t0": 16.988,
-      "t1": 17.112,
+      "t0": 15.922,
+      "t1": 16.068,
       "vowel": false,
       "word": 8
      },
@@ -2565,13 +2661,13 @@
       "syllables": [
        "dog"
       ],
-      "t0": 16.348,
-      "t1": 17.131
+      "t0": 15.476,
+      "t1": 16.087
      },
      {
       "frame": "closing",
-      "t0": 17.431,
-      "t1": 18.972
+      "t0": 16.387,
+      "t1": 17.928
      }
     ],
     "credits": {
@@ -2582,8 +2678,7 @@
       "url": "https://xeno-canto.org/315114",
       "letters": [
        "e",
-       "n",
-       "m"
+       "q"
       ]
      },
      "XC433160": {
@@ -2592,8 +2687,20 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
       "letters": [
-       "a",
-       "o"
+       "a"
+      ]
+     },
+     "XC446151": {
+      "species": "Common Blackbird",
+      "recordist": "James Ray",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+      "letters": [
+       "o",
+       "n",
+       "r",
+       "p",
+       "g"
       ]
      },
      "XC543697": {
@@ -2613,27 +2720,8 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_-_Common_Chaffinch_XC538310.mp3",
       "letters": [
-       "y"
-      ]
-     },
-     "XC760778": {
-      "species": "European Robin",
-      "recordist": "Benjamin Allegrini",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/760778",
-      "letters": [
-       "t",
-       "s",
-       "r"
-      ]
-     },
-     "XC541754": {
-      "species": "Song Thrush",
-      "recordist": "Benoît Van Hecke",
-      "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
-      "letters": [
-       "l"
+       "y",
+       "k"
       ]
      },
      "XC778131": {
@@ -2642,47 +2730,7 @@
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/778131",
       "letters": [
-       "d"
-      ]
-     },
-     "XC303416": {
-      "species": "Great Tit",
-      "recordist": "Timo Schnabel",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/303416",
-      "letters": [
-       "c",
-       "g",
-       "f"
-      ]
-     },
-     "XC637984": {
-      "species": "Eurasian Blue Tit",
-      "recordist": "Georg Amann",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/637984",
-      "letters": [
-       "p"
-      ]
-     },
-     "XC461185": {
-      "species": "Eurasian Wren",
-      "recordist": "Marie-Lan Taÿ Pamart",
-      "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
-      "letters": [
-       "h"
-      ]
-     },
-     "XC857749": {
-      "species": "European Robin",
-      "recordist": "Olivier Swift, Hélène Cartaud",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/857749",
-      "letters": [
-       "v",
-       "j",
-       "x"
+       "t"
       ]
      },
      "XC533763": {
@@ -2691,17 +2739,29 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
       "letters": [
-       "b",
+       "s",
        "z"
       ]
      },
-     "XC446151": {
-      "species": "Common Blackbird",
-      "recordist": "James Ray",
-      "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+     "XC857749": {
+      "species": "European Robin",
+      "recordist": "Olivier Swift, Hélène Cartaud",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/857749",
       "letters": [
-       "w"
+       "l",
+       "m",
+       "b"
+      ]
+     },
+     "XC461185": {
+      "species": "Eurasian Wren",
+      "recordist": "Marie-Lan Taÿ Pamart",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
+      "letters": [
+       "d",
+       "h"
       ]
      },
      "XC880931": {
@@ -2710,8 +2770,44 @@
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/880931",
       "letters": [
-       "k",
-       "q"
+       "c"
+      ]
+     },
+     "XC303416": {
+      "species": "Great Tit",
+      "recordist": "Timo Schnabel",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/303416",
+      "letters": [
+       "v",
+       "w"
+      ]
+     },
+     "XC531169": {
+      "species": "Yellowhammer",
+      "recordist": "Benoît Van Hecke",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Emberiza_citrinella_-_Yellowhammer_XC531169.mp3",
+      "letters": [
+       "f"
+      ]
+     },
+     "XC541754": {
+      "species": "Song Thrush",
+      "recordist": "Benoît Van Hecke",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+      "letters": [
+       "j"
+      ]
+     },
+     "XC637984": {
+      "species": "Eurasian Blue Tit",
+      "recordist": "Georg Amann",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/637984",
+      "letters": [
+       "x"
       ]
      },
      "XC478019": {
@@ -2729,10 +2825,10 @@
     "wav": "3-brisk.mp3",
     "wav_forest": "3-brisk-forest.mp3",
     "png": "3-brisk.png",
-    "dur": 14.11,
+    "dur": 13.97,
     "plot": [
-     0.0237,
-     0.9934
+     0.024,
+     0.9933
     ],
     "marks": [
      {
@@ -2743,21 +2839,21 @@
      {
       "letter": "t",
       "t0": 1.781,
-      "t1": 1.829,
+      "t1": 1.876,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "h",
-      "t0": 1.848,
-      "t1": 1.968,
+      "t0": 1.896,
+      "t1": 1.991,
       "vowel": false,
       "word": 0
      },
      {
       "letter": "e",
-      "t0": 1.995,
-      "t1": 2.267,
+      "t0": 2.017,
+      "t1": 2.289,
       "vowel": true,
       "word": 0
      },
@@ -2767,40 +2863,40 @@
        "the"
       ],
       "t0": 1.781,
-      "t1": 2.291
+      "t1": 2.313
      },
      {
       "letter": "q",
-      "t0": 2.673,
-      "t1": 2.795,
+      "t0": 2.695,
+      "t1": 2.802,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "u",
-      "t0": 2.825,
-      "t1": 3.135,
+      "t0": 2.832,
+      "t1": 3.142,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "i",
-      "t0": 3.158,
-      "t1": 3.467,
+      "t0": 3.165,
+      "t1": 3.474,
       "vowel": true,
       "word": 1
      },
      {
       "letter": "c",
-      "t0": 3.491,
-      "t1": 3.612,
+      "t0": 3.498,
+      "t1": 3.62,
       "vowel": false,
       "word": 1
      },
      {
       "letter": "k",
-      "t0": 3.642,
-      "t1": 3.764,
+      "t0": 3.65,
+      "t1": 3.717,
       "vowel": false,
       "word": 1
      },
@@ -2809,41 +2905,41 @@
       "syllables": [
        "quick"
       ],
-      "t0": 2.673,
-      "t1": 3.784
+      "t0": 2.695,
+      "t1": 3.738
      },
      {
       "letter": "b",
-      "t0": 4.189,
-      "t1": 4.313,
+      "t0": 4.142,
+      "t1": 4.266,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "r",
-      "t0": 4.334,
-      "t1": 4.394,
+      "t0": 4.287,
+      "t1": 4.407,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "o",
-      "t0": 4.429,
-      "t1": 4.701,
+      "t0": 4.441,
+      "t1": 4.638,
       "vowel": true,
       "word": 2
      },
      {
       "letter": "w",
-      "t0": 4.723,
-      "t1": 4.809,
+      "t0": 4.659,
+      "t1": 4.777,
       "vowel": false,
       "word": 2
      },
      {
       "letter": "n",
-      "t0": 4.835,
-      "t1": 4.898,
+      "t0": 4.804,
+      "t1": 4.895,
       "vowel": false,
       "word": 2
      },
@@ -2852,27 +2948,27 @@
       "syllables": [
        "brown"
       ],
-      "t0": 4.189,
-      "t1": 4.928
+      "t0": 4.142,
+      "t1": 4.926
      },
      {
       "letter": "f",
-      "t0": 5.252,
-      "t1": 5.378,
+      "t0": 5.25,
+      "t1": 5.37,
       "vowel": false,
       "word": 3
      },
      {
       "letter": "o",
-      "t0": 5.401,
-      "t1": 5.673,
+      "t0": 5.392,
+      "t1": 5.589,
       "vowel": true,
       "word": 3
      },
      {
       "letter": "x",
-      "t0": 5.701,
-      "t1": 5.824,
+      "t0": 5.617,
+      "t1": 5.73,
       "vowel": false,
       "word": 3
      },
@@ -2881,41 +2977,41 @@
       "syllables": [
        "fox"
       ],
-      "t0": 5.252,
-      "t1": 5.843
+      "t0": 5.25,
+      "t1": 5.75
      },
      {
       "letter": "j",
-      "t0": 6.245,
-      "t1": 6.369,
+      "t0": 6.152,
+      "t1": 6.255,
       "vowel": false,
       "word": 4
      },
      {
       "letter": "u",
-      "t0": 6.399,
-      "t1": 6.709,
+      "t0": 6.285,
+      "t1": 6.595,
       "vowel": true,
       "word": 4
      },
      {
       "letter": "m",
-      "t0": 6.728,
-      "t1": 6.835,
+      "t0": 6.615,
+      "t1": 6.737,
       "vowel": false,
       "word": 4
      },
      {
       "letter": "p",
-      "t0": 6.863,
-      "t1": 6.96,
+      "t0": 6.765,
+      "t1": 6.874,
       "vowel": false,
       "word": 4
      },
      {
       "letter": "s",
-      "t0": 6.992,
-      "t1": 7.06,
+      "t0": 6.906,
+      "t1": 7.026,
       "vowel": false,
       "word": 4
      },
@@ -2924,34 +3020,34 @@
       "syllables": [
        "jumps"
       ],
-      "t0": 6.245,
-      "t1": 7.09
+      "t0": 6.152,
+      "t1": 7.056
      },
      {
       "letter": "o",
-      "t0": 7.524,
-      "t1": 7.797,
+      "t0": 7.49,
+      "t1": 7.687,
       "vowel": true,
       "word": 5
      },
      {
       "letter": "v",
-      "t0": 7.829,
-      "t1": 7.951,
+      "t0": 7.719,
+      "t1": 7.841,
       "vowel": false,
       "word": 5
      },
      {
       "letter": "e",
-      "t0": 7.976,
-      "t1": 8.248,
+      "t0": 7.865,
+      "t1": 8.138,
       "vowel": true,
       "word": 5
      },
      {
       "letter": "r",
-      "t0": 8.277,
-      "t1": 8.337,
+      "t0": 8.167,
+      "t1": 8.286,
       "vowel": false,
       "word": 5
      },
@@ -2961,27 +3057,27 @@
        "o",
        "ver"
       ],
-      "t0": 7.524,
-      "t1": 8.37
+      "t0": 7.49,
+      "t1": 8.319
      },
      {
       "letter": "t",
-      "t0": 8.725,
-      "t1": 8.773,
+      "t0": 8.674,
+      "t1": 8.769,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "h",
-      "t0": 8.796,
-      "t1": 8.916,
+      "t0": 8.792,
+      "t1": 8.887,
       "vowel": false,
       "word": 6
      },
      {
       "letter": "e",
-      "t0": 8.935,
-      "t1": 9.207,
+      "t0": 8.906,
+      "t1": 9.178,
       "vowel": true,
       "word": 6
      },
@@ -2990,34 +3086,34 @@
       "syllables": [
        "the"
       ],
-      "t0": 8.725,
-      "t1": 9.237
+      "t0": 8.674,
+      "t1": 9.208
      },
      {
       "letter": "l",
-      "t0": 9.655,
-      "t1": 9.745,
+      "t0": 9.626,
+      "t1": 9.693,
       "vowel": false,
       "word": 7
      },
      {
       "letter": "a",
-      "t0": 9.778,
-      "t1": 10.122,
+      "t0": 9.727,
+      "t1": 10.071,
       "vowel": true,
       "word": 7
      },
      {
       "letter": "z",
-      "t0": 10.154,
-      "t1": 10.277,
+      "t0": 10.103,
+      "t1": 10.182,
       "vowel": false,
       "word": 7
      },
      {
       "letter": "y",
-      "t0": 10.311,
-      "t1": 10.636,
+      "t0": 10.216,
+      "t1": 10.541,
       "vowel": true,
       "word": 7
      },
@@ -3027,27 +3123,27 @@
        "la",
        "zy"
       ],
-      "t0": 9.655,
-      "t1": 10.663
+      "t0": 9.626,
+      "t1": 10.568
      },
      {
       "letter": "d",
-      "t0": 11.109,
-      "t1": 11.204,
+      "t0": 11.014,
+      "t1": 11.139,
       "vowel": false,
       "word": 8
      },
      {
       "letter": "o",
-      "t0": 11.235,
-      "t1": 11.507,
+      "t0": 11.17,
+      "t1": 11.367,
       "vowel": true,
       "word": 8
      },
      {
       "letter": "g",
-      "t0": 11.529,
-      "t1": 11.653,
+      "t0": 11.389,
+      "t1": 11.514,
       "vowel": false,
       "word": 8
      },
@@ -3056,13 +3152,13 @@
       "syllables": [
        "dog"
       ],
-      "t0": 11.109,
-      "t1": 11.672
+      "t0": 11.014,
+      "t1": 11.533
      },
      {
       "frame": "closing",
-      "t0": 11.972,
-      "t1": 13.514
+      "t0": 11.833,
+      "t1": 13.374
      }
     ],
     "credits": {
@@ -3073,8 +3169,7 @@
       "url": "https://xeno-canto.org/315114",
       "letters": [
        "e",
-       "n",
-       "m"
+       "q"
       ]
      },
      "XC433160": {
@@ -3083,8 +3178,20 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
       "letters": [
-       "a",
-       "o"
+       "a"
+      ]
+     },
+     "XC446151": {
+      "species": "Common Blackbird",
+      "recordist": "James Ray",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+      "letters": [
+       "o",
+       "n",
+       "r",
+       "p",
+       "g"
       ]
      },
      "XC543697": {
@@ -3104,27 +3211,8 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_-_Common_Chaffinch_XC538310.mp3",
       "letters": [
-       "y"
-      ]
-     },
-     "XC760778": {
-      "species": "European Robin",
-      "recordist": "Benjamin Allegrini",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/760778",
-      "letters": [
-       "t",
-       "s",
-       "r"
-      ]
-     },
-     "XC541754": {
-      "species": "Song Thrush",
-      "recordist": "Benoît Van Hecke",
-      "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
-      "letters": [
-       "l"
+       "y",
+       "k"
       ]
      },
      "XC778131": {
@@ -3133,47 +3221,7 @@
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/778131",
       "letters": [
-       "d"
-      ]
-     },
-     "XC303416": {
-      "species": "Great Tit",
-      "recordist": "Timo Schnabel",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/303416",
-      "letters": [
-       "c",
-       "g",
-       "f"
-      ]
-     },
-     "XC637984": {
-      "species": "Eurasian Blue Tit",
-      "recordist": "Georg Amann",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/637984",
-      "letters": [
-       "p"
-      ]
-     },
-     "XC461185": {
-      "species": "Eurasian Wren",
-      "recordist": "Marie-Lan Taÿ Pamart",
-      "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
-      "letters": [
-       "h"
-      ]
-     },
-     "XC857749": {
-      "species": "European Robin",
-      "recordist": "Olivier Swift, Hélène Cartaud",
-      "licence": "CC BY-NC-SA 4.0",
-      "url": "https://xeno-canto.org/857749",
-      "letters": [
-       "v",
-       "j",
-       "x"
+       "t"
       ]
      },
      "XC533763": {
@@ -3182,17 +3230,29 @@
       "licence": "CC BY-SA 4.0",
       "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
       "letters": [
-       "b",
+       "s",
        "z"
       ]
      },
-     "XC446151": {
-      "species": "Common Blackbird",
-      "recordist": "James Ray",
-      "licence": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+     "XC857749": {
+      "species": "European Robin",
+      "recordist": "Olivier Swift, Hélène Cartaud",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/857749",
       "letters": [
-       "w"
+       "l",
+       "m",
+       "b"
+      ]
+     },
+     "XC461185": {
+      "species": "Eurasian Wren",
+      "recordist": "Marie-Lan Taÿ Pamart",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
+      "letters": [
+       "d",
+       "h"
       ]
      },
      "XC880931": {
@@ -3201,8 +3261,44 @@
       "licence": "CC BY-NC-SA 4.0",
       "url": "https://xeno-canto.org/880931",
       "letters": [
-       "k",
-       "q"
+       "c"
+      ]
+     },
+     "XC303416": {
+      "species": "Great Tit",
+      "recordist": "Timo Schnabel",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/303416",
+      "letters": [
+       "v",
+       "w"
+      ]
+     },
+     "XC531169": {
+      "species": "Yellowhammer",
+      "recordist": "Benoît Van Hecke",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Emberiza_citrinella_-_Yellowhammer_XC531169.mp3",
+      "letters": [
+       "f"
+      ]
+     },
+     "XC541754": {
+      "species": "Song Thrush",
+      "recordist": "Benoît Van Hecke",
+      "licence": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+      "letters": [
+       "j"
+      ]
+     },
+     "XC637984": {
+      "species": "Eurasian Blue Tit",
+      "recordist": "Georg Amann",
+      "licence": "CC BY-NC-SA 4.0",
+      "url": "https://xeno-canto.org/637984",
+      "letters": [
+       "x"
       ]
      },
      "XC478019": {

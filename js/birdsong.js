@@ -8,7 +8,7 @@ export const HOP_S = 0.005, WIN_S = 0.0116, NB = 48, F_LO = 1000, F_HI = 9000, F
 
 // ---------- voice ----------
 
-export async function loadVoice(base = "birds/voice/", v = "1") {
+export async function loadVoice(base = "birds/voice/", v = "2") {
   const voice = await (await fetch(`${base}voice.json?v=${v}`)).json();
   const sr = voice.sample_rate;
   const ctx = new OfflineAudioContext(1, 1, sr);
@@ -267,7 +267,7 @@ export class Decoder {
              closeEnd: c >= 0 ? (c + this.tplClose.n) * HOP_S : null };
   }
 
-  decode(x, sr, { biasRatio = 0.72, letterCost = 1.0, newCost = 0.5, onsetGain = 6.0, onsetFullDb = 8.0, repeatCost = 3.0 } = {}) {
+  decode(x, sr, { biasRatio = 0.72, letterCost = 4.0, newCost = 0.5, onsetGain = 10.0, onsetFullDb = 8.0, repeatCost = 3.0 } = {}) {
     const { db, level, T } = features(x, sr);
     const S = shape(db, T);
     const fps = 1 / HOP_S, Tm = this.voice.timing;
