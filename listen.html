@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Listen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send.html">Send</a><a href="listen.html" aria-current="page">Listen</a></nav>
+  <header>
+    <h1>Listen for <em>letters</em></h1>
+    <p class="lede">Hold the phone near the speaker that sings. The listener waits for the high opening call, then writes each letter as it hears it.</p>
+  </header>
+
+  <section class="panel" aria-label="Listener">
+    <div class="row">
+      <button class="primary" id="listen" aria-pressed="false">Start listening</button>
+      <span class="pill" id="state" data-state="off">Microphone off</span>
+    </div>
+    <p class="live idle" id="live" aria-live="polite">Letters will appear here as they are sung.</p>
+    <canvas id="spectro" aria-label="Live sound picture, 1 to 7 kHz"></canvas>
+    <div class="row stats"><span id="level">—</span><span id="rate"></span></div>
+  </section>
+
+  <section aria-label="Received">
+    <h2>Received</h2>
+    <ul class="inbox" id="inbox"></ul>
+  </section>
+
+  <section aria-label="Test without the microphone">
+    <h2>Test without the microphone</h2>
+    <div class="panel">
+      <p class="lede">Sings a message inside the page, adds noise and echo, and decodes it. Useful to see where the decoder breaks.</p>
+      <div class="ctl">
+        <label for="simText">Message</label>
+        <textarea id="simText" spellcheck="false">the quick brown fox jumps over the lazy dog</textarea>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label for="simNoise">Background</label>
+          <select id="simNoise">
+            <option value="none">Quiet</option>
+            <option value="white:15">Hiss</option>
+            <option value="rumble:0">Train rumble</option>
+            <option value="voices:15" selected>Voices nearby</option>
+            <option value="voices:6">Loud voices</option>
+          </select>
+        </div>
+        <div class="ctl"><label for="simEcho">Room</label>
+          <select id="simEcho">
+            <option value="0:0">No echo</option>
+            <option value="0.25:0.6" selected>Small room</option>
+            <option value="0.35:1.6">Museum hall</option>
+          </select>
+        </div>
+        <div class="ctl"><label for="simTempo">Tempo</label>
+          <select id="simTempo">
+            <option value="0.7">Slow</option>
+            <option value="1" selected>Normal</option>
+            <option value="1.4">Fast</option>
+          </select>
+        </div>
+      </div>
+      <div class="row"><button class="secondary" id="simRun">Run the test</button></div>
+      <pre class="result" id="simOut"></pre>
+    </div>
+    <div class="panel">
+      <p class="lede">Or decode a recording: record the sender with your phone's voice memo app, then pick the file here.</p>
+      <div class="row"><input type="file" id="file" accept="audio/*"></div>
+      <pre class="result" id="fileOut"></pre>
+    </div>
+  </section>
+
+  <details>
+    <summary>What the decoder measured (last calls)</summary>
+    <pre class="seglog" id="seglog"></pre>
+  </details>
+</main>
+<script type="module" src="js/listen.js"></script>
+</body>
+</html>

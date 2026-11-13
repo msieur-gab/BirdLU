@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Send</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send.html" aria-current="page">Send</a><a href="listen.html">Listen</a></nav>
+  <header>
+    <h1>Send a <em>letter</em></h1>
+    <p class="lede">Every letter is a small bird call. Type a message, play it out loud, and read it as a score: time runs left to right, pitch rises upward.</p>
+  </header>
+
+  <section class="panel" aria-label="Message">
+    <div class="ctl">
+      <label for="msg">Message</label>
+      <textarea id="msg" spellcheck="false">you are not alone on this train</textarea>
+    </div>
+    <div class="row">
+      <button class="primary" id="play" aria-pressed="false">Play</button>
+      <label class="check"><input type="checkbox" id="loop"> Repeat every 3 s</label>
+      <span class="stats" id="stats"></span>
+    </div>
+    <p class="note" id="skipped"></p>
+    <div class="controls">
+      <div class="ctl">
+        <div class="top"><label for="tempo">Tempo</label><output id="tempoOut" for="tempo"></output></div>
+        <input type="range" id="tempo" min="0.6" max="1.6" step="0.05" value="1">
+      </div>
+      <div class="ctl">
+        <div class="top"><label for="pitch">Pitch</label><output id="pitchOut" for="pitch"></output></div>
+        <input type="range" id="pitch" min="0.8" max="1.25" step="0.01" value="1">
+      </div>
+      <div class="ctl">
+        <div class="top"><label for="room">Room</label><output id="roomOut" for="room"></output></div>
+        <input type="range" id="room" min="0" max="0.7" step="0.05" value="0">
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Score">
+    <h2>Score</h2>
+    <div class="scorewrap" id="wrap"><canvas id="score"></canvas></div>
+    <div class="key">
+      <span><i class="sw" style="background:var(--short)"></i>short call, 16 most common letters</span>
+      <span><i class="sw" style="background:var(--long)"></i>long call, the rest</span>
+      <span><i class="sw" style="background:var(--frame)"></i>opening and closing calls</span>
+    </div>
+  </section>
+
+  <section aria-label="Alphabet">
+    <h2>The alphabet</h2>
+    <p class="lede">Tap a letter to hear its call. Each code reads band · direction · shape.</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section aria-label="How it is built">
+    <h2>How a call is built</h2>
+    <dl>
+      <dt>Pitch band</dt><dd>Four bands between 2 and 5 kHz, where small songbirds sing. B1 is the lowest.</dd>
+      <dt>Direction</dt><dd>The call rises (↑) or falls (↓) across 700 Hz.</dd>
+      <dt>Shape</dt><dd>A straight sweep, or a hook that turns back at the end, like a “tsee-u”.</dd>
+      <dt>Length</dt><dd>70 ms for the 16 most common letters, 130 ms for the others, so everyday text sings faster.</dd>
+      <dt>Spaces</dt><dd>A pause between words, like a bird taking breath.</dd>
+      <dt>Frame</dt><dd>A high opening call (above 5 kHz) and a low closing trill (below 2 kHz). The listener uses the opening call to learn the tempo and pitch.</dd>
+      <dt>Accents</dt><dd>Folded to the base letter for now: é → e, ü → u, ß → ss. Digits are left out.</dd>
+    </dl>
+  </section>
+</main>
+<script type="module" src="js/send.js"></script>
+</body>
+</html>
