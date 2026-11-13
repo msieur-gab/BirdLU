@@ -34,7 +34,10 @@ export function parseWav(ab) {
   return null;
 }
 
-export async function loadVoice(base = "birds/voice/", v = "3") {
+/** Decoded text as people write it: "#c" back to "3". */
+export const readable = text => text.replace(/#([a-j])/g, (_, c) => String(DIGITS.indexOf(c)));
+
+export async function loadVoice(base = "birds/voice/", v = "4") {
   const voice = await (await fetch(`${base}voice.json?v=${v}`)).json();
   const sr = voice.sample_rate;
   const snd = {};
@@ -49,10 +52,14 @@ export async function loadVoice(base = "birds/voice/", v = "3") {
   return { voice, snd, sr };
 }
 
+// a digit is sung as the number call "#" then a letter (0 → j, 1 → a … 9 → i), as in Braille
+export const DIGITS = "jabcdefghi";
+
 export function normalize(text) {
   let out = "";
   for (const ch of text.toLowerCase()) {
     if (ch === "é" || ch === "è") { out += ch; continue; }
+    if (ch >= "0" && ch <= "9") { out += "#" + DIGITS[+ch]; continue; }
     out += ch.replace(/ß/g, "ss").replace(/æ/g, "ae").replace(/œ/g, "oe").normalize("NFD").replace(/[̀-ͯ]/g, "");
   }
   return out;

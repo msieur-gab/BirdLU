@@ -33,6 +33,7 @@
       <button class="secondary preset" type="button">l'été arrive, où es-tu ?</button>
       <button class="secondary preset" type="button">meet me at the old bridge at noon</button>
       <button class="secondary preset" type="button">ich bin gleich wieder da</button>
+      <button class="secondary preset" type="button">Rendez-vous à 18h30, quai n°2 !</button>
     </div>
     <div class="row">
       <button class="primary" id="play" type="button" aria-pressed="false">Play</button>
@@ -55,7 +56,7 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing, Decoder, drawPicture, encodeWav } from "./js/birdsong.js?v=7";
+import { loadVoice, sing, Decoder, drawPicture, encodeWav, readable } from "./js/birdsong.js?v=8";
 const $ = id => document.getElementById(id);
 let SR_PLAY = 44100;
 let V, dec, msg, ctx, src = null, raf = 0, timer = 0, pps = 140;
@@ -73,7 +74,7 @@ function check() {
   const t0 = performance.now();
   const r = dec.decode(msg.samples, V.sr);
   const ok = r.text === msg.sung;
-  $("check").textContent = `${ok ? "✓" : "✗"} ${r.text || "(nothing)"}  · ${Math.round(performance.now() - t0)} ms`;
+  $("check").textContent = `${ok ? "✓" : "✗"} ${readable(r.text) || "(nothing)"}  · ${Math.round(performance.now() - t0)} ms`;
   $("check").style.color = ok ? "var(--ok)" : "var(--warn)";
 }
 function stop() {

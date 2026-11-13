@@ -13,7 +13,7 @@ letters    between them, the decoder searches the best sequence of letters, shor
 
 Run:  .venv/bin/python lab/decode.py [repeats]      (prints letter errors per room)
 """
-import json, os, sys, unicodedata
+import json, os, re, sys, unicodedata
 import numpy as np
 import soundfile as sf
 from scipy.signal import resample_poly
@@ -42,14 +42,25 @@ def load_voice(voice_dir=VOICE_DIR):
     return v, snd, sr
 
 
+DIGITS = "jabcdefghi"   # a digit is sung as the number call "#" then a letter (0 → j, 1 → a … 9 → i), as in Braille
+
+
 def normalize(text):
     out = ""
     for ch in text.lower():
         if ch in "éè":
             out += ch
             continue
+        if ch.isdigit() and ch in "0123456789":
+            out += "#" + DIGITS[int(ch)]
+            continue
         out += "".join(c for c in unicodedata.normalize("NFD", ch) if not unicodedata.combining(c))
     return out
+
+
+def readable(text):
+    """Decoded text as people write it: "#c" back to "3"."""
+    return re.sub(r"#([a-j])", lambda m: str(DIGITS.index(m.group(1))), text)
 
 
 def opening(v, snd):

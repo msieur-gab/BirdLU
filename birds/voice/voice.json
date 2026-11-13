@@ -141,6 +141,69 @@
    "file": "z.wav",
    "vowel": false,
    "dur": 0.1226
+  },
+  ".": {
+   "file": "sign-period.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.126,
+   "source": "XC533763 1.73 (Common Blackbird)"
+  },
+  "?": {
+   "file": "sign-question.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.111,
+   "source": "XC531169 32.03 (Yellowhammer)"
+  },
+  "!": {
+   "file": "sign-exclamation.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.078,
+   "source": "XC478019 75.67 (Common Chiffchaff)"
+  },
+  ",": {
+   "file": "sign-comma.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.099,
+   "source": "XC541754 51.17 (Song Thrush)"
+  },
+  "'": {
+   "file": "sign-apostrophe.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.045,
+   "source": "XC446151 6.06 (Common Blackbird)"
+  },
+  "-": {
+   "file": "sign-hyphen.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.069,
+   "source": "XC533763 45.91 (Common Blackbird)"
+  },
+  ":": {
+   "file": "sign-colon.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.127,
+   "source": "XC446151 36.04 (Common Blackbird)"
+  },
+  "@": {
+   "file": "sign-at.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.127,
+   "source": "XC489896 3.77 (Common Chaffinch)"
+  },
+  "#": {
+   "file": "sign-number.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.127,
+   "source": "XC533763 45.13 (Common Blackbird)"
   }
  },
  "frames": {
@@ -257,7 +320,8 @@
    "licence": "CC BY-SA 4.0",
    "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
    "letters": [
-    "l"
+    "l",
+    ","
    ]
   },
   "XC778131": {
@@ -316,7 +380,10 @@
    "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
    "letters": [
     "b",
-    "z"
+    "z",
+    ".",
+    "-",
+    "#"
    ]
   },
   "XC446151": {
@@ -325,7 +392,9 @@
    "licence": "CC BY-SA 4.0",
    "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
    "letters": [
-    "w"
+    "w",
+    "'",
+    ":"
    ]
   },
   "XC880931": {
@@ -345,8 +414,28 @@
    "url": "https://commons.wikimedia.org/wiki/File:Phylloscopus_collybita_-_Common_Chiffchaff_XC478019.mp3",
    "letters": [
     "chiff",
-    "chaff"
+    "chaff",
+    "!"
+   ]
+  },
+  "XC531169": {
+   "species": "Yellowhammer",
+   "recordist": "Benoît Van Hecke",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Emberiza_citrinella_-_Yellowhammer_XC531169.mp3",
+   "letters": [
+    "?"
+   ]
+  },
+  "XC489896": {
+   "species": "Common Chaffinch",
+   "recordist": "Hannu Varkki",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_-_Common_Chaffinch_XC489896.mp3",
+   "letters": [
+    "@"
    ]
   }
- }
+ },
+ "digits": "jabcdefghi"
 }
