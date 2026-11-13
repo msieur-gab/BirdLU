@@ -198,7 +198,7 @@ class Decoder:
         self.tpl_close = template(mix([(a * sr_tpl, x, g) for a, x, g in cl], int((d + 0.05) * sr_tpl)), sr_tpl)
 
     def decode(self, x, sr, bias_ratio=0.72, letter_cost=4.0, new_cost=0.5, onset_gain=10.0, onset_full_db=8.0, repeat_cost=3.0,
-               dereverb=True, echo_delay=0.03, echo_floor=15.0, rt60=None, rises_from="raw", echo_weight=None, verbose=False):
+               dereverb=True, echo_delay=0.03, echo_floor=15.0, rt60=None, rises_from="raw", echo_weight=None, onset_look=6, verbose=False):
         db, level = features(x, sr)
         S = shape(db)
         fps = 1 / HOP_S
@@ -235,7 +235,7 @@ class Decoder:
         seg_level = level[lo:hi]
         Tn = hi - lo
         ref = np.percentile(seg_level, 95)
-        R_raw = rises(db[:, lo:hi])
+        R_raw = rises(db[:, lo:hi], onset_look)
         # a letter should start where sound rises in its own bands (echo only fades)
         R = np.maximum.reduce([np.roll(R_raw, k, axis=1) for k in (-2, -1, 0, 1)])  # allow ±10 ms
         # leaving NEW sound unexplained costs (a letter cannot just vanish); an echo is old sound, free
