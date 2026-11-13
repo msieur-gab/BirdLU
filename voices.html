@@ -44,6 +44,7 @@
 import { loadVoice, sing, drawPicture } from "./js/birdsong.js?v=7";
 const $ = id => document.getElementById(id);
 let ctx = null, src = null, pressed = null;
+const SR_PLAY = 44100;   // every voice is made at 44.1 kHz
 const list = await (await fetch("birds/voices/index.json?v=vt1")).json();
 const voices = {};
 await Promise.all(list.map(async v => { voices[v.name] = await loadVoice(`birds/voices/${v.name}/`, "vt1"); }));
@@ -57,7 +58,9 @@ async function play(name, btn) {
   const was = pressed === btn;
   stop();
   if (was) return;
-  if (!ctx) ctx = new AudioContext();
+  // play at the voice's own rate: the buffer player's own rate conversion (44.1 → 48 kHz) adds false,
+  // out-of-tune tones to high whistles (a 6 kHz note gained tones at 9.9 and 2.1 kHz): metallic
+  if (!ctx) { try { ctx = new AudioContext({ sampleRate: SR_PLAY }); } catch (e) { ctx = new AudioContext(); } }
   await ctx.resume();
   const V = voices[name], msg = sing($("text").value, V, 1);
   const buf = ctx.createBuffer(1, msg.samples.length, V.sr);

@@ -57,6 +57,7 @@
 <script type="module">
 import { loadVoice, sing, Decoder, drawPicture, encodeWav } from "./js/birdsong.js?v=7";
 const $ = id => document.getElementById(id);
+let SR_PLAY = 44100;
 let V, dec, msg, ctx, src = null, raf = 0, timer = 0, pps = 140;
 // ?voice=<name> sings with a test voice from birds/voices/ (the Listen page must use the same one)
 const VOICE = (new URLSearchParams(location.search).get("voice") || "").match(/^[a-z-]{1,30}$/)?.[0] || null;
@@ -82,7 +83,9 @@ function stop() {
   $("play").textContent = "Play"; $("play").setAttribute("aria-pressed", "false");
 }
 async function play() {
-  if (!ctx) ctx = new AudioContext();
+  // play at the voice's own rate: the buffer player's own rate conversion (44.1 → 48 kHz) adds false,
+  // out-of-tune tones to high whistles (a 6 kHz note gained tones at 9.9 and 2.1 kHz): metallic
+  if (!ctx) { try { ctx = new AudioContext({ sampleRate: SR_PLAY }); } catch (e) { ctx = new AudioContext(); } }
   await ctx.resume();
   const buf = ctx.createBuffer(1, msg.samples.length, V.sr);
   buf.copyToChannel(msg.samples, 0);
@@ -111,6 +114,7 @@ try {
   V = VOICE ? await loadVoice(`birds/voices/${VOICE}/`, "vt1") : await loadVoice();
   if (VOICE) $("lede-voice").textContent = ` Voice: ${VOICE}.`;
   dec = new Decoder(V);
+  SR_PLAY = V.sr;
   $("status").textContent = "";
 } catch (e) { $("status").textContent = "Could not load the bird voice."; throw e; }
 build();
