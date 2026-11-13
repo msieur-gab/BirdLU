@@ -212,12 +212,13 @@ class Decoder:
         new = (R_raw.max(axis=0) >= 8) * new_cost
         loud_cum = np.concatenate([[0], np.cumsum(new)])
         # per letter: score of placing it at each start = its length × (match − bias)
-        place = {}
+        place, fit = {}, {}
         for ch in self.letters:
             m = match(seg_S, self.tpl[ch])
             rise = self.tpl[ch]["start"] @ R
             bonus = onset_gain * (np.minimum(rise, onset_full_db) / onset_full_db - 0.5)
             place[ch] = (m - bias) * self.tpl[ch]["n"] - letter_cost + bonus
+            fit[ch] = m
         g_in = int(round(self.v["timing"]["gap_in_word"] * self.v["timing"]["gap_jitter"][1] * fps)) + 3
         w_lo = int(self.v["timing"]["word_gap"][0] * 0.6 * fps)
         w_hi = int(self.v["timing"]["word_gap"][1] * 1.6 * fps)
@@ -278,11 +279,12 @@ class Decoder:
         if not ends:
             return "", dict(open=float(mo[o]), close=float(mc[c]))
         _, e = max(ends)
-        out = []
+        out, found = [], []
         t, k = e, 0
         while True:
             _, ch, (s, prev) = A[t][k]
             out.append(ch)
+            found.append(self.letter_info(ch, s, place, fit))
             if prev[0] == "W":
                 bw = back_W[prev[1]]
                 if bw is None:
@@ -291,7 +293,21 @@ class Decoder:
                 t, k = bw
             else:
                 t, k = prev[1], prev[2]
-        return "".join(reversed(out)).strip(), dict(open=float(mo[o]), close=float(mc[c]))
+        return "".join(reversed(out)).strip(), dict(open=float(mo[o]), close=float(mc[c]), letters=found[::-1])
+
+    def letter_info(self, ch, s, place, fit, near=3):
+        """How sure the decoder is of a letter placed at frame s: its own placement score (low: it may
+        be an echo or noise), and how much better it fits than the best other letter nearby (low: it may
+        be another letter). The best other letter is kept as a guess."""
+        a, b = max(0, s - near), s + near + 1
+        own = float(fit[ch][s])
+        other, rival = -1.0, None
+        for c2 in self.letters:
+            if c2 != ch:
+                f = float(fit[c2][a:b].max())
+                if f > other:
+                    other, rival = f, c2
+        return dict(ch=ch, start=int(s), score=float(place[ch][s]), margin=own - other, rival=rival)
 
 
 def edit_distance(a, b):

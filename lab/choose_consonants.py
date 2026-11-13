@@ -68,7 +68,7 @@ def heard_pictures(y, rooms):
     return out
 
 
-def main():
+def main(count=20):
     v, snd, _ = load_voice()
     rooms = [np.load(p) for p in sorted(glob.glob(os.path.join(ROOT, "lab", "rooms", "*.npy")))]
     items = pool()
@@ -86,7 +86,7 @@ def main():
     chosen = list(range(len(fixed)))
     cons = []
     cand = list(range(len(fixed), n))
-    while len(cons) < 20:
+    while len(cons) < count:
         best = max(cand, key=lambda c: min(margin(c, s) for s in chosen))
         chosen.append(best); cons.append(best); cand.remove(best)
     # current consonants, for comparison
@@ -101,8 +101,9 @@ def main():
         print(f"{letter}: {o['name']:42s} heard-self {o['self']:.2f}  worst margin {o['worst_margin']:+.2f} (vs {o['closest']})")
     vm = min(min(margin(a, b) for b in range(len(fixed)) if b != a) for a in range(len(fixed)))
     print(f"vowels and frames among themselves: worst margin {vm:+.2f}")
-    json.dump(out, open(os.path.join(ROOT, "lab", "out", "consonants.json"), "w"), indent=1)
+    name = "consonants.json" if count == 20 else f"consonants-{count}.json"
+    json.dump(out, open(os.path.join(ROOT, "lab", "out", name), "w"), indent=1)
 
 
 if __name__ == "__main__":
-    main()
+    main(int(sys.argv[1]) if len(sys.argv) > 1 else 20)
