@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Listen (birds)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .meter{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+  .meter i{display:block;height:100%;width:0;background:var(--ok);transition:width .1s}
+  .diag{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;font:400 .85rem var(--mono);margin:0}
+  .diag dt{color:var(--muted);font-weight:400}
+  .diag dd{margin:0}
+  .warn{color:var(--warn)}
+  .scroll{overflow-x:auto;border-radius:8px;background:#fff}
+  .scroll canvas{display:block}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html" aria-current="page">Listen</a><a href="sketch.html">Sketch</a><a href="birds.html">Birds</a></nav>
+  <header>
+    <h1>Listen for <em>bird</em> letters</h1>
+    <p class="lede">Start listening, then play a message from Send on the computer. The page waits for the chiffchaff's opening call, listens until the closing call, and writes the letter out.</p>
+  </header>
+
+  <section class="panel" aria-label="Listening">
+    <div class="row">
+      <button class="primary" id="start" type="button" aria-pressed="false">Start listening</button>
+      <span class="pill" id="pill" data-state="idle">Not listening</span>
+    </div>
+    <div class="meter" aria-label="Input level"><i id="meter"></i></div>
+    <dl class="diag">
+      <dt>Input level</dt><dd id="lvl">–</dd>
+      <dt>Opening call</dt><dd id="openScore">–</dd>
+      <dt>Closing call</dt><dd id="closeScore">–</dd>
+      <dt>Microphone</dt><dd id="settings">–</dd>
+    </dl>
+    <p class="note" id="status"></p>
+  </section>
+
+  <section aria-label="Letters received">
+    <h2>Letters received</h2>
+    <ul class="inbox" id="inbox"></ul>
+  </section>
+
+  <section class="panel" aria-label="Last message">
+    <h2>What the phone heard</h2>
+    <div class="scroll"><canvas id="pic"></canvas></div>
+    <div class="row">
+      <button class="secondary" id="saveMsg" type="button" disabled>Save the last message as WAV</button>
+      <button class="secondary" id="save30" type="button" disabled>Save the last 30 s as WAV</button>
+    </div>
+    <p class="lede">Send these recordings to Claude: they become tests the decoder must pass.</p>
+  </section>
+
+  <section class="panel" aria-label="Decode a file">
+    <h2>Decode a recording</h2>
+    <input type="file" id="file" accept="audio/*">
+    <p class="check-out" id="fileOut"></p>
+  </section>
+</main>
+<script type="module">
+import { loadVoice, Decoder, encodeWav, drawPicture } from "./js/birdsong.js?v=1";
+const $ = id => document.getElementById(id);
+const OPEN_MIN = 0.45, CLOSE_MIN = 0.45, WINDOW_S = 22, KEEP_S = 45;
+let V, dec, ctx, stream, proc, sr = 48000;
+let chunks = [], total = 0, consumed = 0, busy = false, timer = 0, lastMsg = null;
+
+function pill(state, text) { $("pill").dataset.state = state; $("pill").textContent = text; }
+
+try { V = await loadVoice(); dec = new Decoder(V); }
+catch (e) { $("status").textContent = "Could not load the bird voice."; throw e; }
+
+function recent(seconds, from = 0) {
+  // the last `seconds` of sound, not earlier than absolute sample `from`
+  const want = Math.min(Math.round(seconds * sr), total - from);
+  const out = new Float32Array(Math.max(0, want));
+  let pos = out.length, i = chunks.length - 1;
+  while (pos > 0 && i >= 0) {
+    const c = chunks[i].data, take = Math.min(pos, c.length);
+    out.set(c.subarray(c.length - take), pos - take);
+    pos -= take; i--;
+  }
+  return { x: out, start: total - out.length };
+}
+
+async function start() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: {
+      echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 } });
+  } catch (e) { pill("error", "No microphone"); $("status").textContent = "The microphone was refused or is missing. It needs HTTPS (or localhost)."; return; }
+  ctx = new AudioContext();
+  sr = ctx.sampleRate;
+  const s = stream.getAudioTracks()[0].getSettings();
+  const flag = (k, label) => s[k] === undefined ? `${label} ?` : s[k] ? `<span class="warn">${label} ON</span>` : `${label} off`;
+  $("settings").innerHTML = `${flag("echoCancellation", "echo cancel")} · ${flag("noiseSuppression", "noise suppr.")} · ${flag("autoGainControl", "auto gain")} · ${sr} Hz`;
+  const srcNode = ctx.createMediaStreamSource(stream);
+  proc = ctx.createScriptProcessor(4096, 1, 1);
+  proc.onaudioprocess = e => {
+    const d = e.inputBuffer.getChannelData(0).slice();
+    chunks.push({ data: d }); total += d.length;
+    let have = chunks.reduce((a, c) => a + c.data.length, 0);
+    while (have - chunks[0].data.length > KEEP_S * sr) { have -= chunks[0].data.length; chunks.shift(); }
+    let e2 = 0; for (const v of d) e2 += v * v;
+    const db = 10 * Math.log10(e2 / d.length + 1e-12);
+    $("lvl").textContent = `${db.toFixed(0)} dBFS`;
+    $("meter").style.width = Math.max(0, Math.min(100, (db + 80) * 1.4)) + "%";
+  };
+  srcNode.connect(proc); proc.connect(ctx.destination);
+  try { await navigator.wakeLock?.request("screen"); } catch (e) {}
+  pill("listening", "Listening");
+  $("start").textContent = "Stop"; $("start").setAttribute("aria-pressed", "true");
+  $("save30").disabled = false;
+  timer = setInterval(scan, 1000);
+}
+
+function stopListening() {
+  clearInterval(timer);
+  try { proc.disconnect(); } catch (e) {}
+  stream?.getTracks().forEach(t => t.stop());
+  ctx?.close(); ctx = null;
+  pill("idle", "Not listening");
+  $("start").textContent = "Start listening"; $("start").setAttribute("aria-pressed", "false");
+}
+
+function scan() {
+  if (busy || !ctx) return;
+  busy = true;
+  try {
+    const { x, start } = recent(WINDOW_S, consumed);
+    if (x.length < sr * 1.5) return;
+    const f = dec.findFrames(x, sr);
+    $("openScore").textContent = `${f.openScore.toFixed(2)}${f.openScore >= OPEN_MIN ? " ✓ heard" : ""}`;
+    $("closeScore").textContent = f.close === null ? "–" : `${f.closeScore.toFixed(2)}${f.closeScore >= CLOSE_MIN ? " ✓ heard" : ""}`;
+    if (f.openScore < OPEN_MIN) { pill("listening", "Listening"); return; }
+    pill("receiving", "Hearing a letter…");
+    if (f.close === null || f.closeScore < CLOSE_MIN || f.closeEnd > x.length / sr - 0.3) return;
+    const a = Math.max(0, Math.round((f.open - 0.3) * sr)), b = Math.min(x.length, Math.round((f.closeEnd + 0.4) * sr));
+    const slice = x.slice(a, b);
+    const t0 = performance.now();
+    const r = dec.decode(slice, sr);
+    consumed = start + b;
+    lastMsg = slice;
+    $("saveMsg").disabled = false;
+    drawPicture($("pic"), slice, sr, []);
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="text"></span><span class="meta"></span>`;
+    li.querySelector(".text").textContent = r.text || "(could not read the letters)";
+    li.querySelector(".meta").textContent = `${new Date().toLocaleTimeString()} · opening ${r.info.openScore.toFixed(2)} · closing ${r.info.closeScore.toFixed(2)} · ${Math.round(performance.now() - t0)} ms`;
+    if (!r.text) li.classList.add("partial");
+    $("inbox").prepend(li);
+    pill("listening", "Listening");
+  } finally { busy = false; }
+}
+
+$("start").addEventListener("click", () => ctx ? stopListening() : start());
+const save = (samples, name) => { const a = document.createElement("a"); a.href = URL.createObjectURL(encodeWav(samples, sr)); a.download = name; a.click(); };
+$("saveMsg").addEventListener("click", () => lastMsg && save(lastMsg, `heard-${Date.now()}.wav`));
+$("save30").addEventListener("click", () => save(recent(30).x, `heard-30s-${Date.now()}.wav`));
+$("file").addEventListener("change", async e => {
+  const file = e.target.files[0]; if (!file) return;
+  $("fileOut").textContent = "Decoding…";
+  const actx = new AudioContext();
+  const buf = await actx.decodeAudioData(await file.arrayBuffer());
+  const x = buf.getChannelData(0);
+  const r = dec.decode(x, buf.sampleRate);
+  $("fileOut").textContent = `${r.text || "(nothing)"} · opening ${r.info.openScore.toFixed(2)} · closing ${r.info.closeScore.toFixed(2)}`;
+  drawPicture($("pic"), x, buf.sampleRate, []);
+  actx.close();
+});
+</script>
+</body>
+</html>

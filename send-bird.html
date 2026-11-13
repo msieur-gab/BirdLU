@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Send (birds)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .presets{display:flex;flex-wrap:wrap;gap:8px}
+  .scroll{overflow-x:auto;border-radius:8px;background:#fff;position:relative}
+  .scroll canvas{display:block}
+  .head{position:absolute;top:0;bottom:0;width:2px;background:var(--warn);display:none;pointer-events:none}
+  .playing .head{display:block}
+  .check-out{font:500 1rem var(--mono);margin:0;word-break:break-word}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html" aria-current="page">Send</a><a href="listen-bird.html">Listen</a><a href="sketch.html">Sketch</a><a href="birds.html">Birds</a></nav>
+  <header>
+    <h1>Send a <em>bird</em> letter</h1>
+    <p class="lede">Type a message: a bird voice sings it. A chiffchaff saying its name opens it, the same call reversed and slowing closes it. Play it from the computer; open Listen on the phone.</p>
+  </header>
+
+  <section class="panel" aria-label="Message">
+    <label for="text">Message</label>
+    <textarea id="text" spellcheck="false">you are not alone on this train</textarea>
+    <div class="presets">
+      <button class="secondary preset" type="button">you are not alone on this train</button>
+      <button class="secondary preset" type="button">l'été arrive, où es-tu ?</button>
+      <button class="secondary preset" type="button">meet me at the old bridge at noon</button>
+      <button class="secondary preset" type="button">ich bin gleich wieder da</button>
+    </div>
+    <div class="row">
+      <button class="primary" id="play" type="button" aria-pressed="false">Play</button>
+      <label class="check"><input type="checkbox" id="repeat"> Repeat every 3 s</label>
+      <button class="secondary" id="save" type="button">Save as WAV</button>
+      <span class="stats" id="stats"></span>
+    </div>
+    <p class="note" id="status">Loading the bird voice…</p>
+  </section>
+
+  <section aria-label="Score">
+    <h2>Score</h2>
+    <div class="scroll" id="wrap"><canvas id="pic"></canvas><div class="head" id="head"></div></div>
+  </section>
+
+  <section class="panel" aria-label="Check">
+    <h2>Check</h2>
+    <p class="lede">The listener's decoder, run here on the clean sound, before any speaker or room.</p>
+    <p class="check-out" id="check">–</p>
+  </section>
+</main>
+<script type="module">
+import { loadVoice, sing, Decoder, drawPicture, encodeWav } from "./js/birdsong.js?v=1";
+const $ = id => document.getElementById(id);
+let V, dec, msg, ctx, src = null, raf = 0, timer = 0, pps = 140;
+
+function build() {
+  msg = sing($("text").value, V, 1);
+  const letters = msg.marks.filter(m => m.letter).length;
+  $("stats").textContent = `${letters} letters · ${msg.dur.toFixed(1)} s`;
+  ({ pps } = drawPicture($("pic"), msg.samples, V.sr, msg.marks));
+  setTimeout(check, 30);
+}
+function check() {
+  const t0 = performance.now();
+  const r = dec.decode(msg.samples, V.sr);
+  const ok = r.text === msg.sung;
+  $("check").textContent = `${ok ? "✓" : "✗"} ${r.text || "(nothing)"}  · ${Math.round(performance.now() - t0)} ms`;
+  $("check").style.color = ok ? "var(--ok)" : "var(--warn)";
+}
+function stop() {
+  clearTimeout(timer); cancelAnimationFrame(raf);
+  if (src) { try { src.stop(); } catch (e) {} src = null; }
+  $("wrap").classList.remove("playing");
+  $("play").textContent = "Play"; $("play").setAttribute("aria-pressed", "false");
+}
+async function play() {
+  if (!ctx) ctx = new AudioContext();
+  await ctx.resume();
+  const buf = ctx.createBuffer(1, msg.samples.length, V.sr);
+  buf.copyToChannel(msg.samples, 0);
+  src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination);
+  const t0 = ctx.currentTime + 0.05, me = src;
+  src.start(t0);
+  $("wrap").classList.add("playing");
+  $("play").textContent = "Stop"; $("play").setAttribute("aria-pressed", "true");
+  const tick = () => {
+    if (src !== me) return;
+    const x = (ctx.currentTime - t0) * pps;
+    $("head").style.left = x + "px";
+    const w = $("wrap");
+    if (x > w.scrollLeft + w.clientWidth * 0.8 || x < w.scrollLeft) w.scrollLeft = x - w.clientWidth * 0.3;
+    raf = requestAnimationFrame(tick);
+  };
+  tick();
+  src.onended = () => {
+    if (src !== me) return;
+    if ($("repeat").checked) { src = null; timer = setTimeout(play, 3000); }
+    else stop();
+  };
+}
+
+try {
+  V = await loadVoice();
+  dec = new Decoder(V);
+  $("status").textContent = "";
+} catch (e) { $("status").textContent = "Could not load the bird voice."; throw e; }
+build();
+$("text").addEventListener("input", () => { stop(); build(); });
+document.querySelectorAll(".preset").forEach(b => b.addEventListener("click", () => { $("text").value = b.textContent; stop(); build(); }));
+$("play").addEventListener("click", () => { if (src || timer) { stop(); timer = 0; } else play(); });
+$("save").addEventListener("click", () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(encodeWav(msg.samples, V.sr));
+  a.download = "bird-letter.wav"; a.click();
+});
+</script>
+</body>
+</html>

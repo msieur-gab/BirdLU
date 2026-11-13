@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Bird synthesizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .voices{display:grid;gap:12px}
+  .voice{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px}
+  .voice .head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+  .voice b{font:600 1.6rem var(--mono);color:var(--vowel)}
+  .voice .sp{color:var(--muted);font-size:.9rem}
+  .voice .meta{font:400 .75rem var(--mono);color:var(--muted)}
+  .voice img{width:100%;height:auto;border-radius:6px;background:#fff;display:block}
+  .voice button[aria-pressed="true"]{border-color:var(--short);color:var(--short)}
+  .three{display:flex;gap:8px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send.html">Send</a><a href="listen.html">Listen</a><a href="birds.html">Birds</a></nav>
+  <header>
+    <h1>Can a synthesizer <em>sing</em> like this bird?</h1>
+    <p class="lede">Each vowel's trill, three times. <b>Original</b>: the real bird. <b>Copy</b>: its pitch and loudness measured every 1.5 ms and rebuilt from pure tones. <b>Model</b>: rebuilt from a few numbers only (one typical note, how many, how fast, the drift), which is what the synthesizer would use.</p>
+  </header>
+  <p class="note" id="status"></p>
+  <section class="voices" id="voices" aria-label="Vowels"></section>
+</main>
+<script type="module">
+const V = "2";
+const box = document.getElementById("voices"), status = document.getElementById("status");
+let data;
+try { data = await (await fetch(`birds/synth/voices.json?v=${V}`)).json(); }
+catch (e) { status.textContent = "Could not load the voices."; throw e; }
+const audio = new Audio();
+let pressed = null;
+audio.addEventListener("ended", () => { if (pressed) pressed.setAttribute("aria-pressed", "false"); pressed = null; });
+for (const [ch, v] of Object.entries(data)) {
+  const m = v.model, s = v.source;
+  const el = document.createElement("article");
+  el.className = "voice";
+  el.innerHTML = `
+    <div class="head"><b>${ch}</b><span class="sp">${s.species}</span>
+      <span class="meta">${m.notes} notes · every ${Math.round(m.period * 1000)} ms · around ${(m.pitch / 1000).toFixed(1)} kHz</span></div>
+    <div class="three">
+      <button class="secondary" type="button" data-f="original">Original</button>
+      <button class="secondary" type="button" data-f="copy">Copy</button>
+      <button class="secondary" type="button" data-f="model">Model</button>
+    </div>
+    <img src="birds/synth/${ch}.png?v=${V}" alt="Sound pictures of the ${ch} trill: original, copy and model">
+    <span class="meta">${s.recordist}, <a href="${s.url}">${s.source}</a> · ${s.licence}</span>`;
+  el.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    if (pressed) pressed.setAttribute("aria-pressed", "false");
+    audio.src = `birds/synth/${encodeURIComponent(ch)}-${b.dataset.f}.mp3?v=${V}`;
+    audio.play().catch(() => { status.textContent = "The browser blocked playback. Tap again."; });
+    pressed = b; b.setAttribute("aria-pressed", "true");
+  }));
+  box.appendChild(el);
+}
+</script>
+</body>
+</html>

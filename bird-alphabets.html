@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Bird alphabets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .alphas{display:grid;gap:14px}
+  .alpha{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px}
+  .alpha.playing{border-color:var(--short)}
+  .alpha .head{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+  .alpha .head span{color:var(--muted);font-size:.9rem}
+  .alpha p{margin:0;max-width:62ch}
+  .strip{display:flex;flex-wrap:wrap;gap:3px;font:500 1.05rem var(--mono)}
+  .strip .lt{min-width:1.3em;text-align:center;padding:2px 3px;border-radius:4px;color:var(--muted);transition:background .05s}
+  .strip .lt.on{background:var(--short);color:var(--paper)}
+  .strip .sp{width:.8em}
+  .letters{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px 12px;font-size:.85rem}
+  .letters b{font:600 1rem var(--mono);display:inline-block;width:1.2em}
+  .letters small{color:var(--muted)}
+  .hear{font:500 .8rem var(--mono);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:1px 8px;cursor:pointer}
+  .hear:hover{border-color:var(--short)}
+  .presets{display:flex;flex-wrap:wrap;gap:8px}
+  fieldset{border:0;margin:0;padding:0;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  legend{font-size:.85rem;color:var(--muted);float:left;margin-right:4px}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send.html">Send</a><a href="listen.html">Listen</a><a href="birds.html">Birds</a></nav>
+  <header>
+    <h1>Which one sounds like a <em>real bird</em>?</h1>
+    <p class="lede">Three bird alphabets sing the same message. Each letter is one real bird syllable, sung once or twice. A space is a pause.</p>
+  </header>
+
+  <section class="panel" aria-label="Message">
+    <label for="text">Message</label>
+    <textarea id="text" spellcheck="false">you are not alone on this train</textarea>
+    <div class="presets">
+      <button class="secondary preset" type="button">you are not alone on this train</button>
+      <button class="secondary preset" type="button">l'été arrive, où es-tu ?</button>
+      <button class="secondary preset" type="button">the quick brown fox jumps over the lazy dog</button>
+    </div>
+    <fieldset>
+      <legend>Speed</legend>
+      <label class="check"><input type="radio" name="speed" value="slow" checked> Slow</label>
+      <label class="check"><input type="radio" name="speed" value="lively"> Lively</label>
+      <label class="check"><input type="checkbox" id="room"> As heard 2 m away in a room</label>
+    </fieldset>
+    <p class="note" id="status"></p>
+  </section>
+
+  <section class="alphas" id="alphas" aria-label="Alphabets"></section>
+
+  <p class="lede">Syllables from xeno-canto recordings, CC BY-NC-SA 4.0. Recordists and sources on the <a href="birds.html">Birds</a> page.</p>
+</main>
+<script type="module" src="js/bird-alphabets.js?v=3"></script>
+</body>
+</html>

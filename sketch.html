@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Sound sketch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .sk{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:12px}
+  .sk.playing{border-color:var(--short)}
+  .sk h2{font-size:1.4rem}
+  .scroll{overflow-x:auto;border-radius:8px;background:#fff}
+  .scorebox{position:relative;width:max-content}
+  .scorebox img{display:block;height:230px;width:auto}
+  .head{position:absolute;top:0;bottom:0;width:2px;background:var(--warn);left:0;display:none;pointer-events:none}
+  .sk.playing .head{display:block}
+  .key{font-size:.85rem}
+  .vow{color:var(--vowel);font-weight:600}.con{color:var(--short);font-weight:600}
+  .credits{font-size:.8rem;color:var(--muted);margin:0;padding-left:1.1em}
+  .credits a{color:var(--muted)}
+  .kinds{display:inline-flex;gap:6px}
+  button.kind[aria-pressed="true"]{border-color:var(--short);color:var(--short);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send.html">Send</a><a href="listen.html">Listen</a><a href="birds.html">Birds</a></nav>
+  <header>
+    <h1>A word is a <em>phrase</em></h1>
+    <p class="lede">A sound sketch, not an alphabet yet. Hear it <b>synthesized</b> (every note rebuilt from a model of a real bird) or from the <b>recorded birds</b>. A chiffchaff saying its name opens the message, and the same call reversed and slowing closes it. Each word is sung in one breath, and the bird pauses only between words. <span class="vow">Vowels</span> are real trills, cut whole so they keep the bird's own pace. <span class="con">Consonants</span> are short notes leading in and out.</p>
+  </header>
+  <p class="note" id="status"></p>
+  <section id="list" aria-label="Sketches"></section>
+  <p class="lede">The score is the sound picture: pitch going up, time going right. The letters under it show which bird sings which letter.</p>
+</main>
+<script type="module">
+const V = "5";
+const list = document.getElementById("list"), status = document.getElementById("status");
+let data;
+try { data = await (await fetch(`birds/sketch/sketch.json?v=${V}`)).json(); }
+catch (e) { status.textContent = "Could not load the sketches."; throw e; }
+
+const audio = new Audio();
+let current = null, raf = 0;
+
+function stop() {
+  audio.pause(); cancelAnimationFrame(raf);
+  if (current) {
+    current.card.classList.remove("playing");
+    current.card.querySelectorAll("button.play").forEach(b => { b.textContent = b.dataset.label; b.setAttribute("aria-pressed", "false"); });
+  }
+  current = null;
+}
+
+function play(card, btn, file) {
+  const same = current && current.btn === btn;
+  stop();
+  if (same) return;
+  const v = card._version;
+  audio.src = `birds/sketch/${file(v)}?v=${V}`;
+  audio.play().catch(() => { status.textContent = "The browser blocked playback. Tap again."; });
+  current = { card, btn };
+  card.classList.add("playing");
+  btn.textContent = "Stop"; btn.setAttribute("aria-pressed", "true");
+  const img = card.querySelector("img"), head = card.querySelector(".head"), scroller = card.querySelector(".scroll");
+  const [x0, x1] = v.plot;
+  const tick = () => {
+    const w = img.clientWidth, x = (x0 + (x1 - x0) * Math.min(1, audio.currentTime / v.dur)) * w;
+    head.style.left = x + "px";
+    if (x > scroller.scrollLeft + scroller.clientWidth * 0.8 || x < scroller.scrollLeft) scroller.scrollLeft = x - scroller.clientWidth * 0.3;
+    if (current && current.btn === btn) raf = requestAnimationFrame(tick);
+  };
+  tick();
+}
+audio.addEventListener("ended", stop);
+
+function show(card, s, kind) {
+  stop();
+  const v = s[kind];
+  card._version = v;
+  card.querySelector("img").src = `birds/sketch/${v.png}?v=${V}`;
+  card.querySelector(".dur").textContent = v.dur.toFixed(1) + " s";
+  card.querySelectorAll("button.kind").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.kind === kind)));
+  card.querySelector(".credits").innerHTML = Object.entries(v.credits).map(([id, c]) =>
+    `<li>${c.letters.join(", ")}: ${kind !== "recorded" ? "voice modelled on " : ""}${c.species}, ${c.recordist}, <a href="${c.url}">${id}</a> · ${c.licence}</li>`).join("");
+}
+
+for (const s of data.sentences) {
+  const card = document.createElement("article");
+  card.className = "sk";
+  card.innerHTML = `
+    <h2>${s.text}</h2>
+    <div class="row">
+      <span class="kinds"><button class="secondary kind" type="button" data-kind="brisk">Synthesized, brisk</button>
+      <button class="secondary kind" type="button" data-kind="synth">Synthesized</button>
+      <button class="secondary kind" type="button" data-kind="recorded">Recorded birds</button></span>
+    </div>
+    <div class="row">
+      <button class="primary play" type="button" data-label="Play in the forest" aria-pressed="false">Play in the forest</button>
+      <button class="secondary play" type="button" data-label="Birds only" aria-pressed="false">Birds only</button>
+      <span class="stats dur"></span>
+    </div>
+    <div class="scroll"><div class="scorebox"><img alt="Score of: ${s.text}"><div class="head"></div></div></div>
+    <details><summary>Which birds sing it</summary><ul class="credits"></ul></details>`;
+  const [forest, bare] = card.querySelectorAll("button.play");
+  forest.addEventListener("click", () => play(card, forest, v => v.wav_forest));
+  bare.addEventListener("click", () => play(card, bare, v => v.wav));
+  card.querySelectorAll("button.kind").forEach(b => b.addEventListener("click", () => show(card, s, b.dataset.kind)));
+  list.appendChild(card);
+  show(card, s, "brisk");
+}
+</script>
+</body>
+</html>

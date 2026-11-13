@@ -1,0 +1,52 @@
+{
+ "note": "Simulated letter errors in %, ideal cutting. Made by lab/check_alphabets.py.",
+ "sentences": [
+  "you are not alone on this train",
+  "l'\u00e9t\u00e9 arrive, o\u00f9 es-tu ?",
+  "the quick brown fox jumps over the lazy dog"
+ ],
+ "versions": {
+  "A": {
+   "slow": {
+    "room 1.5 m": 5.921052631578948,
+    "room 3 m": 6.578947368421052,
+    "hall 3 m": 7.894736842105263,
+    "station 2 m": 3.289473684210526
+   },
+   "lively": {
+    "room 1.5 m": 7.894736842105263,
+    "room 3 m": 9.868421052631579,
+    "hall 3 m": 9.210526315789474,
+    "station 2 m": 6.578947368421052
+   }
+  },
+  "B": {
+   "slow": {
+    "room 1.5 m": 5.2631578947368425,
+    "room 3 m": 4.605263157894737,
+    "hall 3 m": 2.6315789473684212,
+    "station 2 m": 2.6315789473684212
+   },
+   "lively": {
+    "room 1.5 m": 7.894736842105263,
+    "room 3 m": 7.894736842105263,
+    "hall 3 m": 4.605263157894737,
+    "station 2 m": 3.9473684210526314
+   }
+  },
+  "C": {
+   "slow": {
+    "room 1.5 m": 3.9473684210526314,
+    "room 3 m": 1.9736842105263157,
+    "hall 3 m": 5.2631578947368425,
+    "station 2 m": 1.3157894736842106
+   },
+   "lively": {
+    "room 1.5 m": 6.578947368421052,
+    "room 3 m": 6.578947368421052,
+    "hall 3 m": 5.2631578947368425,
+    "station 2 m": 3.9473684210526314
+   }
+  }
+ }
+}

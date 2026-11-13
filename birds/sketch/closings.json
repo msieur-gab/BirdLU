@@ -1,0 +1,32 @@
+{
+ "A": {
+  "idea": "The opening reversed and slowing, a little softer each time",
+  "wav": "closing-A.mp3",
+  "png": "closing-A.png",
+  "dur": 4.73,
+  "plot": [
+   0.067,
+   0.9812
+  ]
+ },
+ "B": {
+  "idea": "Three chiffs, each lower and slower: a falling cadence",
+  "wav": "closing-B.mp3",
+  "png": "closing-B.png",
+  "dur": 4.24,
+  "plot": [
+   0.067,
+   0.9812
+  ]
+ },
+ "C": {
+  "idea": "The chaffinch's final flourish, how a real chaffinch ends its song",
+  "wav": "closing-C.mp3",
+  "png": "closing-C.png",
+  "dur": 3.59,
+  "plot": [
+   0.067,
+   0.9812
+  ]
+ }
+}
