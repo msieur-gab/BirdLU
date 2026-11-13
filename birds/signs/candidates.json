@@ -1,0 +1,407 @@
+{
+ "names": {
+  ".": "period",
+  "?": "question",
+  "!": "exclamation",
+  ",": "comma",
+  "'": "apostrophe",
+  "-": "hyphen",
+  ":": "colon",
+  "@": "at",
+  "#": "number"
+ },
+ "candidates": {
+  ".": [
+   {
+    "file": "period-1.wav",
+    "source": "XC533763 1.73 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC533763",
+     1.731,
+     1.872
+    ],
+    "slope_oct": -0.38,
+    "pitch": 2239,
+    "dur": 0.126,
+    "likeness_to_nearest": 0.33
+   },
+   {
+    "file": "period-2.wav",
+    "source": "XC541754 28.81 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     28.805,
+     28.938
+    ],
+    "slope_oct": -0.33,
+    "pitch": 6919,
+    "dur": 0.117,
+    "likeness_to_nearest": 0.36
+   },
+   {
+    "file": "period-3.wav",
+    "source": "XC478019 115.20 (Common Chiffchaff)",
+    "spec": [
+     "cut",
+     "XC478019",
+     115.201,
+     115.322
+    ],
+    "slope_oct": -0.51,
+    "pitch": 4776,
+    "dur": 0.105,
+    "likeness_to_nearest": 0.46
+   }
+  ],
+  "?": [
+   {
+    "file": "question-1.wav",
+    "source": "XC531169 32.03 (Yellowhammer)",
+    "spec": [
+     "cut",
+     "XC531169",
+     32.027,
+     32.154
+    ],
+    "slope_oct": 0.33,
+    "pitch": 4921,
+    "dur": 0.111,
+    "likeness_to_nearest": 0.43
+   },
+   {
+    "file": "question-2.wav",
+    "source": "XC446151 3.05 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     3.051,
+     3.172
+    ],
+    "slope_oct": 0.37,
+    "pitch": 4314,
+    "dur": 0.105,
+    "likeness_to_nearest": 0.51
+   },
+   {
+    "file": "question-3.wav",
+    "source": "XC538310 27.34 (Common Chaffinch)",
+    "spec": [
+     "cut",
+     "XC538310",
+     27.339,
+     27.417
+    ],
+    "slope_oct": 0.79,
+    "pitch": 3752,
+    "dur": 0.06,
+    "likeness_to_nearest": 0.59
+   }
+  ],
+  "!": [
+   {
+    "file": "exclamation-1.wav",
+    "source": "XC541754 48.43 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     48.426,
+     48.509
+    ],
+    "slope_oct": -0.45,
+    "pitch": 6896,
+    "dur": 0.066,
+    "likeness_to_nearest": 0.58
+   },
+   {
+    "file": "exclamation-2.wav",
+    "source": "XC478019 2.89 (Common Chiffchaff)",
+    "spec": [
+     "cut",
+     "XC478019",
+     2.886,
+     2.972
+    ],
+    "slope_oct": -0.54,
+    "pitch": 5560,
+    "dur": 0.069,
+    "likeness_to_nearest": 0.64
+   },
+   {
+    "file": "exclamation-3.wav",
+    "source": "XC478019 75.67 (Common Chiffchaff)",
+    "spec": [
+     "cut",
+     "XC478019",
+     75.675,
+     75.769
+    ],
+    "slope_oct": -0.71,
+    "pitch": 5627,
+    "dur": 0.078,
+    "likeness_to_nearest": 0.67
+   }
+  ],
+  ",": [
+   {
+    "file": "comma-1.wav",
+    "source": "XC446151 102.46 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     102.459,
+     102.545
+    ],
+    "slope_oct": 0.21,
+    "pitch": 1729,
+    "dur": 0.069,
+    "likeness_to_nearest": 0.45
+   },
+   {
+    "file": "comma-2.wav",
+    "source": "XC541754 51.17 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     51.166,
+     51.281
+    ],
+    "slope_oct": -0.19,
+    "pitch": 3068,
+    "dur": 0.099,
+    "likeness_to_nearest": 0.54
+   },
+   {
+    "file": "comma-3.wav",
+    "source": "XC541754 49.49 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     49.485,
+     49.568
+    ],
+    "slope_oct": 0.18,
+    "pitch": 2580,
+    "dur": 0.066,
+    "likeness_to_nearest": 0.62
+   }
+  ],
+  "'": [
+   {
+    "file": "apostrophe-1.wav",
+    "source": "XC446151 6.06 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     6.058,
+     6.121
+    ],
+    "slope_oct": -0.46,
+    "pitch": 1966,
+    "dur": 0.045,
+    "likeness_to_nearest": 0.64
+   },
+   {
+    "file": "apostrophe-2.wav",
+    "source": "XC461185 15.94 (Eurasian Wren)",
+    "spec": [
+     "cut",
+     "XC461185",
+     15.938,
+     16.016
+    ],
+    "slope_oct": 0.22,
+    "pitch": 4941,
+    "dur": 0.059,
+    "likeness_to_nearest": 0.68
+   },
+   {
+    "file": "apostrophe-3.wav",
+    "source": "XC461185 16.14 (Eurasian Wren)",
+    "spec": [
+     "cut",
+     "XC461185",
+     16.139,
+     16.216
+    ],
+    "slope_oct": 0.16,
+    "pitch": 4770,
+    "dur": 0.059,
+    "likeness_to_nearest": 0.7
+   }
+  ],
+  "-": [
+   {
+    "file": "hyphen-1.wav",
+    "source": "XC541754 6.65 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     6.65,
+     6.736
+    ],
+    "slope_oct": 0.35,
+    "pitch": 3280,
+    "dur": 0.069,
+    "likeness_to_nearest": 0.66
+   },
+   {
+    "file": "hyphen-2.wav",
+    "source": "XC533763 45.91 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC533763",
+     45.912,
+     45.998
+    ],
+    "slope_oct": 0.18,
+    "pitch": 4156,
+    "dur": 0.069,
+    "likeness_to_nearest": 0.66
+   },
+   {
+    "file": "hyphen-3.wav",
+    "source": "R02 (European Robin)",
+    "spec": [
+     "syllable",
+     "R02"
+    ],
+    "slope_oct": -0.18,
+    "pitch": 3783,
+    "dur": 0.066,
+    "likeness_to_nearest": 0.68
+   }
+  ],
+  ":": [
+   {
+    "file": "colon-1.wav",
+    "source": "XC446151 36.04 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     36.044,
+     36.197
+    ],
+    "slope_oct": -0.02,
+    "pitch": 2275,
+    "dur": 0.127,
+    "likeness_to_nearest": 0.35
+   },
+   {
+    "file": "colon-2.wav",
+    "source": "XC446151 25.08 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     25.078,
+     25.243
+    ],
+    "slope_oct": -0.02,
+    "pitch": 3376,
+    "dur": 0.127,
+    "likeness_to_nearest": 0.51
+   },
+   {
+    "file": "colon-3.wav",
+    "source": "B04 (Eurasian Blue Tit)",
+    "spec": [
+     "syllable",
+     "B04"
+    ],
+    "slope_oct": -0.53,
+    "pitch": 4386,
+    "dur": 0.117,
+    "likeness_to_nearest": 0.54
+   }
+  ],
+  "@": [
+   {
+    "file": "at-1.wav",
+    "source": "XC541754 40.64 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     40.644,
+     40.82
+    ],
+    "slope_oct": -0.6,
+    "pitch": 2829,
+    "dur": 0.127,
+    "likeness_to_nearest": 0.54
+   },
+   {
+    "file": "at-2.wav",
+    "source": "XC489896 3.77 (Common Chaffinch)",
+    "spec": [
+     "cut",
+     "XC489896",
+     3.768,
+     3.933
+    ],
+    "slope_oct": -0.3,
+    "pitch": 3619,
+    "dur": 0.127,
+    "likeness_to_nearest": 0.6
+   },
+   {
+    "file": "at-3.wav",
+    "source": "XC541754 7.25 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     7.251,
+     7.349
+    ],
+    "slope_oct": -0.68,
+    "pitch": 4800,
+    "dur": 0.081,
+    "likeness_to_nearest": 0.61
+   }
+  ],
+  "#": [
+   {
+    "file": "number-1.wav",
+    "source": "XC446151 36.96 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     36.961,
+     37.114
+    ],
+    "slope_oct": -0.34,
+    "pitch": 2138,
+    "dur": 0.127,
+    "likeness_to_nearest": 0.62
+   },
+   {
+    "file": "number-2.wav",
+    "source": "XC533763 45.13 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC533763",
+     45.126,
+     45.276
+    ],
+    "slope_oct": -0.26,
+    "pitch": 2207,
+    "dur": 0.127,
+    "likeness_to_nearest": 0.64
+   },
+   {
+    "file": "number-3.wav",
+    "source": "XC446151 6.19 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     6.192,
+     6.313
+    ],
+    "slope_oct": 0.09,
+    "pitch": 1523,
+    "dur": 0.105,
+    "likeness_to_nearest": 0.65
+   }
+  ]
+ }
+}
