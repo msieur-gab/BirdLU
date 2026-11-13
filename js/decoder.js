@@ -5,7 +5,7 @@
 // 4. Measure band, direction, shape and length of each call and look up its letter.
 // 5. Stop at the low closing trill (or after a long silence).
 
-import { BANDS, SPAN, lookup } from "./chirp.js";
+import { BANDS, SPAN, lookup } from "./chirp.js?v=3";
 
 const OPEN_CENTERS = [5950, 5950, 5800];
 const F_LO = 1200, F_HI = 7400;

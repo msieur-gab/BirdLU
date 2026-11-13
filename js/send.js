@@ -1,4 +1,4 @@
-import { ALPHA, BANDS, SPAN, OPEN, CLOSE, symNote, sweep, build, Player, renderOffline, encodeWav, encodeMp3 } from "./chirp.js";
+import { ALPHA, BANDS, SPAN, OPEN, CLOSE, symNote, sweep, build, Player, renderOffline, encodeWav, encodeMp3 } from "./chirp.js?v=3";
 
 const $ = id => document.getElementById(id);
 const msg = $("msg"), playBtn = $("play"), loopIn = $("loop"), stats = $("stats"), skippedEl = $("skipped");
@@ -162,16 +162,34 @@ function fileName(ext) {
 async function save(kind) {
   const note = $("saveNote"), p = params();
   note.textContent = "Rendering…";
+  let blob, name;
   try {
     const { samples, sampleRate } = await renderOffline(sched, { pitch: p.pitch, room: p.room, sampleRate: 44100 });
-    const blob = kind === "mp3" ? encodeMp3(samples, sampleRate) : encodeWav(samples, sampleRate);
-    const url = URL.createObjectURL(blob), a = document.createElement("a");
-    a.href = url; a.download = fileName(kind); document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
-    note.textContent = `Saved ${a.download} (${Math.round(blob.size / 1024)} KB).`;
+    if (kind === "mp3") {
+      try { blob = encodeMp3(samples, sampleRate); }
+      catch (e) { console.error(e); kind = "wav"; blob = encodeWav(samples, sampleRate); }
+    } else blob = encodeWav(samples, sampleRate);
+    name = fileName(kind);
   } catch (e) {
-    note.textContent = kind === "mp3" ? "The MP3 encoder did not load. Try Save as WAV." : "This browser could not render the audio.";
+    console.error(e);
+    note.textContent = "Could not render the audio: " + (e && e.message ? e.message : e);
+    return;
   }
+  const url = URL.createObjectURL(blob);
+  const file = new File([blob], name, { type: blob.type });
+  // A visible link always works, even where the browser blocks automatic downloads.
+  note.textContent = "";
+  const a = document.createElement("a");
+  a.href = url; a.download = name; a.textContent = `Download ${name} (${Math.round(blob.size / 1024)} KB)`;
+  note.append(a);
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    const sh = document.createElement("button");
+    sh.className = "secondary"; sh.type = "button"; sh.textContent = "Share or save to Files";
+    sh.style.marginLeft = "12px";
+    sh.addEventListener("click", () => navigator.share({ files: [file], title: name }).catch(() => {}));
+    note.append(sh);
+  }
+  try { a.click(); } catch (e) { /* the link stays for a manual tap */ }
 }
 $("saveMp3").addEventListener("click", () => save("mp3"));
 $("saveWav").addEventListener("click", () => save("wav"));
