@@ -1,7 +1,7 @@
 // Run: node test/simulate.mjs
 // Sings messages, degrades them (noise, echo, tempo, pitch), decodes, reports the error rate.
-import { build, renderSamples } from "../js/chirp.js?v=4";
-import { decodeBuffer, cer, addEcho, addNoise, addSpeaker } from "../js/decoder.js?v=4";
+import { build, renderSamples } from "../js/chirp.js?v=5";
+import { decodeBuffer, cer, addEcho, addNoise, addSpeaker } from "../js/decoder.js?v=5";
 
 const SR = 48000;
 const MESSAGES = [

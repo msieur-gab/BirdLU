@@ -1,5 +1,5 @@
-import { build, renderSamples, encodeWav } from "./chirp.js?v=4";
-import { Decoder, decodeBuffer, cer, addEcho, addNoise } from "./decoder.js?v=4";
+import { build, renderSamples, encodeWav } from "./chirp.js?v=5";
+import { Decoder, decodeBuffer, cer, addEcho, addNoise } from "./decoder.js?v=5";
 
 const $ = id => document.getElementById(id);
 const btn = $("listen"), pill = $("state"), live = $("live"), inbox = $("inbox");

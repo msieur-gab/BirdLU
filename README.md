@@ -26,9 +26,12 @@ v1 used a "hook" (a turn-back at the end of a call) as one property. It got lost
 ## Simulation
 
 ```
-node test/simulate.mjs      # error rate per condition
+node test/simulate.mjs      # synthetic audio: error rate per condition
 node test/simulate.mjs -v   # with sent/heard pairs
+node test/recordings.mjs    # real recordings from test/recordings/
 ```
+
+`test/recordings/` holds what a phone actually heard (Listen → "Keep a recording"), so real rooms can be replayed after every decoder change. First set (room1: PC → Bluetooth speaker → Android phone at 30–50 cm): 3.0 % average error, down from 10 % before the decoder learned to stitch calls cut in two by loudness dips and to accept weak second vowel notes.
 
 Current baseline (v2, synthetic audio): 0 % in quiet, hiss, train rumble, nearby voices, small rooms and a simulated small speaker (also pushed hard, with room and voices); ~9 % in a museum-sized hall; fails when voices are louder than the calls. The simulated speaker does not yet reproduce the failures seen in a real room, so real recordings (Listen → "Keep a recording") are the next reference.
 

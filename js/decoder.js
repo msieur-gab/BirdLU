@@ -6,7 +6,7 @@
 //    and length of each consonant call; look up the letter.
 // 5. Stop at the low closing trill (or after a long silence).
 
-import { BANDS, DUR, OPEN_CENTERS, CLOSE_BELOW, TRILL, lookup } from "./chirp.js?v=4";
+import { BANDS, DUR, OPEN_CENTERS, CLOSE_BELOW, TRILL, lookup } from "./chirp.js?v=5";
 
 const D3 = 0.160; // last opening note, the time unit everything is measured against
 const F_LO = 1200, F_HI = 7400;
@@ -48,6 +48,7 @@ export class Decoder {
     this.frameIndex = 0;
     this.snrOn = opts.snrOn ?? 12;
     this.dip = opts.dip ?? 9;
+    this.mergeGap = opts.mergeGap ?? 0; // raw stitching off: done per letter instead (see readLetter)
     this.follow = opts.follow ?? false; this.followHz = opts.followHz ?? 250; this.followDb = opts.followDb ?? 8;
     this.on = Object.assign({ state() {}, letter() {}, message() {}, segment() {}, frame() {} }, opts.on || {});
     this.reset();
@@ -56,7 +57,7 @@ export class Decoder {
   reset() {
     this.seg = null; this.inactive = 0; this.levelRef = -200; this.levelRefT = 0;
     this.history = []; this.state = "idle"; this.cal = null; this.text = ""; this.letters = [];
-    this.lastEnd = null; this.pending = null;
+    this.lastEnd = null; this.pending = null; this.held = null;
   }
 
   get frequencies() { // bin centre frequencies of the spectrum passed to on.frame
@@ -124,16 +125,45 @@ export class Decoder {
     } else if (s) {
       if (++this.inactive >= 2) this.close();
     }
+    if (!this.seg) this.releaseHeld(t);
     const lastT = this.pending ? this.pending.t1 : this.lastEnd;
     if (this.state === "receiving" && !this.seg && lastT !== null && t - lastT > 7 * this.cal.d3) {
       this.finish(false);
     }
   }
 
+  // A call can dip in loudness halfway (uneven speaker or room response) and be cut in two.
+  // Pieces that follow within a few ms, at a nearby pitch and nearly as loud, are stitched back.
   close() {
     const s = this.seg; this.seg = null; this.inactive = 0;
-    if (!s || s.frames.length < 3) return;
-    const fr = s.frames;
+    if (!s || !s.frames.length) return;
+    const h = this.held;
+    if (h) {
+      const gap = s.frames[0].t - h.frames[h.frames.length - 1].t;
+      const jump = Math.abs(s.frames[0].f - h.frames[h.frames.length - 1].f);
+      if (gap <= this.mergeGap && jump < 350 && s.maxDb >= h.maxDb - 6) {
+        h.frames.push(...s.frames); h.maxDb = Math.max(h.maxDb, s.maxDb);
+        return;
+      }
+      this.held = null; this.finalize(h);
+    }
+    this.held = s;
+  }
+
+  releaseHeld(t) {
+    const h = this.held;
+    if (h && (t === undefined || t - h.frames[h.frames.length - 1].t > this.mergeGap)) { this.held = null; this.finalize(h); }
+  }
+
+  finalize(s) {
+    if (s.frames.length < 3) return;
+    const seg = this.features(s.frames, s.maxDb);
+    if (seg.maxDb > this.levelRef - 15 * (seg.t1 - this.levelRefT)) { this.levelRef = seg.maxDb; this.levelRefT = seg.t1; }
+    this.on.segment(seg);
+    if (this.state === "idle") this.seekOpening(seg); else this.readLetter(seg);
+  }
+
+  features(fr, maxDb) {
     const fs = fr.map((p, i) => { // median of 3 smoothing
       const a = fr[Math.max(0, i - 1)].f, b = p.f, c = fr[Math.min(fr.length - 1, i + 1)].f;
       return Math.max(Math.min(a, b), Math.min(Math.max(a, b), c));
@@ -150,11 +180,9 @@ export class Decoder {
     const seg = {
       t0: fr[0].t, t1: fr[n - 1].t, dur: fr[n - 1].t - fr[0].t + this.dt,
       fmin: fs[iMin], fmax: fs[iMax], center: fm, f0: fs[0], f1: fs[n - 1],
-      dir: slope >= 0 ? "up" : "down", slope, wobble: Math.sqrt(res / n), maxDb: s.maxDb
+      dir: slope >= 0 ? "up" : "down", slope, wobble: Math.sqrt(res / n), maxDb, frames: fr
     };
-    if (seg.maxDb > this.levelRef - 15 * (seg.t1 - this.levelRefT)) { this.levelRef = seg.maxDb; this.levelRefT = seg.t1; }
-    this.on.segment(seg);
-    if (this.state === "idle") this.seekOpening(seg); else this.readLetter(seg);
+    return seg;
   }
 
   seekOpening(seg) {
@@ -176,21 +204,33 @@ export class Decoder {
 
   readLetter(seg) {
     const { pitch, d3 } = this.cal, u = d3 / D3; // u: measured seconds per design second
-    if (seg.dur < 0.15 * d3) return; // click or blip
-    if (seg.center < CLOSE_BELOW * pitch) { this.flush(); this.finish(true); return; }
+    if (seg.center < CLOSE_BELOW * pitch && seg.dur >= 0.15 * d3) { this.flush(); this.finish(true); return; }
     const p = this.pending;
     if (p) {
       const gap = seg.t0 - p.t1;
-      // echo fragment: starts right after the previous call, at the pitch where it ended
-      if (gap < 0.012 * u && Math.abs(seg.f0 - p.f1) < 200 * pitch) { p.t1 = seg.t1; return; }
+      // A call cut in two by a loudness dip (uneven speaker/room response): tiny gap, nearby pitch,
+      // similar level. Vowel notes jump further apart in pitch, so they are never stitched.
+      if (gap < 0.03 * u && Math.abs(seg.center - p.center) <= 350 * pitch
+          && Math.abs(seg.f0 - p.f1) < 450 * pitch && seg.maxDb >= p.maxDb - 9) {
+        this.pending = this.features(p.frames.concat(seg.frames), Math.max(p.maxDb, seg.maxDb));
+        return;
+      }
+    }
+    if (p) {
+      const gap = seg.t0 - p.t1;
       const short = x => x.dur < (DUR.note + 0.035) * u;
-      if (short(p) && short(seg) && gap < (DUR.noteGap + 0.03) * u && Math.abs(seg.center - p.center) > 350 * pitch) {
+      // Vowel: two short notes with a clear pitch jump. The second note may arrive weak and
+      // broken (a dip in the speaker or room response), so even a crumb counts when it lands
+      // exactly where a second note is expected.
+      if (short(p) && short(seg) && seg.dur >= 0.05 * d3 && gap < (DUR.noteGap + 0.03) * u
+          && Math.abs(seg.center - p.center) > 350 * pitch) {
         this.pending = null;
         this.emit([p, seg]);
         return;
       }
-      this.flush();
     }
+    if (seg.dur < 0.15 * d3) return; // click, blip or echo crumb
+    if (p) this.flush();
     this.pending = seg;
   }
 
@@ -212,7 +252,7 @@ export class Decoder {
       const mid = (DUR[texture].short + DUR[texture].long) / 2 * u;
       const len = s.dur > mid ? "long" : "short";
       // a short note with no partner is an echo tail (or half a vowel we cannot rebuild): skip it
-      if (s.dur < (DUR.note + 0.02) * u) return;
+      if (s.dur < (DUR.note + 0.005) * u) return;
       const lone = false;
       const off = Math.abs(rel - BANDS[band]) > 450;
       sym = lone || off || s.dur > 1.6 * d3 ? null : lookup(texture, band, s.dir, len);
@@ -241,6 +281,7 @@ export class Decoder {
   /** Flush at end of a recording. */
   end() {
     if (this.seg) this.close();
+    this.releaseHeld();
     if (this.state === "receiving") this.finish(false);
   }
 }

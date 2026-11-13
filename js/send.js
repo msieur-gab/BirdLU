@@ -1,4 +1,4 @@
-import { ALPHA, BANDS, SPAN, PAIR, OPEN, CLOSE, symbolNotes, freqAt, build, Player, renderOffline, encodeWav, encodeMp3 } from "./chirp.js?v=4";
+import { ALPHA, BANDS, SPAN, PAIR, OPEN, CLOSE, symbolNotes, freqAt, build, Player, renderOffline, encodeWav, encodeMp3 } from "./chirp.js?v=5";
 
 const $ = id => document.getElementById(id);
 const msg = $("msg"), playBtn = $("play"), loopIn = $("loop"), stats = $("stats"), skippedEl = $("skipped");
