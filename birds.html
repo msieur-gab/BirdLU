@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Bird syllables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .birds{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+  .bird{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:8px;align-content:start}
+  .bird img{width:100%;height:auto;aspect-ratio:16/9;border-radius:6px;background:#fff;display:block}
+  .bird .head{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+  .bird b{font:600 1.05rem var(--mono)}
+  .bird .sp{font-size:.85rem;color:var(--muted)}
+  .bird p{margin:0;font-size:.92rem}
+  .bird .meta{font:400 .75rem var(--mono);color:var(--muted)}
+  .bird .watch{font-size:.8rem;color:var(--long)}
+  .bird .credit{font-size:.75rem;color:var(--muted)}
+  .bird .credit a{color:var(--muted)}
+  .bird.reserve{border-style:dashed}
+  .bird.playing{border-color:var(--short)}
+  .bird button{justify-self:start}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send.html">Send</a><a href="listen.html">Listen</a><a href="birds.html" aria-current="page">Birds</a></nav>
+  <header>
+    <h1>Bird <em>syllables</em></h1>
+    <p class="lede">Candidate calls for a bird-song alphabet, cut from nine xeno-canto recordings of great tits, blue tits and robins. B01–B16 are clean and clearly different from one another; R01–R03 are reserves. Press Play on a card to hear it.</p>
+  </header>
+
+  <section class="panel" aria-label="Playback">
+    <div class="row">
+      <button class="primary" id="playAll" aria-pressed="false">Play all core syllables</button>
+      <span class="stats" id="status"></span>
+    </div>
+    <p class="note">Recordings are CC BY-NC-SA 4.0: free for this non-commercial prototype with credit; commercial use needs each recordist's permission.</p>
+  </section>
+
+  <section aria-label="Syllables">
+    <div class="birds" id="grid"></div>
+  </section>
+
+  <section aria-label="Credits">
+    <h2>Credits</h2>
+    <p class="lede">Each clip is a short cut from the recording below, shared under the same licence. Full list with time stamps in <a href="birds/CREDITS.md">birds/CREDITS.md</a>.</p>
+    <ul class="steps" id="credits"></ul>
+  </section>
+</main>
+<script>
+(async function () {
+  const grid = document.getElementById("grid"), status = document.getElementById("status");
+  let data = [];
+  try { data = await (await fetch("birds/syllables.json?v=5")).json(); }
+  catch (e) { status.textContent = "Could not load the syllable list."; return; }
+  const audio = new Audio();
+  let queue = [], current = null;
+
+  function play(item, card) {
+    document.querySelectorAll(".bird.playing").forEach(c => c.classList.remove("playing"));
+    current = card; card.classList.add("playing");
+    audio.src = "birds/" + item.file;
+    audio.play().catch(() => { status.textContent = "The browser blocked playback. Tap again."; });
+    status.textContent = `${item.id} · ${item.species}`;
+  }
+  audio.addEventListener("ended", () => {
+    if (current) current.classList.remove("playing");
+    if (queue.length) { const [it, c] = queue.shift(); setTimeout(() => play(it, c), 350); }
+    else { playAll.textContent = "Play all core syllables"; playAll.setAttribute("aria-pressed", "false"); status.textContent = ""; }
+  });
+
+  for (const it of data) {
+    const card = document.createElement("article");
+    card.className = "bird" + (it.status === "reserve" ? " reserve" : "");
+    card.innerHTML = `
+      <img src="birds/${it.file.replace(".wav", ".png")}" alt="Sound picture of ${it.id}: ${it.note}">
+      <div class="head"><b>${it.id}</b><span class="sp">${it.species}</span></div>
+      <p>${it.note}</p>
+      ${it.watch ? `<p class="watch">Watch: ${it.watch}</p>` : ""}
+      <span class="meta">${Math.round(it.dur * 1000)} ms · around ${(it.fmean / 1000).toFixed(1)} kHz</span>
+      <span class="credit">${it.recordist}, <a href="${it.url}">${it.source}</a> · ${it.licence}</span>
+      <button class="secondary" type="button">Play ${it.id}</button>`;
+    card.querySelector("button").addEventListener("click", () => { queue = []; play(it, card); });
+    grid.appendChild(card);
+    it._card = card;
+  }
+
+  const playAll = document.getElementById("playAll");
+  playAll.addEventListener("click", () => {
+    if (playAll.getAttribute("aria-pressed") === "true") {
+      queue = []; audio.pause(); if (current) current.classList.remove("playing");
+      playAll.textContent = "Play all core syllables"; playAll.setAttribute("aria-pressed", "false"); status.textContent = ""; return;
+    }
+    queue = data.filter(d => d.status === "core").map(d => [d, d._card]);
+    const [it, c] = queue.shift(); play(it, c);
+    playAll.textContent = "Stop"; playAll.setAttribute("aria-pressed", "true");
+  });
+
+  const bySrc = {};
+  data.forEach(d => { (bySrc[d.source] = bySrc[d.source] || { ...d, ids: [] }).ids.push(d.id); });
+  document.getElementById("credits").innerHTML = Object.values(bySrc).sort((a, b) => a.source.localeCompare(b.source))
+    .map(s => `<li>${s.recordist}, ${s.source}. Accessible at <a href="${s.url}">${s.url.replace("https://", "")}</a> · ${s.species} · ${s.licence} · ${s.ids.join(", ")}</li>`).join("");
+})();
+</script>
+</body>
+</html>

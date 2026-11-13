@@ -35,6 +35,12 @@ node test/recordings.mjs    # real recordings from test/recordings/
 
 Current baseline (v2, synthetic audio): 0 % in quiet, hiss, train rumble, nearby voices, small rooms and a simulated small speaker (also pushed hard, with room and voices); ~9 % in a museum-sized hall; fails when voices are louder than the calls. The simulated speaker does not yet reproduce the failures seen in a real room, so real recordings (Listen → "Keep a recording") are the next reference.
 
+## Bird syllables
+
+`birds.html` lists candidate syllables for a bird-song alphabet, cut from nine xeno-canto recordings (great tit, blue tit, robin): 16 clean, clearly distinct ones (B01–B16) and 3 reserves (R01–R03), with recordist and licence for each in `birds/CREDITS.md`. The clips are CC BY-NC-SA 4.0 (non-commercial; commercial use needs each recordist's permission).
+
+`birds/tools/` holds the cutter: `syllables.py` finds and measures syllables (pitch track, length, loudness, clean single voice), `reps_sheet.py` groups look-alikes into types, `export.py` writes clips, sound pictures and credits.
+
 ## Third-party
 
 MP3 export uses [lamejs](https://github.com/zhuker/lamejs) 1.2.1 (LGPL-3.0), vendored in `js/vendor/` with its licence.
