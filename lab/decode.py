@@ -20,6 +20,7 @@ from scipy.signal import resample_poly
 
 sys.path.insert(0, os.path.dirname(__file__))
 from channel import transmit
+import echo
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VOICE_DIR = os.path.join(ROOT, "birds", "voice")
@@ -29,7 +30,8 @@ NB, F_LO, F_HI = 48, 1000, 9000
 
 # ---------- the voice and the sender ----------
 
-def load_voice():
+def load_voice(voice_dir=VOICE_DIR):
+    VOICE_DIR = voice_dir
     v = json.load(open(os.path.join(VOICE_DIR, "voice.json")))
     sr = v["sample_rate"]
     snd = {}
@@ -178,11 +180,14 @@ class Decoder:
         self.letters = list(v["letters"])
         self.tpl = {c: template(snd[c], sr_tpl) for c in self.letters}
         op, d = opening(v, snd)
-        self.tpl_open = template(mix([(a * sr_tpl, x, g) for a, x, g in op], int((d + 0.05) * sr_tpl)), sr_tpl)
+        y_open = mix([(a * sr_tpl, x, g) for a, x, g in op], int((d + 0.05) * sr_tpl))
+        self.tpl_open = template(y_open, sr_tpl)
+        self.open_ref = echo.opening_reference(*features(y_open, sr_tpl))
         cl, d = closing(v, snd)
         self.tpl_close = template(mix([(a * sr_tpl, x, g) for a, x, g in cl], int((d + 0.05) * sr_tpl)), sr_tpl)
 
-    def decode(self, x, sr, bias_ratio=0.72, letter_cost=4.0, new_cost=0.5, onset_gain=10.0, onset_full_db=8.0, repeat_cost=3.0, verbose=False):
+    def decode(self, x, sr, bias_ratio=0.72, letter_cost=4.0, new_cost=0.5, onset_gain=10.0, onset_full_db=8.0, repeat_cost=3.0,
+               dereverb=True, echo_delay=0.03, echo_floor=15.0, rt60=None, rises_from="raw", echo_weight=None, verbose=False):
         db, level = features(x, sr)
         S = shape(db)
         fps = 1 / HOP_S
@@ -201,6 +206,20 @@ class Decoder:
         lo, hi = open_end, c
         if hi - lo < 10:
             return "", dict(open=float(mo[o]), close=float(mc[c]))
+        # the opening as a tuning fork: how long this room's echo lasts
+        measured = echo.estimate_rt60(db, o, self.open_ref)
+        room_rt60 = rt60 if rt60 is not None else measured
+        if verbose:
+            print(f"  echo: RT60 measured {measured} s, used {room_rt60}")
+        if dereverb and room_rt60:
+            db_c, direct = echo.dereverb(db, room_rt60, echo_delay, echo_floor)
+            S = shape(db_c)
+            if echo_weight:
+                # a column that is mostly echo is weak evidence for any letter
+                lo_w, hi_w = echo_weight
+                S = S * np.clip((direct - lo_w) / (hi_w - lo_w), 0, 1)[None, :]
+            if rises_from == "clean":
+                db = db_c
         seg_S = S[:, lo:hi]
         seg_level = level[lo:hi]
         Tn = hi - lo
@@ -293,7 +312,7 @@ class Decoder:
                 t, k = bw
             else:
                 t, k = prev[1], prev[2]
-        return "".join(reversed(out)).strip(), dict(open=float(mo[o]), close=float(mc[c]), letters=found[::-1])
+        return "".join(reversed(out)).strip(), dict(open=float(mo[o]), close=float(mc[c]), letters=found[::-1], rt60=measured)
 
     def letter_info(self, ch, s, place, fit, near=3):
         """How sure the decoder is of a letter placed at frame s: its own placement score (low: it may

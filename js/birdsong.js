@@ -8,14 +8,39 @@ export const HOP_S = 0.005, WIN_S = 0.0116, NB = 48, F_LO = 1000, F_HI = 9000, F
 
 // ---------- voice ----------
 
+/** Read a WAV file (16-bit or 32-bit float PCM) exactly, first channel. The browser's own decoder
+ *  alters samples slightly, which the decoder notices. Returns null for other formats. */
+export function parseWav(ab) {
+  const dv = new DataView(ab);
+  const tag = o => String.fromCharCode(dv.getUint8(o), dv.getUint8(o + 1), dv.getUint8(o + 2), dv.getUint8(o + 3));
+  if (ab.byteLength < 44 || tag(0) !== "RIFF" || tag(8) !== "WAVE") return null;
+  let o = 12, fmt = null;
+  while (o + 8 <= ab.byteLength) {
+    const id = tag(o), size = dv.getUint32(o + 4, true), body = o + 8;
+    if (id === "fmt ") fmt = { code: dv.getUint16(body, true), ch: dv.getUint16(body + 2, true), sr: dv.getUint32(body + 4, true), bits: dv.getUint16(body + 14, true) };
+    if (id === "data" && fmt) {
+      const bytes = fmt.bits / 8, n = Math.floor(Math.min(size, ab.byteLength - body) / (bytes * fmt.ch)), x = new Float32Array(n);
+      const code = fmt.code === 0xFFFE ? (fmt.bits === 32 ? 3 : 1) : fmt.code;
+      for (let i = 0; i < n; i++) {
+        const p = body + i * bytes * fmt.ch;
+        if (code === 1 && fmt.bits === 16) x[i] = dv.getInt16(p, true) / 32768;
+        else if (code === 3 && fmt.bits === 32) x[i] = dv.getFloat32(p, true);
+        else return null;
+      }
+      return { x, sr: fmt.sr };
+    }
+    o = body + size + (size & 1);
+  }
+  return null;
+}
+
 export async function loadVoice(base = "birds/voice/", v = "2") {
   const voice = await (await fetch(`${base}voice.json?v=${v}`)).json();
   const sr = voice.sample_rate;
-  const ctx = new OfflineAudioContext(1, 1, sr);
   const snd = {};
   const load = async (key, file) => {
     const ab = await (await fetch(`${base}${file}?v=${v}`)).arrayBuffer();
-    snd[key] = (await ctx.decodeAudioData(ab)).getChannelData(0).slice();
+    snd[key] = parseWav(ab).x;
   };
   await Promise.all([
     ...Object.entries(voice.letters).map(([ch, d]) => load(ch, d.file)),
@@ -132,8 +157,11 @@ function fftPower(re, im) {
 }
 
 /** Band levels in dB: db[b * T + t] (NB bands × T frames), and the frame level in dB. */
+// rounds as Python does (half to even): at 44.1 kHz a 5 ms hop is 220.5 samples → 220
+const roundEven = v => { const f = Math.floor(v), d = v - f; return d > 0.5 + 1e-9 ? f + 1 : d < 0.5 - 1e-9 ? f : (f % 2 === 0 ? f : f + 1); };
+
 export function features(x, sr) {
-  const hop = Math.round(sr * HOP_S), win = Math.round(sr * WIN_S);
+  const hop = roundEven(sr * HOP_S), win = roundEven(sr * WIN_S);
   let nfft = 1; while (nfft < win) nfft <<= 1;
   const T = 1 + Math.max(0, Math.floor((x.length - win) / hop));
   const w = new Float64Array(win);
@@ -237,6 +265,77 @@ function rises(db, T, from, to, look = 6) {
   return R;
 }
 
+// ---------- the opening as a tuning fork, and the echo taken away ----------
+
+/** From the clean opening's picture: its frames trimmed as the template is, and which are loud. */
+function openingReference(x, sr) {
+  const { db, level, T } = features(x, sr);
+  let mx = -Infinity; for (const v of level) mx = Math.max(mx, v);
+  let a = 0, b = T - 1;
+  while (a < T && level[a] <= mx - 30) a++;
+  while (b > a && level[b] <= mx - 30) b--;
+  const n = b - a + 1, sub = new Float32Array(NB * n), loud = new Uint8Array(n);
+  let lmx = -Infinity; for (let k = 0; k < n; k++) lmx = Math.max(lmx, level[a + k]);
+  for (let k = 0; k < n; k++) loud[k] = level[a + k] > lmx - 30 ? 1 : 0;
+  for (let bb = 0; bb < NB; bb++) for (let k = 0; k < n; k++) sub[bb * n + k] = db[bb * T + a + k];
+  return { db: sub, n, loud };
+}
+
+function percentile(arr, q) {
+  const s = Float64Array.from(arr).sort(), i = q / 100 * (s.length - 1), lo = Math.floor(i), hi = Math.ceil(i);
+  return s[lo] + (s[hi] - s[lo]) * (i - lo);
+}
+
+/** The room's reverberation time (s), from how the echo fades in the opening's silences. */
+export function estimateRt60(db, T, start, ref, afterS = 0.15) {
+  const n = ref.n, after = Math.floor(afterS / HOP_S), L = n + after;
+  const floor = new Float64Array(NB);
+  for (let b = 0; b < NB; b++) floor[b] = percentile(db.subarray(b * T, (b + 1) * T), 10);
+  const top = new Float64Array(NB);
+  let tmx = -Infinity;
+  for (let b = 0; b < NB; b++) { let m = -Infinity; for (let k = 0; k < n; k++) m = Math.max(m, ref.db[b * n + k]); top[b] = m; tmx = Math.max(tmx, m); }
+  const bands = [];
+  for (let b = 0; b < NB; b++) if (top[b] > tmx - 15) bands.push(b);
+  let num = 0, den = 0, count = 0, last = null, seg = [];
+  const close = () => {
+    if (seg.length < 4) return;
+    for (const b of bands) {
+      const ts = [], hs = [];
+      for (const [tau, k] of seg) { const h = db[b * T + start + k]; if (h > floor[b] + 6) { ts.push(tau * HOP_S); hs.push(h); } }
+      if (ts.length < 4) continue;
+      let mt = 0, mh = 0; for (let i = 0; i < ts.length; i++) { mt += ts[i]; mh += hs[i]; }
+      mt /= ts.length; mh /= ts.length;
+      for (let i = 0; i < ts.length; i++) { num += (ts[i] - mt) * (hs[i] - mh); den += (ts[i] - mt) ** 2; }
+      count += ts.length;
+    }
+  };
+  for (let k = 0; k < Math.min(L, T - start); k++) {
+    if (k < n && ref.loud[k]) { close(); seg = []; last = k; continue; }
+    if (last === null) continue;
+    const tau = k - last;
+    if (tau >= 4 && tau <= 24) seg.push([tau, k]);
+  }
+  close();
+  if (count < 20 || den === 0) return null;
+  const slope = num / den;
+  if (slope >= -1) return 2.5;
+  return Math.min(2.5, Math.max(0.1, -60 / slope));
+}
+
+/** Take the late echo out of a picture (Lebart et al. 2001): the echo now is what was heard
+ *  delayS ago, faded at the room's rate; it is subtracted, down to floorDb below. */
+export function dereverb(db, T, rt60, delayS = 0.03, floorDb = 15) {
+  const d = Math.round(delayS / HOP_S), fade = Math.exp(-2 * (3 * Math.log(10) / rt60) * delayS);
+  const g0 = Math.pow(10, -floorDb / 10), out = new Float32Array(NB * T);
+  for (let b = 0; b < NB; b++) for (let t = 0; t < T; t++) {
+    const P = Math.pow(10, db[b * T + t] / 10);
+    const R = t >= d ? Math.pow(10, db[b * T + t - d] / 10) * fade : 0;
+    const G = Math.max(Math.min(1, Math.max(0, 1 - R / (P + 1e-20))), g0);
+    out[b * T + t] = 10 * Math.log10(P * G + 1e-12);
+  }
+  return out;
+}
+
 // ---------- decoder ----------
 
 export class Decoder {
@@ -249,6 +348,7 @@ export class Decoder {
     this.tplOpen = template(mix(op.parts, Math.ceil((op.dur + 0.05) * sr), sr), sr);
     this.tplClose = template(mix(cl.parts, Math.ceil((cl.dur + 0.05) * sr), sr), sr);
     this.openDur = op.dur; this.closeDur = cl.dur;
+    this.openRef = openingReference(mix(op.parts, Math.ceil((op.dur + 0.05) * sr), sr), sr);
   }
 
   /** Where the best opening and closing calls are in a stretch of sound (for live listening). */
@@ -267,9 +367,10 @@ export class Decoder {
              closeEnd: c >= 0 ? (c + this.tplClose.n) * HOP_S : null };
   }
 
-  decode(x, sr, { biasRatio = 0.72, letterCost = 4.0, newCost = 0.5, onsetGain = 10.0, onsetFullDb = 8.0, repeatCost = 3.0 } = {}) {
+  decode(x, sr, { biasRatio = 0.72, letterCost = 4.0, newCost = 0.5, onsetGain = 10.0, onsetFullDb = 8.0, repeatCost = 3.0,
+                 echo = true, echoDelay = 0.03, echoFloor = 15 } = {}) {
     const { db, level, T } = features(x, sr);
-    const S = shape(db, T);
+    let S = shape(db, T);
     const fps = 1 / HOP_S, Tm = this.voice.timing;
     const mo = match(S, T, this.tplOpen);
     let o = 0; for (let i = 1; i < mo.length; i++) if (mo[i] > mo[o]) o = i;
@@ -280,6 +381,10 @@ export class Decoder {
     const info = { open: o * HOP_S, openScore: mo[o], close: c * HOP_S, closeScore: cs };
     if (c < 0 || c - openEnd < 10) return { text: "", info };
     const bias = biasRatio * mo[o];
+    // the opening as a tuning fork: how long this room's echo lasts; then the echo is taken out of
+    // the picture the letters are read from (onsets still come from the sound as heard)
+    info.rt60 = estimateRt60(db, T, o, this.openRef);
+    if (echo && info.rt60) S = shape(dereverb(db, T, info.rt60, echoDelay, echoFloor), T);
     const lo = openEnd, hi = c, Tn = hi - lo;
     const Sseg = new Float32Array(NB * Tn);
     for (let b = 0; b < NB; b++) Sseg.set(S.subarray(b * T + lo, b * T + hi), b * Tn);
