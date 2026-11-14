@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Letters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .group{display:grid;gap:8px}
+  .group h3{margin:0;font:600 .8rem var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px}
+  .card{display:grid;gap:4px;justify-items:start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 8px 6px;cursor:pointer;color:var(--ink);font:inherit;min-width:0}
+  .card:hover{border-color:var(--short)}
+  .card[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+  .card .top{display:flex;justify-content:space-between;align-items:baseline;width:100%}
+  .card b{font:600 1.5rem/1 var(--mono)}
+  .card.vowel b{color:var(--vowel)} .card.cons b{color:var(--short)} .card.sign b{color:var(--long)} .card.frame b{color:var(--frame);font-size:1rem}
+  .card .dur{font:400 .75rem var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+  .card canvas{width:100%;height:auto;display:block;border-radius:4px}
+  .card .src{font-size:.72rem;color:var(--muted);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+  .axis{font:400 .75rem var(--mono);color:var(--muted)}
+  .chars{display:flex;flex-wrap:wrap;gap:6px}
+  .ch{display:grid;justify-items:center;gap:1px;min-width:44px;padding:5px 6px 4px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font:inherit;color:var(--ink);cursor:pointer}
+  .ch b{font:600 1.15rem/1.1 var(--mono)}
+  .ch span{font:400 .68rem var(--mono);color:var(--muted);white-space:nowrap}
+  .ch.own{border-color:color-mix(in srgb,var(--ok) 55%,var(--line))}
+  .ch.folded{border-style:dashed;border-color:var(--long)}
+  .ch.folded span{color:var(--long)}
+  .ch.missing{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 10%,var(--surface));cursor:default}
+  .ch.missing span{color:var(--warn)}
+  .ch.space{min-width:22px;border-style:dotted;cursor:default}
+  .ch.double{box-shadow:inset 0 -3px 0 var(--warn)}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.82rem;color:var(--muted)}
+  .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;border:1px solid var(--line);vertical-align:-2px;margin-right:5px}
+  .legend .l-own{border-color:var(--ok)} .legend .l-folded{border:1px dashed var(--long)} .legend .l-missing{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 15%,transparent)} .legend .l-double{box-shadow:inset 0 -3px 0 var(--warn)}
+  .summary{margin:0;font-size:.95rem}
+  .summary b{font-family:var(--mono)}
+  .lang{display:grid;gap:6px}
+  .lang h3{margin:0;font:600 .8rem var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .scroll{overflow-x:auto;border-radius:8px;background:#fff;position:relative;cursor:pointer}
+  .scroll canvas{display:block}
+  .head{position:absolute;top:0;bottom:0;width:2px;background:var(--warn);display:none;pointer-events:none}
+  .playing .head{display:block}
+  .check-out{font:500 1rem var(--mono);margin:0;word-break:break-word}
+  .presets{display:flex;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="letters.html" aria-current="page">Letters</a><a href="signs.html">Signs</a></nav>
+  <header>
+    <h1>Every <em>bird</em> letter</h1>
+    <p class="lede">Each letter's shape, drawn as a sound picture (pitch going up, time going right, same scale for all) with its wave underneath. Tap a letter to hear it. Below: the characters people type that the voice cannot sing yet, and a box to compose your own sentence.</p>
+    <p class="note" id="status">Loading the bird voice…</p>
+  </header>
+
+  <section aria-label="Alphabet">
+    <h2>The alphabet</h2>
+    <p class="axis" id="axis"></p>
+    <div id="alphabet" class="group"></div>
+  </section>
+
+  <section class="panel" aria-label="Compose">
+    <h2>Compose</h2>
+    <label for="text">Your sentence</label>
+    <textarea id="text" spellcheck="false">l'été arrive, où es-tu ?</textarea>
+    <div class="presets">
+      <button class="secondary preset" type="button">l'été arrive, où es-tu ?</button>
+      <button class="secondary preset" type="button">la belle Wasser im carro, little one</button>
+      <button class="secondary preset" type="button">¿Dónde estás? Ça va, à bientôt…</button>
+      <button class="secondary preset" type="button">Grüße aus München – 15 % günstiger!</button>
+    </div>
+    <div class="chars" id="typed" aria-label="Your sentence, character by character"></div>
+    <div class="legend">
+      <span><i class="l-own"></i>its own bird sound</span>
+      <span><i class="l-folded"></i>sung as another letter (accent lost)</span>
+      <span><i class="l-missing"></i>missing: not sung at all</span>
+      <span><i class="l-double"></i>doubled letter (weak today: "arrive")</span>
+    </div>
+    <p class="summary" id="typed-sum"></p>
+    <div class="row">
+      <button class="primary" id="play" type="button" aria-pressed="false">Play</button>
+      <span class="stats" id="stats"></span>
+    </div>
+    <div class="scroll" id="wrap" title="Tap a letter in the score to hear it alone"><canvas id="pic"></canvas><div class="head" id="head"></div></div>
+    <p class="check-out" id="check">–</p>
+  </section>
+
+  <section aria-label="What is missing">
+    <h2>What people type</h2>
+    <p class="lede">Every accent and sign of French, Spanish, German and Portuguese, and the common signs of any keyboard: which ones the voice sings, which it folds into a plain letter, and which it drops.</p>
+    <p class="summary" id="cover-sum"></p>
+    <div id="cover" class="group"></div>
+  </section>
+</main>
+<script type="module">
+import { loadVoice, sing, features, normalize, readable, drawPicture, Decoder, DIGITS, NB, HOP_S } from "./js/birdsong.js?v=9";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+let V, dec, ctx = null, src = null, pressed = null, raf = 0, msg = null, pps = 140, gen = 0;
+
+// ---------- sound ----------
+async function play(samples, btn, onTick) {
+  const was = pressed === btn && btn;
+  stop();
+  if (was) return;
+  // at the voice's own rate: a converted buffer sounds metallic on high whistles
+  if (!ctx) { try { ctx = new AudioContext({ sampleRate: V.sr }); } catch (e) { ctx = new AudioContext(); } }
+  const my = ++gen;
+  await ctx.resume();
+  if (my !== gen) return;           // another tap came in while the sound was waking up
+  const buf = ctx.createBuffer(1, samples.length, V.sr);
+  buf.copyToChannel(samples, 0);
+  src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination);
+  const me = src, t0 = ctx.currentTime + 0.03;
+  src.onended = () => { if (src === me) stop(); };
+  src.start(t0);
+  if (btn) { pressed = btn; btn.setAttribute("aria-pressed", "true"); }
+  if (onTick) { const tick = () => { if (src !== me) return; onTick(ctx.currentTime - t0); raf = requestAnimationFrame(tick); }; tick(); }
+}
+function stop() {
+  gen++;
+  cancelAnimationFrame(raf);
+  if (src) { try { src.stop(); } catch (e) {} src = null; }
+  if (pressed) { pressed.setAttribute("aria-pressed", "false"); pressed = null; }
+  $("wrap").classList.remove("playing");
+  $("play").textContent = "Play";
+}
+const silence = s => new Float32Array(Math.round(s * V.sr));
+function join(...xs) {
+  const y = new Float32Array(xs.reduce((n, x) => n + x.length, 0));
+  let o = 0; for (const x of xs) { y.set(x, o); o += x.length; }
+  return y;
+}
+/** What one typed character sounds like, alone (a digit is the number call then its letter). */
+function soundOf(sung) {
+  const parts = [];
+  [...sung].forEach((c, i) => { if (i) parts.push(silence(V.voice.timing.gap_in_word)); parts.push(V.snd[c]); });
+  return join(silence(0.02), ...parts, silence(0.05));
+}
+
+// ---------- the letter's picture ----------
+const PPS = 300, CARD_S = 0.36;      // one time scale for every card: 0.36 s across
+function drawLetter(canvas, x, color) {
+  const W = Math.round(CARD_S * PPS), HS = 64, HW = 22, H = HS + HW, dpr = window.devicePixelRatio || 1;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  const c = canvas.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = css("--paper"); c.fillRect(0, 0, W, H);
+  const { db, T } = features(x, V.sr);
+  let mx = -Infinity; for (const v of db) mx = Math.max(mx, v);
+  const w = Math.min(W, T * HOP_S * PPS), cw = w / T, ch = HS / NB;
+  c.fillStyle = color;
+  for (let t = 0; t < T; t++) for (let b = 0; b < NB; b++) {
+    const v = (db[b * T + t] - (mx - 45)) / 45;
+    if (v <= 0) continue;
+    c.globalAlpha = Math.min(1, v * v * 1.1);
+    c.fillRect(t * cw, HS - (b + 1) * ch, cw + .6, ch + .6);
+  }
+  // the wave: its outline (peak per pixel), mirrored
+  c.globalAlpha = 0.85; c.fillStyle = css("--muted");
+  const n = x.length, per = n / (x.length / V.sr * PPS), mid = HS + HW / 2;
+  let peak = 1e-9; for (const v of x) peak = Math.max(peak, Math.abs(v));
+  for (let px = 0; px < Math.min(W, n / per); px++) {
+    let m = 0; for (let i = Math.floor(px * per); i < Math.min(n, (px + 1) * per); i++) m = Math.max(m, Math.abs(x[i]));
+    const h = Math.max(.5, m / peak * (HW / 2 - 2));
+    c.fillRect(px, mid - h, 1, h * 2);
+  }
+  c.globalAlpha = 1;
+}
+
+// ---------- the alphabet ----------
+function speciesOf() {
+  const by = {};
+  for (const cr of Object.values(V.voice.credits || {})) for (const l of cr.letters || []) by[l] = cr.species;
+  return by;
+}
+function card(label, x, kind, about, dur) {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "card " + kind; b.setAttribute("aria-pressed", "false");
+  b.innerHTML = `<span class="top"><b></b><span class="dur"></span></span><canvas></canvas><span class="src"></span>`;
+  b.querySelector("b").textContent = label;
+  b.querySelector(".dur").textContent = `${Math.round(dur * 1000)} ms`;
+  b.querySelector(".src").textContent = about || "";
+  b.title = `${label} · ${about || ""}`;
+  b.setAttribute("aria-label", `Play ${label}${about ? ", " + about : ""}`);
+  drawLetter(b.querySelector("canvas"), x, css(kind === "vowel" ? "--vowel" : kind === "sign" ? "--long" : kind === "frame" ? "--frame" : "--short"));
+  b.addEventListener("click", () => play(join(silence(0.02), x, silence(0.05)), b));
+  return b;
+}
+function buildAlphabet() {
+  const L = V.voice.letters, sp = speciesOf(), root = $("alphabet");
+  const SIGN_NAME = { ".": "period", "?": "question", "!": "exclamation", ",": "comma", "'": "apostrophe", "-": "hyphen", ":": "colon", "@": "at", "#": "number call" };
+  const groups = [
+    ["Vowels", Object.keys(L).filter(c => L[c].vowel && !L[c].sign).sort(), "vowel"],
+    ["Consonants", Object.keys(L).filter(c => !L[c].vowel && !L[c].sign).sort(), "cons"],
+    ["Signs", Object.keys(L).filter(c => L[c].sign), "sign"],
+  ];
+  for (const [name, list, kind] of groups) {
+    const g = document.createElement("div"); g.className = "group";
+    g.innerHTML = `<h3>${name} · ${list.length}</h3><div class="cards"></div>`;
+    for (const c of list) {
+      const about = L[c].sign ? `${SIGN_NAME[c]} · ${(L[c].source || "").replace(/^.*\(|\)$/g, "")}` : sp[c] || "";
+      g.querySelector(".cards").appendChild(card(c, V.snd[c], kind, about, V.snd[c].length / V.sr));
+    }
+    root.appendChild(g);
+  }
+  // digits: the number call then a letter, as in Braille
+  const g = document.createElement("div"); g.className = "group";
+  g.innerHTML = `<h3>Numbers · sung as # then a letter (1 = a … 9 = i, 0 = j)</h3><div class="cards"></div>`;
+  for (let d = 0; d <= 9; d++) {
+    const x = soundOf("#" + DIGITS[d]);
+    g.querySelector(".cards").appendChild(card(String(d), x, "sign", `# + ${DIGITS[d]}`, x.length / V.sr - 0.07));
+  }
+  root.appendChild(g);
+  const f = document.createElement("div"); f.className = "group";
+  f.innerHTML = `<h3>Opening and closing · chiffchaff</h3><div class="cards"></div>`;
+  for (const k of Object.keys(V.voice.frames)) f.querySelector(".cards").appendChild(card(k, V.snd[k], "frame", "Common Chiffchaff", V.snd[k].length / V.sr));
+  root.appendChild(f);
+  $("axis").textContent = `Each picture: 1–9 kHz from bottom to top, ${CARD_S * 1000} ms across.`;
+}
+
+// ---------- what a typed character becomes ----------
+/** own: its own sound · folded: sung as other letters (accent lost) · missing: dropped. */
+function classify(ch) {
+  if (/\s/.test(ch)) return { kind: "space", sung: "" };
+  const n = normalize(ch);
+  const ok = n.length && [...n].every(c => V.voice.letters[c]);
+  if (!ok) return { kind: "missing", sung: "" };
+  if (n === ch.toLowerCase()) return { kind: "own", sung: n };
+  if (/[0-9]/.test(ch)) return { kind: "own", sung: n, show: "#" + n.slice(1) };
+  return { kind: "folded", sung: n };
+}
+function chip(ch, info, doubled) {
+  const el = document.createElement(info.kind === "missing" || info.kind === "space" ? "span" : "button");
+  el.className = `ch ${info.kind}${doubled ? " double" : ""}`;
+  if (el.tagName === "BUTTON") el.type = "button";
+  const label = info.kind === "space" ? "" : info.kind === "missing" ? "none" : info.kind === "folded" ? "→ " + info.sung : info.show || "";
+  el.innerHTML = `<b></b><span></span>`;
+  el.querySelector("b").textContent = info.kind === "space" ? "␣" : ch;
+  el.querySelector("span").textContent = label;
+  el.title = info.kind === "missing" ? `${ch}: not sung, it disappears from the message`
+    : info.kind === "folded" ? `${ch}: sung as "${info.sung}", the accent is lost` : info.kind === "own" ? `${ch}: its own bird sound` : "space";
+  if (el.tagName === "BUTTON") el.addEventListener("click", () => play(soundOf(info.sung), el));
+  return el;
+}
+
+const COVER = [
+  ["French", "àâæçéèêëîïôœùûüÿ"],
+  ["Spanish", "áéíñóúü¿¡"],
+  ["German", "äöüß"],
+  ["Portuguese", "ãõâêôáàçéíóú"],
+  ["Signs on every keyboard", ".,?!'-:@#;\"()/&%€$+=*_<>[]"],
+  ["Signs phones type for you", "’‘“”«»–—…"],
+  ["Digits", "0123456789"],
+];
+function buildCover() {
+  const root = $("cover"), seen = new Map();
+  for (const [name, chars] of COVER) {
+    const g = document.createElement("div"); g.className = "lang";
+    g.innerHTML = `<h3></h3><div class="chars"></div>`;
+    g.querySelector("h3").textContent = name;
+    for (const ch of chars) {
+      const info = classify(ch); seen.set(ch, info.kind);
+      g.querySelector(".chars").appendChild(chip(ch, info));
+    }
+    root.appendChild(g);
+  }
+  const count = k => [...seen.values()].filter(v => v === k).length;
+  $("cover-sum").innerHTML = `Of <b>${seen.size}</b> characters: <b>${count("own")}</b> have their own sound, <b>${count("folded")}</b> lose their accent, <b>${count("missing")}</b> are missing.`;
+}
+
+// ---------- compose ----------
+function compose() {
+  stop();
+  const text = $("text").value, box = $("typed");
+  box.textContent = "";
+  let own = 0, folded = 0, missing = new Set(), doubles = [];
+  const chars = [...text];
+  chars.forEach((ch, i) => {
+    const info = classify(ch);
+    const doubled = info.kind !== "space" && info.kind !== "missing" && i > 0 && normalize(chars[i - 1]) === normalize(ch);
+    if (doubled) doubles.push(ch + ch);
+    if (info.kind === "own") own++; else if (info.kind === "folded") folded++; else if (info.kind === "missing") missing.add(ch);
+    box.appendChild(chip(ch, info, doubled));
+  });
+  const parts = [];
+  if (folded) parts.push(`<b>${folded}</b> lose their accent`);
+  if (missing.size) parts.push(`missing: <b>${[...missing].join(" ")}</b>`);
+  if (doubles.length) parts.push(`doubled: <b>${[...new Set(doubles)].join(" ")}</b>`);
+  $("typed-sum").innerHTML = parts.length ? parts.join(" · ") : "Every character has its own bird sound.";
+
+  msg = sing(text, V, 1);
+  const letters = msg.marks.filter(m => m.letter).length;
+  $("stats").textContent = `${letters} letters · ${msg.dur.toFixed(1)} s`;
+  ({ pps } = drawPicture($("pic"), msg.samples, V.sr, msg.marks));
+  setTimeout(check, 30);
+}
+function check() {
+  const r = dec.decode(msg.samples, V.sr), ok = r.text === msg.sung;
+  $("check").textContent = `Read back by the decoder: ${ok ? "✓" : "✗"} ${readable(r.text) || "(nothing)"}`;
+  $("check").style.color = ok ? "var(--ok)" : "var(--warn)";
+}
+$("play").addEventListener("click", () => {
+  if (src && pressed === $("play")) { stop(); return; }
+  $("wrap").classList.add("playing");
+  play(msg.samples, $("play"), t => {
+    const x = t * pps, w = $("wrap");
+    $("head").style.left = x + "px";
+    if (x > w.scrollLeft + w.clientWidth * 0.8 || x < w.scrollLeft) w.scrollLeft = x - w.clientWidth * 0.3;
+  }).then(() => { if (pressed === $("play")) $("play").textContent = "Stop"; });
+});
+$("pic").addEventListener("click", e => {
+  const t = e.offsetX / pps, m = msg.marks.find(m => m.letter && t >= m.t0 - 0.02 && t <= m.t1 + 0.02);
+  if (m) play(soundOf(m.letter), null);
+});
+let typing = 0;
+$("text").addEventListener("input", () => { clearTimeout(typing); typing = setTimeout(compose, 150); });
+document.querySelectorAll(".preset").forEach(b => b.addEventListener("click", () => { $("text").value = b.textContent; compose(); }));
+
+try {
+  V = await loadVoice();
+  dec = new Decoder(V);
+  $("status").textContent = "";
+} catch (e) { $("status").textContent = "Could not load the bird voice."; throw e; }
+buildAlphabet();
+buildCover();
+compose();
+</script>
+</body>
+</html>
