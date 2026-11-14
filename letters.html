@@ -94,14 +94,14 @@
   </section>
 
   <section aria-label="What is missing">
-    <h2>What people type</h2>
-    <p class="lede">The accents and letters of European languages, north and south, and the common signs of any keyboard: which the voice sings, which become a letter + accent call, which lose their mark because it has no call yet, and which it drops.</p>
+    <h2>Every letter and its variants</h2>
+    <p class="lede">Each letter with all its variants: every accent mark used in Europe, north and south, and the letters of their own that look like it (ø, ł, ð, þ, æ, ß). Tap one to hear what the voice sings for it. Then the signs and digits.</p>
     <p class="summary" id="cover-sum"></p>
     <div id="cover" class="group"></div>
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing, features, normalize, readable, drawPicture, Decoder, DIGITS, NB, HOP_S } from "./js/birdsong.js?v=10";
+import { loadVoice, sing, features, normalize, readable, drawPicture, Decoder, DIGITS, NB, HOP_S } from "./js/birdsong.js?v=11";
 const $ = id => document.getElementById(id);
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
@@ -205,6 +205,7 @@ function buildAlphabet() {
     ["Accent calls · sung right after the letter · candidate 1 as a placeholder until chosen by ear", Object.keys(L).filter(c => L[c].accent), "accent"],
   ];
   for (const [name, list, kind] of groups) {
+    if (!list.length) continue;
     const g = document.createElement("div"); g.className = "group";
     g.innerHTML = `<h3>${name} · ${list.length}</h3><div class="cards"></div>`;
     for (const c of list) {
@@ -223,22 +224,6 @@ function buildAlphabet() {
     g.querySelector(".cards").appendChild(card(String(d), x, "sign", `# + ${DIGITS[d]}`, x.length / V.sr - 0.07));
   }
   root.appendChild(g);
-  // every accent on every letter it can sit on: the letters Unicode writes as one character
-  const acc = Object.keys(L).filter(c => L[c].accent);
-  const ga = document.createElement("div"); ga.className = "group";
-  ga.innerHTML = `<h3>Accents on every letter · tap to hear the letter then its call</h3>`;
-  for (const a of acc) {
-    const row = document.createElement("div"); row.className = "lang";
-    row.innerHTML = `<h3></h3><div class="chars"></div>`;
-    row.querySelector("h3").textContent = `${L[a].name} ◌${V.voice.accents[a]}`;
-    row.querySelector("h3").style.textTransform = "none";
-    for (const base of "abcdefghijklmnopqrstuvwxyz") {
-      const ch = (base + V.voice.accents[a]).normalize("NFC");
-      if ([...ch].length === 1) row.querySelector(".chars").appendChild(chip(ch, classify(ch)));
-    }
-    ga.appendChild(row);
-  }
-  root.appendChild(ga);
   const f = document.createElement("div"); f.className = "group";
   f.innerHTML = `<h3>Opening and closing · chiffchaff</h3><div class="cards"></div>`;
   for (const k of Object.keys(V.voice.frames)) f.querySelector(".cards").appendChild(card(k, V.snd[k], "frame", "Common Chiffchaff", V.snd[k].length / V.sr));
@@ -250,7 +235,7 @@ function buildAlphabet() {
 /** own: its own sound · folded: sung as other letters (accent lost) · missing: dropped. */
 function classify(ch) {
   if (/\s/.test(ch)) return { kind: "space", sung: "" };
-  const n = normalize(ch);
+  const n = normalize(ch).replace(/[´`^¨~¸˚ˇ¯˛˙˝˘]/g, c => V.voice.letters[c] ? c : "");
   const ok = n.length && [...n].every(c => V.voice.letters[c]);
   if (!ok) return { kind: "missing", sung: "" };
   if (n === ch.toLowerCase()) return { kind: "own", sung: n };
@@ -275,31 +260,24 @@ function chip(ch, info, doubled) {
   return el;
 }
 
-const COVER = [
-  ["French", "àâæçéèêëîïôœùûüÿ"],
-  ["Spanish", "áéíñóúü¿¡"],
-  ["German", "äöüß"],
-  ["Portuguese", "ãõâêôáàçéíóú"],
-  ["Italian", "àèéìíîòóùú"],
-  ["Danish and Norwegian", "æøå"],
-  ["Swedish", "åäö"],
-  ["Finnish", "äöå"],
-  ["Icelandic", "áéíóúýþðæö"],
-  ["Estonian", "äöõüšž"],
-  ["Latvian", "āčēģīķļņšūž"],
-  ["Lithuanian", "ąčęėįšųūž"],
-  ["Polish", "ąćęłńóśźż"],
-  ["Czech", "áčďéěíňóřšťúůýž"],
+// every letter with all its variants: the letter with each European mark (one Unicode character),
+// and the letters of their own that look like it
+const MARKS13 = "\u0301\u0300\u0302\u0308\u0303\u0327\u030a\u030c\u0304\u0328\u0307\u030b\u0306";
+const OWN = { a: "æ", d: "đð", i: "ı", l: "ł", o: "øœ", s: "ß", t: "þ" };
+const COVER = [..."abcdefghijklmnopqrstuvwxyz"].map(b => {
+  const v = [...MARKS13].map(m => (b + m).normalize("NFC")).filter(c => [...c].length === 1);
+  return [b, b + v.join("") + (OWN[b] || "")];
+}).concat([
   ["Signs on every keyboard", ".,?!'-:@#;\"()/&%€$+=*_<>[]"],
-  ["Signs phones type for you", "’‘“”«»–—…"],
+  ["Signs phones type for you", "’‘“”«»–—…¿¡"],
   ["Digits", "0123456789"],
-];
+]);
 function buildCover() {
   const root = $("cover"), seen = new Map();
   for (const [name, chars] of COVER) {
     const g = document.createElement("div"); g.className = "lang";
     g.innerHTML = `<h3></h3><div class="chars"></div>`;
-    g.querySelector("h3").textContent = name;
+    g.querySelector("h3").textContent = name.length === 1 ? name.toUpperCase() : name;
     for (const ch of chars) {
       const info = classify(ch); seen.set(ch, info.kind);
       g.querySelector(".chars").appendChild(chip(ch, info));

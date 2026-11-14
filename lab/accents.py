@@ -30,7 +30,9 @@ from sketch import CONSONANTS, SR
 
 OUT = os.path.join(ROOT, "birds", "accents")
 # the strictest gestures pick first
-NAMES = {"^": "circumflex", "~": "tilde", "´": "acute", "`": "grave", "¸": "cedilla", "¨": "diaeresis"}
+NAMES = {"^": "circumflex", "ˇ": "caron", "~": "tilde", "´": "acute", "`": "grave", "˝": "double-acute", "˘": "breve",
+         "¯": "macron", "˚": "ring", "¸": "cedilla", "˛": "ogonek", "¨": "diaeresis", "˙": "dot", "⁄": "stroke"}
+PER = 3
 TICK_GAP = 0.03   # between the diaeresis' two ticks
 
 
@@ -52,19 +54,34 @@ def turns(s):
     return n
 
 
+def valley(s):
+    """How far the middle dips below both ends (octaves)."""
+    k = max(1, len(s) // 6)
+    return float(min(np.mean(s[:k]), np.mean(s[-k:])) - np.min(s[len(s) // 3: 2 * len(s) // 3]))
+
+
 def arch(s):
     """How far the middle rises above both ends (octaves)."""
     k = max(1, len(s) // 6)
     return float(np.max(s[len(s) // 3: 2 * len(s) // 3]) - max(np.mean(s[:k]), np.mean(s[-k:])))
 
 
+MID = lambda c: 2000 < c["pitch"] < 5600    # where the letters sing: no high beeps (Gab: "robotic")
 WANT = {
-    "´": lambda c: c["slope"] > 0.18 and c["dur"] < 0.12,
-    "`": lambda c: c["slope"] < -0.25 and c["dur"] < 0.10,
-    "^": lambda c: c["arch"] > 0.15 and c["dur"] < 0.12,
-    "¨": lambda c: c["dur"] < 0.06 and abs(c["slope"]) < 0.3,   # dots: plain ticks
-    "~": lambda c: c["turns"] >= 2 and c["dur"] < 0.14,
-    "¸": lambda c: c["pitch"] < 3200 and c["dur"] < 0.10,
+    "´": lambda c: c["slope"] > 0.18 and c["dur"] < 0.12 and MID(c),
+    "`": lambda c: c["slope"] < -0.25 and c["dur"] < 0.10 and MID(c),
+    "^": lambda c: c["arch"] > 0.12 and c["dur"] < 0.12 and MID(c),                # up then down
+    "ˇ": lambda c: c["valley"] > 0.12 and c["dur"] < 0.12 and MID(c),              # down then up
+    "˝": lambda c: c["slope"] > 0.12 and c["dur"] < 0.06 and MID(c),               # two rising ticks
+    "˘": lambda c: c["valley"] > 0.06 and c["dur"] < 0.08 and MID(c),              # a small dip
+    "¯": lambda c: abs(c["slope"]) < 0.08 and c["turns"] == 0 and 0.05 < c["dur"] < 0.14 and MID(c),  # level
+    "˚": lambda c: abs(c["slope"]) < 0.2 and 0.05 < c["dur"] < 0.12 and MID(c),   # a round, full note
+    "¨": lambda c: c["dur"] < 0.06 and abs(c["slope"]) < 0.3 and MID(c),          # two plain ticks
+    "˙": lambda c: c["dur"] < 0.05 and MID(c),                                     # one tiny tick
+    "~": lambda c: c["turns"] >= 2 and c["dur"] < 0.14 and MID(c),                 # a waver
+    "¸": lambda c: c["pitch"] < 3200 and c["dur"] < 0.10,                          # a low note
+    "˛": lambda c: c["pitch"] < 3600 and c["slope"] > 0.05 and c["dur"] < 0.10,    # a low hook, rising
+    "⁄": lambda c: c["slope"] < -0.15 and c["dur"] < 0.08 and MID(c),              # a quick stroke down
 }
 
 
@@ -93,7 +110,7 @@ def main():
         t = template(y, SR)
         P = shape(features(y, SR)[0])
         sim = max(max(match(P, tb).max(), match(pb, t).max()) for tb, pb in zip(tf, pf))
-        info.append(dict(name=name, spec=spec, y=y, slope=sl, pitch=p, dur=d, turns=turns(s), arch=arch(s),
+        info.append(dict(name=name, spec=spec, y=y, slope=sl, pitch=p, dur=d, turns=turns(s), arch=arch(s), valley=valley(s),
                          sim=float(sim), t=t, P=P))
     os.makedirs(OUT, exist_ok=True)
     out, taken = {}, []
@@ -105,20 +122,20 @@ def main():
                 s = max(s, match(c["P"], t["t"]).max(), match(t["P"], c["t"]).max())
             return s
         ok.sort(key=worst)
-        picks = ok[:3]
+        picks = ok[:PER]
         like = [worst(c) for c in picks]
         taken += picks
         out[acc] = []
         for k, (c, lk) in enumerate(zip(picks, like), 1):
             y = c["y"]
-            if acc == "¨":
+            if acc in ("¨", "˝"):   # two dots, two strokes
                 y = np.concatenate([y, np.zeros(int(TICK_GAP * SR)), y])
             fn = f"{NAMES[acc]}-{k}.wav"
             sf.write(os.path.join(OUT, fn), y, SR, subtype="PCM_16")
             out[acc].append(dict(file=fn, source=c["name"], spec=list(c["spec"]), slope_oct=round(c["slope"], 2),
                                  pitch=round(c["pitch"]), dur=round(len(y) / SR, 3), turns=c["turns"],
                                  arch_oct=round(c["arch"], 2), likeness_to_nearest=round(float(lk), 2)))
-        print(acc, f"{len(ok)} fit |", " | ".join(f"{o['source']} slope {o['slope_oct']:+.2f} {o['pitch']} Hz "
+        print(acc, NAMES[acc], f"{len(ok)} fit |", " | ".join(f"{o['source']} slope {o['slope_oct']:+.2f} {o['pitch']} Hz "
                                                  f"{o['dur'] * 1000:.0f} ms like {o['likeness_to_nearest']:.2f}" for o in out[acc]))
     json.dump(dict(names=NAMES, candidates=out), open(os.path.join(OUT, "candidates.json"), "w"), ensure_ascii=False, indent=1)
 

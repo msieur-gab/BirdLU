@@ -194,60 +194,6 @@
    "sign": true,
    "dur": 0.127,
    "source": "XC533763 45.13 (Common Blackbird)"
-  },
-  "´": {
-   "file": "accent-acute.wav",
-   "vowel": false,
-   "accent": true,
-   "name": "acute",
-   "dur": 0.105,
-   "source": "XC446151 3.05 (Common Blackbird)",
-   "candidate": 1
-  },
-  "`": {
-   "file": "accent-grave.wav",
-   "vowel": false,
-   "accent": true,
-   "name": "grave",
-   "dur": 0.066,
-   "source": "XC541754 48.43 (Song Thrush)",
-   "candidate": 1
-  },
-  "^": {
-   "file": "accent-circumflex.wav",
-   "vowel": false,
-   "accent": true,
-   "name": "circumflex",
-   "dur": 0.096,
-   "source": "XC541754 52.76 (Song Thrush)",
-   "candidate": 1
-  },
-  "¨": {
-   "file": "accent-diaeresis.wav",
-   "vowel": false,
-   "accent": true,
-   "name": "diaeresis",
-   "dur": 0.149,
-   "source": "XC461185 15.94 (Eurasian Wren)",
-   "candidate": 1
-  },
-  "~": {
-   "file": "accent-tilde.wav",
-   "vowel": false,
-   "accent": true,
-   "name": "tilde",
-   "dur": 0.117,
-   "source": "XC541754 28.81 (Song Thrush)",
-   "candidate": 1
-  },
-  "¸": {
-   "file": "accent-cedilla.wav",
-   "vowel": false,
-   "accent": true,
-   "name": "cedilla",
-   "dur": 0.066,
-   "source": "XC533763 30.31 (Common Blackbird)",
-   "candidate": 1
   }
  },
  "frames": {
@@ -365,10 +311,7 @@
     "l",
     ",",
     "-",
-    "@",
-    "`",
-    "^",
-    "~"
+    "@"
    ]
   },
   "XC778131": {
@@ -406,8 +349,7 @@
    "licence": "CC BY-SA 4.0",
    "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
    "letters": [
-    "h",
-    "¨"
+    "h"
    ]
   },
   "XC857749": {
@@ -430,8 +372,7 @@
     "b",
     "z",
     ".",
-    "#",
-    "¸"
+    "#"
    ]
   },
   "XC446151": {
@@ -442,8 +383,7 @@
    "letters": [
     "w",
     "'",
-    ":",
-    "´"
+    ":"
    ]
   },
   "XC880931": {
@@ -484,6 +424,13 @@
   "^": "̂",
   "¨": "̈",
   "~": "̃",
-  "¸": "̧"
+  "¸": "̧",
+  "˚": "̊",
+  "ˇ": "̌",
+  "¯": "̄",
+  "˛": "̨",
+  "˙": "̇",
+  "˝": "̋",
+  "˘": "̆"
  }
 }

@@ -36,14 +36,15 @@ export function parseWav(ab) {
 
 // Accents, one rule for every letter (Gab, 14 Nov): an accented letter is sung as its plain letter, then
 // a short accent call (é = e + ´, ñ = n + ~, ç = c + ¸). If the call is lost, the letter is still there.
-export const ACCENTS = { "\u0301": "´", "\u0300": "`", "\u0302": "^", "\u0308": "¨", "\u0303": "~", "\u0327": "¸" };
+export const ACCENTS = { "\u0301": "´", "\u0300": "`", "\u0302": "^", "\u0308": "¨", "\u0303": "~", "\u0327": "¸",
+  "\u030a": "˚", "\u030c": "ˇ", "\u0304": "¯", "\u0328": "˛", "\u0307": "˙", "\u030b": "˝", "\u0306": "˘" };
 const MARKS = Object.fromEntries(Object.entries(ACCENTS).map(([k, v]) => [v, k]));
 
 /** Decoded text as people write it: "#c" back to "3", "e´" back to "é". */
 export const readable = text => [...text.replace(/#([a-j])/g, (_, c) => String(DIGITS.indexOf(c)))]
   .map(c => MARKS[c] || c).join("").normalize("NFC");
 
-export async function loadVoice(base = "birds/voice/", v = "6") {
+export async function loadVoice(base = "birds/voice/", v = "7") {
   const voice = await (await fetch(`${base}voice.json?v=${v}`)).json();
   const sr = voice.sample_rate;
   const snd = {};

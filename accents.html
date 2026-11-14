@@ -27,7 +27,7 @@
   <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="sketch.html">Sketch</a><a href="letters.html">Letters</a><a href="accents.html" aria-current="page">Accents</a></nav>
   <header>
     <h1>A <em>bird</em> for every accent</h1>
-    <p class="lede">An accented letter is sung as its plain letter, then a short accent call: à = a + grave, ñ = n + tilde. If the call is lost, the letter is still there. Each call draws its mark: rising for acute, falling for grave, up and down for circumflex, two ticks for the dots, a waver for the tilde, a low note for the cedilla. Three real bird notes per accent: listen alone and in a word, and pick the one that sounds right. The six should also sound clearly different from each other.</p>
+    <p class="lede">An accented letter is sung as its plain letter, then a short accent call: à = a + grave, ñ = n + tilde. If the call is lost, the letter is still there. Every mark used in Europe, each on its own. Each call draws its mark (rising for acute, falling for grave, up and down for circumflex…), from real bird notes in the pitch range of the letters. Listen to the word without a call, then each candidate alone and in the word; pick one, or "none". The calls should also sound clearly different from each other.</p>
   </header>
   <section class="signs" id="signs" aria-label="Accents"></section>
   <section class="panel" aria-label="Your choice">
@@ -36,19 +36,24 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing } from "./js/birdsong.js?v=10";
+import { loadVoice, sing } from "./js/birdsong.js?v=11";
 const $ = id => document.getElementById(id);
 const ABOUT = { "´": "acute: a short rising call", "`": "grave: a short falling call", "^": "circumflex: up then down",
-  "¨": "diaeresis: two tiny ticks", "~": "tilde: a wavering call", "¸": "cedilla: a low short note" };
-const SHOW = { "´": "á", "`": "à", "^": "ê", "¨": "ü", "~": "ñ", "¸": "ç" };
-// each word as written; it is sung with the accent call right after its letter
-const PHRASE = { "´": "está", "`": "voilà", "^": "fête", "¨": "über", "~": "niño", "¸": "ça va" };
+  "ˇ": "caron: down then up", "~": "tilde: a wavering call", "˝": "double acute: two rising ticks", "˘": "breve: a small dip",
+  "¯": "macron: a level note", "˚": "ring: a round, full note", "¸": "cedilla: a low short note",
+  "˛": "ogonek: a low hook, rising", "¨": "diaeresis: two tiny ticks", "˙": "dot: one tiny tick", "⁄": "stroke: a quick stroke down" };
+const SHOW = { "´": "á", "`": "à", "^": "ê", "ˇ": "č", "~": "ñ", "˝": "ő", "˘": "ă", "¯": "ā", "˚": "å", "¸": "ç", "˛": "ę",
+  "¨": "ü", "˙": "ż", "⁄": "ø" };
+// each word as written; it is sung with the accent call right after its letter ("⁄" stands for the stroke of ø)
+const PHRASE = { "´": "está", "`": "voilà", "^": "fête", "ˇ": "čaj", "~": "niño", "˝": "erő", "˘": "mă", "¯": "māte",
+  "˚": "på", "¸": "ça va", "˛": "ręka", "¨": "über", "˙": "żaba", "⁄": "bro⁄d" };
+const WRITTEN = { "⁄": "brød" };
 const V = await loadVoice();
-const C = await (await fetch("birds/accents/candidates.json?v=1")).json();
+const C = await (await fetch("birds/accents/candidates.json?v=2")).json();
 const snd = {};
 await Promise.all(Object.values(C.candidates).flat().map(async c => {
-  const { parseWav } = await import("./js/birdsong.js?v=10");
-  snd[c.file] = parseWav(await (await fetch(`birds/accents/${c.file}?v=1`)).arrayBuffer()).x;
+  const { parseWav } = await import("./js/birdsong.js?v=11");
+  snd[c.file] = parseWav(await (await fetch(`birds/accents/${c.file}?v=2`)).arrayBuffer()).x;
 }));
 const chosen = {};
 let ctx = null, src = null, pressed = null;
@@ -75,14 +80,24 @@ function phrase(sign, file) {
   return sing(PHRASE[sign], { voice, snd: s, sr: V.sr }, 1).samples;
 }
 function showChoice() {
-  $("choice").textContent = Object.keys(C.candidates).map(s => `${s} ${chosen[s] || "–"}`).join(" · ");
+  $("choice").textContent = Object.keys(C.candidates).map(s => `${SHOW[s]} ${chosen[s] || "–"}`).join(" · ");
 }
 for (const [sign, list] of Object.entries(C.candidates)) {
   const el = document.createElement("article");
   el.className = "sign";
   el.innerHTML = `<div class="head"><b></b><span class="about"></span></div><div class="cands"></div>`;
   el.querySelector("b").textContent = SHOW[sign];
-  el.querySelector(".about").textContent = `${ABOUT[sign]} · word: “${PHRASE[sign]}”`;
+  el.querySelector(".about").textContent = `${ABOUT[sign]} · word: “${WRITTEN[sign] || PHRASE[sign]}”`;
+  // the word with no call at all, to compare
+  const plain = document.createElement("div");
+  plain.className = "cand";
+  plain.innerHTML = `<label><input type="radio"> none</label><button class="secondary" type="button">Word without a call</button>
+    <span class="src">${list.length ? "" : "no bird note with this gesture in our library yet"}</span>`;
+  plain.querySelector("input").name = "s" + C.names[sign];
+  plain.querySelector("input").addEventListener("change", () => { chosen[sign] = "none"; showChoice(); });
+  const pb = plain.querySelector("button");
+  pb.addEventListener("click", () => play(sing(PHRASE[sign], V, 1).samples, pb));
+  el.querySelector(".cands").appendChild(plain);
   list.forEach((c, k) => {
     const row = document.createElement("div");
     row.className = "cand";

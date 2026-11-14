@@ -13,7 +13,9 @@ import json, os, shutil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VOICE = os.path.join(ROOT, "birds", "voice")
-CHOICE = {"´": 1, "`": 1, "^": 1, "¨": 1, "~": 1, "¸": 1}   # PROVISIONAL: Gab chooses by ear
+# none chosen yet: candidate 1 of each, put in as a placeholder, sounded "extremely robotic" (Gab, 14 Nov),
+# so the voice carries no call until Gab chooses by ear; an accented letter is sung as its plain letter
+CHOICE = {}
 DROP = ["é", "è"]                                          # now e + acute, e + grave
 
 
@@ -25,6 +27,14 @@ def main():
     for ch in DROP:
         d = v["letters"].pop(ch, None)
         if d and os.path.exists(os.path.join(VOICE, d["file"])):
+            os.remove(os.path.join(VOICE, d["file"]))
+        for cr in v["credits"].values():
+            if ch in cr["letters"]:
+                cr["letters"].remove(ch)
+    v["credits"] = {k: cr for k, cr in v["credits"].items() if cr["letters"]}
+    for ch in [c for c, d in v["letters"].items() if d.get("accent")]:   # start clean
+        d = v["letters"].pop(ch)
+        if os.path.exists(os.path.join(VOICE, d["file"])):
             os.remove(os.path.join(VOICE, d["file"]))
         for cr in v["credits"].values():
             if ch in cr["letters"]:
@@ -45,7 +55,8 @@ def main():
                 cr["letters"].append(acc)
         print(acc, fn, cand["source"], "credited" if rid in meta else "NOT CREDITED")
     # the accent marks as they combine with a letter (Unicode), for the sender and the decoder
-    v["accents"] = {"´": "́", "`": "̀", "^": "̂", "¨": "̈", "~": "̃", "¸": "̧"}
+    v["accents"] = {"´": "\u0301", "`": "\u0300", "^": "\u0302", "¨": "\u0308", "~": "\u0303", "¸": "\u0327",
+                    "˚": "\u030a", "ˇ": "\u030c", "¯": "\u0304", "˛": "\u0328", "˙": "\u0307", "˝": "\u030b", "˘": "\u0306"}
     json.dump(v, open(vp, "w"), ensure_ascii=False, indent=1)
 
 

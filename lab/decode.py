@@ -47,7 +47,8 @@ DIGITS = "jabcdefghi"   # a digit is sung as the number call "#" then a letter (
 
 # Accents, one rule for every letter (Gab, 14 Nov): an accented letter is sung as its plain letter, then
 # a short accent call (é = e + ´, ñ = n + ~, ç = c + ¸). If the call is lost, the letter is still there.
-ACCENTS = {"\u0301": "´", "\u0300": "`", "\u0302": "^", "\u0308": "¨", "\u0303": "~", "\u0327": "¸"}
+ACCENTS = {"\u0301": "´", "\u0300": "`", "\u0302": "^", "\u0308": "¨", "\u0303": "~", "\u0327": "¸",
+           "\u030a": "˚", "\u030c": "ˇ", "\u0304": "¯", "\u0328": "˛", "\u0307": "˙", "\u030b": "˝", "\u0306": "˘"}
 MARKS = {v: k for k, v in ACCENTS.items()}
 
 
