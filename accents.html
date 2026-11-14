@@ -36,19 +36,18 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing } from "./js/birdsong.js?v=9";
+import { loadVoice, sing } from "./js/birdsong.js?v=10";
 const $ = id => document.getElementById(id);
 const ABOUT = { "´": "acute: a short rising call", "`": "grave: a short falling call", "^": "circumflex: up then down",
   "¨": "diaeresis: two tiny ticks", "~": "tilde: a wavering call", "¸": "cedilla: a low short note" };
-// each word as written, and as sung: the accent call right after its letter
 const SHOW = { "´": "á", "`": "à", "^": "ê", "¨": "ü", "~": "ñ", "¸": "ç" };
-const PHRASE = { "´": ["está", "esta´"], "`": ["voilà", "voila`"], "^": ["fête", "fe^te"], "¨": ["über", "u¨ber"],
-  "~": ["niño", "nin~o"], "¸": ["ça va", "c¸a va"] };
+// each word as written; it is sung with the accent call right after its letter
+const PHRASE = { "´": "está", "`": "voilà", "^": "fête", "¨": "über", "~": "niño", "¸": "ça va" };
 const V = await loadVoice();
 const C = await (await fetch("birds/accents/candidates.json?v=1")).json();
 const snd = {};
 await Promise.all(Object.values(C.candidates).flat().map(async c => {
-  const { parseWav } = await import("./js/birdsong.js?v=9");
+  const { parseWav } = await import("./js/birdsong.js?v=10");
   snd[c.file] = parseWav(await (await fetch(`birds/accents/${c.file}?v=1`)).arrayBuffer()).x;
 }));
 const chosen = {};
@@ -73,7 +72,7 @@ async function play(samples, btn) {
 function phrase(sign, file) {
   const voice = { ...V.voice, letters: { ...V.voice.letters, [sign]: { file, vowel: false } } };
   const s = { ...V.snd, [sign]: snd[file] };
-  return sing(PHRASE[sign][1], { voice, snd: s, sr: V.sr }, 1).samples;
+  return sing(PHRASE[sign], { voice, snd: s, sr: V.sr }, 1).samples;
 }
 function showChoice() {
   $("choice").textContent = Object.keys(C.candidates).map(s => `${s} ${chosen[s] || "–"}`).join(" · ");
@@ -83,7 +82,7 @@ for (const [sign, list] of Object.entries(C.candidates)) {
   el.className = "sign";
   el.innerHTML = `<div class="head"><b></b><span class="about"></span></div><div class="cands"></div>`;
   el.querySelector("b").textContent = SHOW[sign];
-  el.querySelector(".about").textContent = `${ABOUT[sign]} · word: “${PHRASE[sign][0]}”`;
+  el.querySelector(".about").textContent = `${ABOUT[sign]} · word: “${PHRASE[sign]}”`;
   list.forEach((c, k) => {
     const row = document.createElement("div");
     row.className = "cand";

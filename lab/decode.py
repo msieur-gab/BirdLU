@@ -45,22 +45,32 @@ def load_voice(voice_dir=VOICE_DIR):
 DIGITS = "jabcdefghi"   # a digit is sung as the number call "#" then a letter (0 → j, 1 → a … 9 → i), as in Braille
 
 
+# Accents, one rule for every letter (Gab, 14 Nov): an accented letter is sung as its plain letter, then
+# a short accent call (é = e + ´, ñ = n + ~, ç = c + ¸). If the call is lost, the letter is still there.
+ACCENTS = {"\u0301": "´", "\u0300": "`", "\u0302": "^", "\u0308": "¨", "\u0303": "~", "\u0327": "¸"}
+MARKS = {v: k for k, v in ACCENTS.items()}
+
+
 def normalize(text):
     out = ""
-    for ch in text.lower():
-        if ch in "éè":
-            out += ch
+    for ch in text.lower().replace("ß", "ss").replace("æ", "ae").replace("œ", "oe"):
+        if ch in MARKS:          # a mark typed on its own is not a letter's accent: not sung
             continue
         if ch.isdigit() and ch in "0123456789":
             out += "#" + DIGITS[int(ch)]
             continue
-        out += "".join(c for c in unicodedata.normalize("NFD", ch) if not unicodedata.combining(c))
+        for c in unicodedata.normalize("NFD", ch):
+            if not unicodedata.combining(c):
+                out += c
+            elif c in ACCENTS:
+                out += ACCENTS[c]
     return out
 
 
 def readable(text):
-    """Decoded text as people write it: "#c" back to "3"."""
-    return re.sub(r"#([a-j])", lambda m: str(DIGITS.index(m.group(1))), text)
+    """Decoded text as people write it: "#c" back to "3", "e´" back to "é"."""
+    text = re.sub(r"#([a-j])", lambda m: str(DIGITS.index(m.group(1))), text)
+    return unicodedata.normalize("NFC", "".join(MARKS.get(c, c) for c in text))
 
 
 def opening(v, snd):
@@ -189,6 +199,9 @@ class Decoder:
     def __init__(self, v, snd, sr_tpl):
         self.v = v
         self.letters = list(v["letters"])
+        # an accent call can only follow a plain letter (not a word start, a sign or another accent)
+        self.accents = {c for c, d in v["letters"].items() if d.get("accent")}
+        self.bases = {c for c, d in v["letters"].items() if not d.get("accent") and not d.get("sign")}
         self.tpl = {c: template(snd[c], sr_tpl) for c in self.letters}
         op, d = opening(v, snd)
         y_open = mix([(a * sr_tpl, x, g) for a, x, g in op], int((d + 0.05) * sr_tpl))
@@ -299,9 +312,13 @@ class Decoder:
                     continue
                 best, prev = NEG, None
                 for sc, lc, p in preds:
+                    if ch in self.accents and lc not in self.bases:
+                        continue
                     sc2 = sc - repeat_cost if lc == ch else sc
                     if sc2 > best:
                         best, prev = sc2, p
+                if prev is None:
+                    continue
                 push(A[e], best + place[ch][t], ch, (t, prev))
         end_lo = max(0, Tn - int((self.v["timing"]["before_close"] + 0.4) * fps))
         end_hi = max(end_lo + 1, Tn - int(self.v["timing"]["before_close"] * 0.4 * fps))

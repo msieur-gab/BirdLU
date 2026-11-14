@@ -27,6 +27,9 @@
   .ch b{font:600 1.15rem/1.1 var(--mono)}
   .ch span{font:400 .68rem var(--mono);color:var(--muted);white-space:nowrap}
   .ch.own{border-color:color-mix(in srgb,var(--ok) 55%,var(--line))}
+  .ch.accent{border-color:var(--vowel)}
+  .ch.accent span{color:var(--vowel)}
+  .legend .l-accent{border-color:var(--vowel)}
   .ch.folded{border-style:dashed;border-color:var(--long)}
   .ch.folded span{color:var(--long)}
   .ch.missing{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 10%,var(--surface));cursor:default}
@@ -53,7 +56,7 @@
   <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="letters.html" aria-current="page">Letters</a><a href="signs.html">Signs</a></nav>
   <header>
     <h1>Every <em>bird</em> letter</h1>
-    <p class="lede">Each letter's shape, drawn as a sound picture (pitch going up, time going right, same scale for all) with its wave underneath. Tap a letter to hear it. Below: the characters people type that the voice cannot sing yet, and a box to compose your own sentence.</p>
+    <p class="lede">Each letter's shape, drawn as a sound picture (pitch going up, time going right, same scale for all) with its wave underneath. Tap a letter to hear it. Below: a box to compose your own sentence, and the characters people type that the voice cannot sing yet.</p>
     <p class="note" id="status">Loading the bird voice…</p>
   </header>
 
@@ -76,7 +79,8 @@
     <div class="chars" id="typed" aria-label="Your sentence, character by character"></div>
     <div class="legend">
       <span><i class="l-own"></i>its own bird sound</span>
-      <span><i class="l-folded"></i>sung as another letter (accent lost)</span>
+      <span><i class="l-accent"></i>letter + accent call</span>
+      <span><i class="l-folded"></i>mark lost: no call for it yet</span>
       <span><i class="l-missing"></i>missing: not sung at all</span>
       <span><i class="l-double"></i>doubled letter (weak today: "arrive")</span>
     </div>
@@ -91,13 +95,13 @@
 
   <section aria-label="What is missing">
     <h2>What people type</h2>
-    <p class="lede">Every accent and sign of French, Spanish, German and Portuguese, and the common signs of any keyboard: which ones the voice sings, which it folds into a plain letter, and which it drops.</p>
+    <p class="lede">The accents and letters of European languages, north and south, and the common signs of any keyboard: which the voice sings, which become a letter + accent call, which lose their mark because it has no call yet, and which it drops.</p>
     <p class="summary" id="cover-sum"></p>
     <div id="cover" class="group"></div>
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing, features, normalize, readable, drawPicture, Decoder, DIGITS, NB, HOP_S } from "./js/birdsong.js?v=9";
+import { loadVoice, sing, features, normalize, readable, drawPicture, Decoder, DIGITS, NB, HOP_S } from "./js/birdsong.js?v=10";
 const $ = id => document.getElementById(id);
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
@@ -196,15 +200,18 @@ function buildAlphabet() {
   const SIGN_NAME = { ".": "period", "?": "question", "!": "exclamation", ",": "comma", "'": "apostrophe", "-": "hyphen", ":": "colon", "@": "at", "#": "number call" };
   const groups = [
     ["Vowels", Object.keys(L).filter(c => L[c].vowel && !L[c].sign).sort(), "vowel"],
-    ["Consonants", Object.keys(L).filter(c => !L[c].vowel && !L[c].sign).sort(), "cons"],
+    ["Consonants", Object.keys(L).filter(c => !L[c].vowel && !L[c].sign && !L[c].accent).sort(), "cons"],
     ["Signs", Object.keys(L).filter(c => L[c].sign), "sign"],
+    ["Accent calls · sung right after the letter · candidate 1 as a placeholder until chosen by ear", Object.keys(L).filter(c => L[c].accent), "accent"],
   ];
   for (const [name, list, kind] of groups) {
     const g = document.createElement("div"); g.className = "group";
     g.innerHTML = `<h3>${name} · ${list.length}</h3><div class="cards"></div>`;
     for (const c of list) {
-      const about = L[c].sign ? `${SIGN_NAME[c]} · ${(L[c].source || "").replace(/^.*\(|\)$/g, "")}` : sp[c] || "";
-      g.querySelector(".cards").appendChild(card(c, V.snd[c], kind, about, V.snd[c].length / V.sr));
+      const bird = (L[c].source || "").replace(/^.*\(|\)$/g, "");
+      const about = L[c].sign ? `${SIGN_NAME[c]} · ${bird}` : L[c].accent ? `${L[c].name} · ${bird}` : sp[c] || "";
+      const label = L[c].accent ? "◌" + V.voice.accents[c] : c;
+      g.querySelector(".cards").appendChild(card(label, V.snd[c], kind === "accent" ? "sign" : kind, about, V.snd[c].length / V.sr));
     }
     root.appendChild(g);
   }
@@ -216,6 +223,22 @@ function buildAlphabet() {
     g.querySelector(".cards").appendChild(card(String(d), x, "sign", `# + ${DIGITS[d]}`, x.length / V.sr - 0.07));
   }
   root.appendChild(g);
+  // every accent on every letter it can sit on: the letters Unicode writes as one character
+  const acc = Object.keys(L).filter(c => L[c].accent);
+  const ga = document.createElement("div"); ga.className = "group";
+  ga.innerHTML = `<h3>Accents on every letter · tap to hear the letter then its call</h3>`;
+  for (const a of acc) {
+    const row = document.createElement("div"); row.className = "lang";
+    row.innerHTML = `<h3></h3><div class="chars"></div>`;
+    row.querySelector("h3").textContent = `${L[a].name} ◌${V.voice.accents[a]}`;
+    row.querySelector("h3").style.textTransform = "none";
+    for (const base of "abcdefghijklmnopqrstuvwxyz") {
+      const ch = (base + V.voice.accents[a]).normalize("NFC");
+      if ([...ch].length === 1) row.querySelector(".chars").appendChild(chip(ch, classify(ch)));
+    }
+    ga.appendChild(row);
+  }
+  root.appendChild(ga);
   const f = document.createElement("div"); f.className = "group";
   f.innerHTML = `<h3>Opening and closing · chiffchaff</h3><div class="cards"></div>`;
   for (const k of Object.keys(V.voice.frames)) f.querySelector(".cards").appendChild(card(k, V.snd[k], "frame", "Common Chiffchaff", V.snd[k].length / V.sr));
@@ -232,18 +255,22 @@ function classify(ch) {
   if (!ok) return { kind: "missing", sung: "" };
   if (n === ch.toLowerCase()) return { kind: "own", sung: n };
   if (/[0-9]/.test(ch)) return { kind: "own", sung: n, show: "#" + n.slice(1) };
+  const calls = [...n].filter(c => V.voice.letters[c].accent);
+  const kept = (n.replace(/./gu, c => V.voice.letters[c].accent ? V.voice.accents[c] : c)).normalize("NFC") === ch.toLowerCase();
+  if (calls.length && kept) return { kind: "accent", sung: n, show: [...n].map(c => V.voice.letters[c].accent ? "+" + c : c).join("") };
   return { kind: "folded", sung: n };
 }
 function chip(ch, info, doubled) {
   const el = document.createElement(info.kind === "missing" || info.kind === "space" ? "span" : "button");
   el.className = `ch ${info.kind}${doubled ? " double" : ""}`;
   if (el.tagName === "BUTTON") el.type = "button";
-  const label = info.kind === "space" ? "" : info.kind === "missing" ? "none" : info.kind === "folded" ? "→ " + info.sung : info.show || "";
+  const label = info.kind === "space" ? "" : info.kind === "missing" ? "none" : info.kind === "folded" ? "→ " + info.sung.replace(/[´`^¨~¸]/g, c => "+" + c) : info.show || "";
   el.innerHTML = `<b></b><span></span>`;
   el.querySelector("b").textContent = info.kind === "space" ? "␣" : ch;
   el.querySelector("span").textContent = label;
   el.title = info.kind === "missing" ? `${ch}: not sung, it disappears from the message`
-    : info.kind === "folded" ? `${ch}: sung as "${info.sung}", the accent is lost` : info.kind === "own" ? `${ch}: its own bird sound` : "space";
+    : info.kind === "folded" ? `${ch}: sung as "${info.sung}", its mark has no call yet`
+    : info.kind === "accent" ? `${ch}: sung as the letter, then its accent call` : info.kind === "own" ? `${ch}: its own bird sound` : "space";
   if (el.tagName === "BUTTON") el.addEventListener("click", () => play(soundOf(info.sung), el));
   return el;
 }
@@ -253,6 +280,16 @@ const COVER = [
   ["Spanish", "áéíñóúü¿¡"],
   ["German", "äöüß"],
   ["Portuguese", "ãõâêôáàçéíóú"],
+  ["Italian", "àèéìíîòóùú"],
+  ["Danish and Norwegian", "æøå"],
+  ["Swedish", "åäö"],
+  ["Finnish", "äöå"],
+  ["Icelandic", "áéíóúýþðæö"],
+  ["Estonian", "äöõüšž"],
+  ["Latvian", "āčēģīķļņšūž"],
+  ["Lithuanian", "ąčęėįšųūž"],
+  ["Polish", "ąćęłńóśźż"],
+  ["Czech", "áčďéěíňóřšťúůýž"],
   ["Signs on every keyboard", ".,?!'-:@#;\"()/&%€$+=*_<>[]"],
   ["Signs phones type for you", "’‘“”«»–—…"],
   ["Digits", "0123456789"],
@@ -270,7 +307,7 @@ function buildCover() {
     root.appendChild(g);
   }
   const count = k => [...seen.values()].filter(v => v === k).length;
-  $("cover-sum").innerHTML = `Of <b>${seen.size}</b> characters: <b>${count("own")}</b> have their own sound, <b>${count("folded")}</b> lose their accent, <b>${count("missing")}</b> are missing.`;
+  $("cover-sum").innerHTML = `Of <b>${seen.size}</b> characters: <b>${count("own")}</b> have their own sound, <b>${count("accent")}</b> are a letter + its accent call, <b>${count("folded")}</b> lose their mark (no call for it yet), <b>${count("missing")}</b> are missing.`;
 }
 
 // ---------- compose ----------
@@ -284,11 +321,11 @@ function compose() {
     const info = classify(ch);
     const doubled = info.kind !== "space" && info.kind !== "missing" && i > 0 && normalize(chars[i - 1]) === normalize(ch);
     if (doubled) doubles.push(ch + ch);
-    if (info.kind === "own") own++; else if (info.kind === "folded") folded++; else if (info.kind === "missing") missing.add(ch);
+    if (info.kind === "own" || info.kind === "accent") own++; else if (info.kind === "folded") folded++; else if (info.kind === "missing") missing.add(ch);
     box.appendChild(chip(ch, info, doubled));
   });
   const parts = [];
-  if (folded) parts.push(`<b>${folded}</b> lose their accent`);
+  if (folded) parts.push(`<b>${folded}</b> lose their mark (no call yet)`);
   if (missing.size) parts.push(`missing: <b>${[...missing].join(" ")}</b>`);
   if (doubles.length) parts.push(`doubled: <b>${[...new Set(doubles)].join(" ")}</b>`);
   $("typed-sum").innerHTML = parts.length ? parts.join(" · ") : "Every character has its own bird sound.";

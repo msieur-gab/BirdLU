@@ -34,10 +34,16 @@ export function parseWav(ab) {
   return null;
 }
 
-/** Decoded text as people write it: "#c" back to "3". */
-export const readable = text => text.replace(/#([a-j])/g, (_, c) => String(DIGITS.indexOf(c)));
+// Accents, one rule for every letter (Gab, 14 Nov): an accented letter is sung as its plain letter, then
+// a short accent call (é = e + ´, ñ = n + ~, ç = c + ¸). If the call is lost, the letter is still there.
+export const ACCENTS = { "\u0301": "´", "\u0300": "`", "\u0302": "^", "\u0308": "¨", "\u0303": "~", "\u0327": "¸" };
+const MARKS = Object.fromEntries(Object.entries(ACCENTS).map(([k, v]) => [v, k]));
 
-export async function loadVoice(base = "birds/voice/", v = "5") {
+/** Decoded text as people write it: "#c" back to "3", "e´" back to "é". */
+export const readable = text => [...text.replace(/#([a-j])/g, (_, c) => String(DIGITS.indexOf(c)))]
+  .map(c => MARKS[c] || c).join("").normalize("NFC");
+
+export async function loadVoice(base = "birds/voice/", v = "6") {
   const voice = await (await fetch(`${base}voice.json?v=${v}`)).json();
   const sr = voice.sample_rate;
   const snd = {};
@@ -57,10 +63,13 @@ export const DIGITS = "jabcdefghi";
 
 export function normalize(text) {
   let out = "";
-  for (const ch of text.toLowerCase()) {
-    if (ch === "é" || ch === "è") { out += ch; continue; }
+  for (const ch of text.toLowerCase().replace(/ß/g, "ss").replace(/æ/g, "ae").replace(/œ/g, "oe")) {
+    if (MARKS[ch]) continue;          // a mark typed on its own is not a letter's accent: not sung
     if (ch >= "0" && ch <= "9") { out += "#" + DIGITS[+ch]; continue; }
-    out += ch.replace(/ß/g, "ss").replace(/æ/g, "ae").replace(/œ/g, "oe").normalize("NFD").replace(/[̀-ͯ]/g, "");
+    for (const c of ch.normalize("NFD")) {
+      if (!/[\u0300-\u036f]/.test(c)) out += c;
+      else if (ACCENTS[c]) out += ACCENTS[c];
+    }
   }
   return out;
 }
@@ -349,6 +358,9 @@ export class Decoder {
   constructor({ voice, snd, sr }) {
     this.voice = voice;
     this.letters = Object.keys(voice.letters);
+    // an accent call can only follow a plain letter (not a word start, a sign or another accent)
+    this.accents = new Set(this.letters.filter(c => voice.letters[c].accent));
+    this.bases = new Set(this.letters.filter(c => !voice.letters[c].accent && !voice.letters[c].sign));
     this.tpl = {};
     for (const c of this.letters) this.tpl[c] = template(snd[c], sr);
     const op = openingParts(voice, snd), cl = closingParts(voice, snd);
@@ -449,10 +461,13 @@ export class Decoder {
         const e = t + this.tpl[ch].n;
         if (e > Tn) continue;
         let best = NEG, prev = null;
+        const acc = this.accents.has(ch);
         for (const [sc, lc, p] of preds) {
+          if (acc && !this.bases.has(lc)) continue;
           const sc2 = lc === ch ? sc - repeatCost : sc;
           if (sc2 > best) { best = sc2; prev = p; }
         }
+        if (prev === null) continue;
         push(A[e], best + place[ch][t], ch, [t, prev]);
       }
     }
