@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Accents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .signs{display:grid;gap:12px}
+  .sign{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px;min-width:0}
+  .sign .head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+  .sign b{font:600 1.6rem var(--mono);color:var(--vowel);min-width:1.5em}
+  .sign .about{color:var(--muted);font-size:.9rem}
+  .cands{display:grid;gap:8px}
+  .cand{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .cand label{display:flex;gap:6px;align-items:center;font:500 .9rem var(--mono)}
+  .cand .src{color:var(--muted);font-size:.8rem}
+  .cand button[aria-pressed="true"]{border-color:var(--short);color:var(--short)}
+  .choice{font:500 1rem var(--mono);word-break:break-word}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="sketch.html">Sketch</a><a href="letters.html">Letters</a><a href="accents.html" aria-current="page">Accents</a></nav>
+  <header>
+    <h1>A <em>bird</em> for every accent</h1>
+    <p class="lede">An accented letter is sung as its plain letter, then a short accent call: à = a + grave, ñ = n + tilde. If the call is lost, the letter is still there. Each call draws its mark: rising for acute, falling for grave, up and down for circumflex, two ticks for the dots, a waver for the tilde, a low note for the cedilla. Three real bird notes per accent: listen alone and in a word, and pick the one that sounds right. The six should also sound clearly different from each other.</p>
+  </header>
+  <section class="signs" id="signs" aria-label="Accents"></section>
+  <section class="panel" aria-label="Your choice">
+    <h2>Your choice</h2>
+    <p class="choice" id="choice">–</p>
+  </section>
+</main>
+<script type="module">
+import { loadVoice, sing } from "./js/birdsong.js?v=9";
+const $ = id => document.getElementById(id);
+const ABOUT = { "´": "acute: a short rising call", "`": "grave: a short falling call", "^": "circumflex: up then down",
+  "¨": "diaeresis: two tiny ticks", "~": "tilde: a wavering call", "¸": "cedilla: a low short note" };
+// each word as written, and as sung: the accent call right after its letter
+const SHOW = { "´": "á", "`": "à", "^": "ê", "¨": "ü", "~": "ñ", "¸": "ç" };
+const PHRASE = { "´": ["está", "esta´"], "`": ["voilà", "voila`"], "^": ["fête", "fe^te"], "¨": ["über", "u¨ber"],
+  "~": ["niño", "nin~o"], "¸": ["ça va", "c¸a va"] };
+const V = await loadVoice();
+const C = await (await fetch("birds/accents/candidates.json?v=1")).json();
+const snd = {};
+await Promise.all(Object.values(C.candidates).flat().map(async c => {
+  const { parseWav } = await import("./js/birdsong.js?v=9");
+  snd[c.file] = parseWav(await (await fetch(`birds/accents/${c.file}?v=1`)).arrayBuffer()).x;
+}));
+const chosen = {};
+let ctx = null, src = null, pressed = null;
+function stop() {
+  if (src) { try { src.stop(); } catch (e) {} src = null; }
+  if (pressed) { pressed.setAttribute("aria-pressed", "false"); pressed = null; }
+}
+async function play(samples, btn) {
+  const was = pressed === btn;
+  stop();
+  if (was) return;
+  // at the voice's own rate (a converted buffer sounds metallic)
+  if (!ctx) { try { ctx = new AudioContext({ sampleRate: V.sr }); } catch (e) { ctx = new AudioContext(); } }
+  await ctx.resume();
+  const buf = ctx.createBuffer(1, samples.length, V.sr);
+  buf.copyToChannel(samples, 0);
+  src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination);
+  const me = src; src.onended = () => { if (src === me) stop(); };
+  src.start(); pressed = btn; btn.setAttribute("aria-pressed", "true");
+}
+function phrase(sign, file) {
+  const voice = { ...V.voice, letters: { ...V.voice.letters, [sign]: { file, vowel: false } } };
+  const s = { ...V.snd, [sign]: snd[file] };
+  return sing(PHRASE[sign][1], { voice, snd: s, sr: V.sr }, 1).samples;
+}
+function showChoice() {
+  $("choice").textContent = Object.keys(C.candidates).map(s => `${s} ${chosen[s] || "–"}`).join(" · ");
+}
+for (const [sign, list] of Object.entries(C.candidates)) {
+  const el = document.createElement("article");
+  el.className = "sign";
+  el.innerHTML = `<div class="head"><b></b><span class="about"></span></div><div class="cands"></div>`;
+  el.querySelector("b").textContent = SHOW[sign];
+  el.querySelector(".about").textContent = `${ABOUT[sign]} · word: “${PHRASE[sign][0]}”`;
+  list.forEach((c, k) => {
+    const row = document.createElement("div");
+    row.className = "cand";
+    row.innerHTML = `<label><input type="radio"> ${k + 1}</label>
+      <button class="secondary alone" type="button">Alone</button>
+      <button class="secondary phr" type="button">In the word</button>
+      <span class="src"></span>`;
+    const r = row.querySelector("input");
+    r.name = "s" + C.names[sign];
+    r.addEventListener("change", () => { chosen[sign] = k + 1; showChoice(); });
+    row.querySelector(".src").textContent = c.source;
+    const a = row.querySelector(".alone"), p = row.querySelector(".phr");
+    a.addEventListener("click", () => play(snd[c.file], a));
+    p.addEventListener("click", () => play(phrase(sign, c.file), p));
+    el.querySelector(".cands").appendChild(row);
+  });
+  $("signs").appendChild(el);
+}
+showChoice();
+</script>
+</body>
+</html>

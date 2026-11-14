@@ -1,0 +1,312 @@
+{
+ "names": {
+  "^": "circumflex",
+  "~": "tilde",
+  "´": "acute",
+  "`": "grave",
+  "¸": "cedilla",
+  "¨": "diaeresis"
+ },
+ "candidates": {
+  "^": [
+   {
+    "file": "circumflex-1.wav",
+    "source": "XC541754 52.76 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     52.759,
+     52.872
+    ],
+    "slope_oct": -0.04,
+    "pitch": 6969,
+    "dur": 0.096,
+    "turns": 3,
+    "arch_oct": 0.23,
+    "likeness_to_nearest": 0.69
+   },
+   {
+    "file": "circumflex-2.wav",
+    "source": "XC446151 101.59 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     101.594,
+     101.686
+    ],
+    "slope_oct": 0.12,
+    "pitch": 1423,
+    "dur": 0.075,
+    "turns": 3,
+    "arch_oct": 0.24,
+    "likeness_to_nearest": 0.71
+   },
+   {
+    "file": "circumflex-3.wav",
+    "source": "XC541754 17.93 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     17.927,
+     18.059
+    ],
+    "slope_oct": 0.02,
+    "pitch": 2928,
+    "dur": 0.117,
+    "turns": 1,
+    "arch_oct": 0.26,
+    "likeness_to_nearest": 0.8
+   }
+  ],
+  "~": [
+   {
+    "file": "tilde-1.wav",
+    "source": "XC541754 28.81 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     28.805,
+     28.938
+    ],
+    "slope_oct": -0.33,
+    "pitch": 6919,
+    "dur": 0.117,
+    "turns": 5,
+    "arch_oct": 0.01,
+    "likeness_to_nearest": 0.39
+   },
+   {
+    "file": "tilde-2.wav",
+    "source": "XC446151 102.46 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     102.459,
+     102.545
+    ],
+    "slope_oct": 0.21,
+    "pitch": 1729,
+    "dur": 0.069,
+    "turns": 3,
+    "arch_oct": 0.04,
+    "likeness_to_nearest": 0.54
+   },
+   {
+    "file": "tilde-3.wav",
+    "source": "XC538310 2.89 (Common Chaffinch)",
+    "spec": [
+     "cut",
+     "XC538310",
+     2.886,
+     3.021
+    ],
+    "slope_oct": -0.43,
+    "pitch": 3915,
+    "dur": 0.12,
+    "turns": 3,
+    "arch_oct": -0.09,
+    "likeness_to_nearest": 0.56
+   }
+  ],
+  "´": [
+   {
+    "file": "acute-1.wav",
+    "source": "XC446151 3.05 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     3.051,
+     3.172
+    ],
+    "slope_oct": 0.37,
+    "pitch": 4314,
+    "dur": 0.105,
+    "turns": 0,
+    "arch_oct": -0.36,
+    "likeness_to_nearest": 0.52
+   },
+   {
+    "file": "acute-2.wav",
+    "source": "XC538310 27.34 (Common Chaffinch)",
+    "spec": [
+     "cut",
+     "XC538310",
+     27.339,
+     27.417
+    ],
+    "slope_oct": 0.79,
+    "pitch": 3752,
+    "dur": 0.06,
+    "turns": 0,
+    "arch_oct": -0.41,
+    "likeness_to_nearest": 0.59
+   },
+   {
+    "file": "acute-3.wav",
+    "source": "XC541754 49.49 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     49.485,
+     49.568
+    ],
+    "slope_oct": 0.18,
+    "pitch": 2580,
+    "dur": 0.066,
+    "turns": 0,
+    "arch_oct": 0.01,
+    "likeness_to_nearest": 0.62
+   }
+  ],
+  "`": [
+   {
+    "file": "grave-1.wav",
+    "source": "XC541754 48.43 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     48.426,
+     48.509
+    ],
+    "slope_oct": -0.45,
+    "pitch": 6896,
+    "dur": 0.066,
+    "turns": 0,
+    "arch_oct": -0.01,
+    "likeness_to_nearest": 0.58
+   },
+   {
+    "file": "grave-2.wav",
+    "source": "XC541754 7.25 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     7.251,
+     7.349
+    ],
+    "slope_oct": -0.68,
+    "pitch": 4800,
+    "dur": 0.081,
+    "turns": 0,
+    "arch_oct": -0.62,
+    "likeness_to_nearest": 0.61
+   },
+   {
+    "file": "grave-3.wav",
+    "source": "XC533763 38.81 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC533763",
+     38.807,
+     38.896
+    ],
+    "slope_oct": -0.42,
+    "pitch": 2370,
+    "dur": 0.072,
+    "turns": 0,
+    "arch_oct": -0.19,
+    "likeness_to_nearest": 0.71
+   }
+  ],
+  "¸": [
+   {
+    "file": "cedilla-1.wav",
+    "source": "XC533763 30.31 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC533763",
+     30.314,
+     30.398
+    ],
+    "slope_oct": -0.04,
+    "pitch": 2495,
+    "dur": 0.066,
+    "turns": 1,
+    "arch_oct": -0.0,
+    "likeness_to_nearest": 0.75
+   },
+   {
+    "file": "cedilla-2.wav",
+    "source": "XC541754 26.70 (Song Thrush)",
+    "spec": [
+     "cut",
+     "XC541754",
+     26.698,
+     26.764
+    ],
+    "slope_oct": -0.11,
+    "pitch": 2463,
+    "dur": 0.048,
+    "turns": 0,
+    "arch_oct": -0.01,
+    "likeness_to_nearest": 0.8
+   },
+   {
+    "file": "cedilla-3.wav",
+    "source": "XC446151 7.72 (Common Blackbird)",
+    "spec": [
+     "cut",
+     "XC446151",
+     7.716,
+     7.802
+    ],
+    "slope_oct": -0.02,
+    "pitch": 2123,
+    "dur": 0.069,
+    "turns": 0,
+    "arch_oct": -0.01,
+    "likeness_to_nearest": 0.94
+   }
+  ],
+  "¨": [
+   {
+    "file": "diaeresis-1.wav",
+    "source": "XC461185 15.94 (Eurasian Wren)",
+    "spec": [
+     "cut",
+     "XC461185",
+     15.938,
+     16.016
+    ],
+    "slope_oct": 0.22,
+    "pitch": 4941,
+    "dur": 0.149,
+    "turns": 0,
+    "arch_oct": -0.06,
+    "likeness_to_nearest": 0.68
+   },
+   {
+    "file": "diaeresis-2.wav",
+    "source": "XC461185 16.14 (Eurasian Wren)",
+    "spec": [
+     "cut",
+     "XC461185",
+     16.139,
+     16.216
+    ],
+    "slope_oct": 0.16,
+    "pitch": 4770,
+    "dur": 0.149,
+    "turns": 0,
+    "arch_oct": -0.08,
+    "likeness_to_nearest": 0.7
+   },
+   {
+    "file": "diaeresis-3.wav",
+    "source": "XC461185 16.36 (Eurasian Wren)",
+    "spec": [
+     "cut",
+     "XC461185",
+     16.356,
+     16.422
+    ],
+    "slope_oct": 0.21,
+    "pitch": 4921,
+    "dur": 0.125,
+    "turns": 0,
+    "arch_oct": -0.09,
+    "likeness_to_nearest": 0.71
+   }
+  ]
+ }
+}
