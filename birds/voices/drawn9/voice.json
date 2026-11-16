@@ -1,0 +1,473 @@
+{
+ "note": "Test voice drawn9: version D with the letters !#',-.:?@abcdefghijklmnopqrstuvwxz drawn by Gab on draw.html. Made by lab/draw_check.py.",
+ "sample_rate": 44100,
+ "letters": {
+  "e": {
+   "file": "e.wav",
+   "vowel": true,
+   "dur": 0.2722,
+   "gesture": "drawn by Gab"
+  },
+  "a": {
+   "file": "a.wav",
+   "vowel": true,
+   "dur": 0.3441,
+   "gesture": "drawn by Gab"
+  },
+  "o": {
+   "file": "o.wav",
+   "vowel": true,
+   "dur": 0.2726,
+   "gesture": "drawn by Gab"
+  },
+  "i": {
+   "file": "i.wav",
+   "vowel": true,
+   "dur": 0.3093,
+   "gesture": "drawn by Gab"
+  },
+  "u": {
+   "file": "u.wav",
+   "vowel": true,
+   "dur": 0.3101,
+   "gesture": "drawn by Gab"
+  },
+  "y": {
+   "file": "y.wav",
+   "vowel": true,
+   "dur": 0.3249,
+   "gesture": "-4.0 st"
+  },
+  "t": {
+   "file": "t.wav",
+   "vowel": false,
+   "dur": 0.1455,
+   "gesture": "drawn by Gab"
+  },
+  "n": {
+   "file": "n.wav",
+   "vowel": false,
+   "dur": 0.204,
+   "gesture": "drawn by Gab"
+  },
+  "s": {
+   "file": "s.wav",
+   "vowel": false,
+   "dur": 0.1024,
+   "gesture": "drawn by Gab"
+  },
+  "r": {
+   "file": "r.wav",
+   "vowel": false,
+   "dur": 0.0937,
+   "gesture": "drawn by Gab"
+  },
+  "l": {
+   "file": "l.wav",
+   "vowel": false,
+   "dur": 0.2753,
+   "gesture": "drawn by Gab"
+  },
+  "d": {
+   "file": "d.wav",
+   "vowel": false,
+   "dur": 0.1219,
+   "gesture": "drawn by Gab"
+  },
+  "c": {
+   "file": "c.wav",
+   "vowel": false,
+   "dur": 0.1491,
+   "gesture": "drawn by Gab"
+  },
+  "m": {
+   "file": "m.wav",
+   "vowel": false,
+   "dur": 0.2209,
+   "gesture": "drawn by Gab"
+  },
+  "p": {
+   "file": "p.wav",
+   "vowel": false,
+   "dur": 0.1815,
+   "gesture": "drawn by Gab"
+  },
+  "h": {
+   "file": "h.wav",
+   "vowel": false,
+   "dur": 0.1509,
+   "gesture": "drawn by Gab"
+  },
+  "v": {
+   "file": "v.wav",
+   "vowel": false,
+   "dur": 0.0661,
+   "gesture": "drawn by Gab"
+  },
+  "g": {
+   "file": "g.wav",
+   "vowel": false,
+   "dur": 0.1222,
+   "gesture": "drawn by Gab"
+  },
+  "f": {
+   "file": "f.wav",
+   "vowel": false,
+   "dur": 0.1171,
+   "gesture": "drawn by Gab"
+  },
+  "b": {
+   "file": "b.wav",
+   "vowel": false,
+   "dur": 0.1219,
+   "gesture": "drawn by Gab"
+  },
+  "w": {
+   "file": "w.wav",
+   "vowel": false,
+   "dur": 0.1367,
+   "gesture": "drawn by Gab"
+  },
+  "k": {
+   "file": "k.wav",
+   "vowel": false,
+   "dur": 0.1818,
+   "gesture": "drawn by Gab"
+  },
+  "j": {
+   "file": "j.wav",
+   "vowel": false,
+   "dur": 0.1987,
+   "gesture": "drawn by Gab"
+  },
+  "q": {
+   "file": "q.wav",
+   "vowel": false,
+   "dur": 0.1837,
+   "gesture": "drawn by Gab"
+  },
+  "x": {
+   "file": "x.wav",
+   "vowel": false,
+   "dur": 0.1576,
+   "gesture": "drawn by Gab"
+  },
+  "z": {
+   "file": "z.wav",
+   "vowel": false,
+   "dur": 0.146,
+   "gesture": "drawn by Gab"
+  },
+  ".": {
+   "file": "sign-period.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.1051,
+   "source": "XC533763 1.73 (Common Blackbird)",
+   "gesture": "drawn by Gab"
+  },
+  "?": {
+   "file": "sign-question.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.0995,
+   "source": "XC531169 32.03 (Yellowhammer)",
+   "gesture": "drawn by Gab"
+  },
+  "!": {
+   "file": "sign-exclamation.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.1117,
+   "source": "XC478019 75.67 (Common Chiffchaff)",
+   "gesture": "drawn by Gab"
+  },
+  ",": {
+   "file": "sign-comma.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.0801,
+   "source": "XC541754 51.17 (Song Thrush)",
+   "gesture": "drawn by Gab"
+  },
+  "'": {
+   "file": "sign-apostrophe.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.0993,
+   "source": "XC446151 6.06 (Common Blackbird)",
+   "gesture": "drawn by Gab"
+  },
+  "-": {
+   "file": "sign-hyphen.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.0732,
+   "source": "XC541754 6.65 (Song Thrush)",
+   "gesture": "drawn by Gab"
+  },
+  ":": {
+   "file": "sign-colon.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.1006,
+   "source": "XC446151 36.04 (Common Blackbird)",
+   "gesture": "drawn by Gab"
+  },
+  "@": {
+   "file": "sign-at.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.1095,
+   "source": "XC541754 40.64 (Song Thrush)",
+   "gesture": "drawn by Gab"
+  },
+  "#": {
+   "file": "sign-number.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.1732,
+   "source": "XC533763 45.13 (Common Blackbird)",
+   "gesture": "drawn by Gab"
+  }
+ },
+ "frames": {
+  "ngopen": {
+   "file": "ngopen.wav",
+   "dur": 1.533,
+   "source": "Common Nightingale XC473316-16.wav (XC138451/XC473316, CC BY-SA 4.0)"
+  },
+  "ngclose": {
+   "file": "ngclose.wav",
+   "dur": 1.053,
+   "source": "Common Nightingale XC138451-4.wav (XC138451/XC473316, CC BY-SA 4.0)"
+  }
+ },
+ "timing": {
+  "lead": 0.4,
+  "gap_in_word": 0.025,
+  "gap_jitter": [
+   0.6,
+   1.4
+  ],
+  "word_gap": [
+   0.32,
+   0.45
+  ],
+  "open_pattern": [
+   "ngopen"
+  ],
+  "open_period": 0,
+  "after_open": 0.35,
+  "close_pattern": [
+   {
+    "note": "ngclose",
+    "gap": 0,
+    "level": 1.0
+   }
+  ],
+  "before_close": 0.3,
+  "level_jitter_db": 2
+ },
+ "credits": {
+  "XC315114": {
+   "species": "Eurasian Blue Tit",
+   "recordist": "Ad Postma",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/315114",
+   "letters": [
+    "e",
+    "n",
+    "m"
+   ]
+  },
+  "XC433160": {
+   "species": "Eurasian Nuthatch",
+   "recordist": "Joost van Bruggen",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
+   "letters": [
+    "a",
+    "o"
+   ]
+  },
+  "XC543697": {
+   "species": "Eurasian Wren",
+   "recordist": "Benoît Van Hecke",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC543697.mp3",
+   "letters": [
+    "i",
+    "u"
+   ]
+  },
+  "XC538310": {
+   "species": "Common Chaffinch",
+   "recordist": "Benoît Van Hecke",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_-_Common_Chaffinch_XC538310.mp3",
+   "letters": [
+    "y"
+   ]
+  },
+  "XC760778": {
+   "species": "European Robin",
+   "recordist": "Benjamin Allegrini",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/760778",
+   "letters": [
+    "t",
+    "s",
+    "r"
+   ]
+  },
+  "XC541754": {
+   "species": "Song Thrush",
+   "recordist": "Benoît Van Hecke",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+   "letters": [
+    "l",
+    ",",
+    "-",
+    "@"
+   ]
+  },
+  "XC778131": {
+   "species": "Eurasian Blue Tit",
+   "recordist": "Paul Driver",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/778131",
+   "letters": [
+    "d"
+   ]
+  },
+  "XC303416": {
+   "species": "Great Tit",
+   "recordist": "Timo Schnabel",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/303416",
+   "letters": [
+    "c",
+    "g",
+    "f"
+   ]
+  },
+  "XC637984": {
+   "species": "Eurasian Blue Tit",
+   "recordist": "Georg Amann",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/637984",
+   "letters": [
+    "p"
+   ]
+  },
+  "XC461185": {
+   "species": "Eurasian Wren",
+   "recordist": "Marie-Lan Taÿ Pamart",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
+   "letters": [
+    "h"
+   ]
+  },
+  "XC857749": {
+   "species": "European Robin",
+   "recordist": "Olivier Swift, Hélène Cartaud",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/857749",
+   "letters": [
+    "v",
+    "j",
+    "x"
+   ]
+  },
+  "XC533763": {
+   "species": "Common Blackbird",
+   "recordist": "Marie-Lan Taÿ Pamart",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
+   "letters": [
+    "b",
+    "z",
+    ".",
+    "#"
+   ]
+  },
+  "XC446151": {
+   "species": "Common Blackbird",
+   "recordist": "James Ray",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+   "letters": [
+    "w",
+    "'",
+    ":"
+   ]
+  },
+  "XC880931": {
+   "species": "Great Tit",
+   "recordist": "Lee Alder",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/880931",
+   "letters": [
+    "k",
+    "q"
+   ]
+  },
+  "XC478019": {
+   "species": "Common Chiffchaff",
+   "recordist": "Marie-Lan Taÿ Pamart",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Phylloscopus_collybita_-_Common_Chiffchaff_XC478019.mp3",
+   "letters": [
+    "chiff",
+    "chaff",
+    "!"
+   ]
+  },
+  "XC531169": {
+   "species": "Yellowhammer",
+   "recordist": "Benoît Van Hecke",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Emberiza_citrinella_-_Yellowhammer_XC531169.mp3",
+   "letters": [
+    "?"
+   ]
+  },
+  "XC473316": {
+   "species": "Common Nightingale",
+   "recordist": "Marie-Lan Taÿ Pamart",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://xeno-canto.org/473316",
+   "letters": [
+    "opening"
+   ]
+  },
+  "XC138451": {
+   "species": "Common Nightingale",
+   "recordist": "Sander Pieterse",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://xeno-canto.org/138451",
+   "letters": [
+    "closing"
+   ]
+  }
+ },
+ "digits": "jabcdefghi",
+ "accents": {
+  "´": "́",
+  "`": "̀",
+  "^": "̂",
+  "¨": "̈",
+  "~": "̃",
+  "¸": "̧",
+  "˚": "̊",
+  "ˇ": "̌",
+  "¯": "̄",
+  "˛": "̨",
+  "˙": "̇",
+  "˝": "̋",
+  "˘": "̆"
+ }
+}
