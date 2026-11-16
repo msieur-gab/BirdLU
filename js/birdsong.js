@@ -114,10 +114,17 @@ function mix(parts, n, sr) {
   return y;
 }
 
-/** The message as the sender sings it: samples, the text actually sung, and the timeline. */
-export function sing(text, { voice, snd, sr }, seed = 1) {
+// punctuation that can be left unsung (Gab, 16 Nov: "let's not play them, because I think that's what
+// actually breaks the melody"); "#" stays, it is the number call, and "@" is not punctuation
+export const PUNCTUATION = new Set([".", "?", "!", ",", "'", "-", ":"]);
+
+/** The message as the sender sings it: samples, the text actually sung, and the timeline.
+ *  punctuation: false leaves . ? ! , ' - : unsung. */
+export function sing(text, { voice, snd, sr }, seed = 1, { punctuation = true } = {}) {
   const R = rng(seed), T = voice.timing, between = (a, b) => a + (b - a) * R();
-  const words = normalize(text).split(/\s+/).map(w => [...w].filter(c => voice.letters[c])).filter(w => w.length);
+  // unsung punctuation inside a word ("l'été", "es-tu") leaves a word pause, so the words do not run together
+  const plain = punctuation ? normalize(text) : [...normalize(text)].map(c => PUNCTUATION.has(c) ? " " : c).join("");
+  const words = plain.split(/\s+/).map(w => [...w].filter(c => voice.letters[c])).filter(w => w.length);
   const parts = [], marks = [];
   let t = T.lead;
   const op = openingParts(voice, snd);

@@ -1,0 +1,101 @@
+{
+ "rule": "cost = sum of share x max(0, 6 - semitones apart) / 6; see MUSICOLOGY.md",
+ "cost_today": 21.314,
+ "cost_proposed": 8.301,
+ "w_pitch": {
+  "note": "F6",
+  "hz": 1397
+ },
+ "sound_of": {
+  "a": "a",
+  "e": "o",
+  "i": "u",
+  "o": "i",
+  "u": "e",
+  "y": "y",
+  "b": "d",
+  "c": "s",
+  "d": "r",
+  "f": "k",
+  "g": "p",
+  "h": "t",
+  "j": "n",
+  "k": "m",
+  "l": "l",
+  "m": "j",
+  "n": "z",
+  "p": "q",
+  "q": "f",
+  "r": "b",
+  "s": "h",
+  "t": "g",
+  "v": "c",
+  "w": null,
+  "x": "x",
+  "z": "v"
+ },
+ "today": {
+  "all": {
+   "under2": 14.26,
+   "under4": 29.36,
+   "mean_apart": 7.31
+  },
+  "English": {
+   "under2": 16.34,
+   "under4": 30.13,
+   "mean_apart": 7.48
+  },
+  "French": {
+   "under2": 14.64,
+   "under4": 32.53,
+   "mean_apart": 6.76
+  },
+  "German": {
+   "under2": 16.19,
+   "under4": 29.2,
+   "mean_apart": 7.2
+  },
+  "Spanish": {
+   "under2": 12.43,
+   "under4": 27.38,
+   "mean_apart": 7.55
+  },
+  "Italian": {
+   "under2": 11.68,
+   "under4": 27.57,
+   "mean_apart": 7.54
+  }
+ },
+ "proposed": {
+  "all": {
+   "under2": 4.34,
+   "under4": 9.0,
+   "mean_apart": 9.73
+  },
+  "English": {
+   "under2": 4.65,
+   "under4": 9.32,
+   "mean_apart": 10.0
+  },
+  "French": {
+   "under2": 3.48,
+   "under4": 7.26,
+   "mean_apart": 9.62
+  },
+  "German": {
+   "under2": 2.8,
+   "under4": 7.56,
+   "mean_apart": 9.78
+  },
+  "Spanish": {
+   "under2": 6.35,
+   "under4": 11.99,
+   "mean_apart": 9.62
+  },
+  "Italian": {
+   "under2": 4.42,
+   "under4": 8.85,
+   "mean_apart": 9.64
+  }
+ }
+}

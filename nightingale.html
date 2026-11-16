@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Nightingale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .list{display:grid;gap:12px}
+  .ph{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:8px;min-width:0}
+  .ph .head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+  .ph b{font:600 1rem var(--mono)}
+  .ph .src{color:var(--muted);font-size:.8rem}
+  .pic{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+  .pic canvas{display:block}
+  button.secondary[aria-pressed="true"]{border-color:var(--short);color:var(--short);font-weight:600}
+  button.pick[aria-pressed="true"]{background:var(--short);color:var(--paper);border-color:var(--short)}
+  .picks{font:500 1rem var(--mono);word-break:break-word}
+  h2.rec{margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="variants.html">Versions</a><a href="nightingale.html" aria-current="page">Nightingale</a></nav>
+  <header>
+    <h1>The <em>nightingale</em>, for opening and closing</h1>
+    <p class="lede">Every full song phrase (1.2 s or more) of three nightingale recordings, cleaned of their background. These are the real birds, for listening: nothing is synthesized yet. Mark the phrases that could open a message, and those that could close one. A phrase can be both, or you can say which part you like.</p>
+    <div class="row"><button class="secondary" id="today" type="button">Today's opening and closing (chiffchaff)</button></div>
+  </header>
+  <section class="panel" aria-label="Synthesized">
+    <h2>Your picks, through our synthesizer</h2>
+    <p class="lede">Opening 2.16 and closing 1.4. <b>copy</b> follows the bird every 1.5 ms; <b>notes</b> rebuilds each note like a letter; <b>notes, lower</b> moves them down like version B of the letters. All are cut above 9 kHz. “Message” sings the sentence between that opening and closing.</p>
+    <div class="row">
+      <label class="check"><input type="radio" name="letters" value="today"> letters today</label>
+      <label class="check"><input type="radio" name="letters" value="gesture" checked> letters D (bird gestures)</label>
+    </div>
+    <textarea id="text" aria-label="Sentence">l'été arrive, où es-tu ?</textarea>
+    <label class="check"><input type="checkbox" id="punct"> sing punctuation (. ? ! , ' - :)</label>
+    <div id="synth" class="list"></div>
+    <p class="stats" id="readback"></p>
+  </section>
+  <section class="panel" aria-label="Your picks">
+    <h2>Your picks</h2>
+    <p class="picks" id="picks">–</p>
+  </section>
+  <div id="list"></div>
+  <p class="lede" id="credits"></p>
+</main>
+<script type="module">
+import { loadVoice, sing, parseWav, drawPicture, Decoder, readable } from "./js/birdsong.js?v=12";
+const $ = id => document.getElementById(id);
+const V = await loadVoice();
+const P = await (await fetch("birds/nightingale/phrases.json?v=1")).json();
+let ctx = null, src = null, pressed = null;
+function stop() {
+  if (src) { try { src.stop(); } catch (e) {} src = null; }
+  if (pressed) { pressed.setAttribute("aria-pressed", "false"); pressed = null; }
+}
+async function play(samples, btn) {
+  const was = pressed === btn;
+  stop();
+  if (was) return;
+  // at the recordings' own rate (a converted buffer sounds metallic)
+  if (!ctx) { try { ctx = new AudioContext({ sampleRate: V.sr }); } catch (e) { ctx = new AudioContext(); } }
+  await ctx.resume();
+  const buf = ctx.createBuffer(1, samples.length, V.sr); buf.copyToChannel(samples, 0);
+  src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination);
+  const me = src; src.onended = () => { if (src === me) stop(); };
+  src.start(); pressed = btn; btn.setAttribute("aria-pressed", "true");
+}
+// the picks through the synthesizer, alone and around a message
+const wav = async u => parseWav(await (await fetch(u)).arrayBuffer()).x;
+const F = await (await fetch("birds/frames-ng/frames.json?v=2")).json();
+const VI = await (await fetch("birds/variants/variants.json?v=2")).json();
+const lettersD = { ...V.snd };
+await Promise.all(Object.entries(VI.versions.gesture).map(async ([c, d]) => { lettersD[c] = await wav(`birds/variants/${d.file}?v=2`); }));
+const ROWS = [["recording", "the recording itself (reference)"], ["copy", "copy"], ["notes", "notes"], ["notes-lower", "notes, lower"]];
+const frames = {};
+for (const [k] of ROWS) frames[k] = k === "recording"
+  ? { open: await wav(`birds/nightingale/${F.opening.source}?v=1`), close: await wav(`birds/nightingale/${F.closing.source}?v=1`) }
+  : { open: await wav(`birds/frames-ng/${F.opening.versions[k].file}?v=2`), close: await wav(`birds/frames-ng/${F.closing.versions[k].file}?v=1`) };
+const decoders = {};
+function voiceWith(k) {
+  const letters = document.querySelector("input[name=letters]:checked").value;
+  const voice = { ...V.voice, frames: { ...V.voice.frames, ngopen: { file: "" }, ngclose: { file: "" } },
+    timing: { ...V.voice.timing, open_pattern: ["ngopen"], open_period: 0, close_pattern: [{ note: "ngclose", gap: 0, level: 1 }] } };
+  return { key: k + "/" + letters, voice, sr: V.sr, snd: { ...(letters === "gesture" ? lettersD : V.snd), ngopen: frames[k].open, ngclose: frames[k].close } };
+}
+for (const [k, label] of ROWS) {
+  const row = document.createElement("div");
+  row.className = "row";
+  row.innerHTML = `<b style="min-width:17em;font:600 .95rem var(--mono)"></b><button class="secondary" data-w="open" type="button">Opening</button><button class="secondary" data-w="close" type="button">Closing</button><button class="secondary" data-w="msg" type="button">Message</button>`;
+  row.querySelector("b").textContent = label;
+  row.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    if (b.dataset.w !== "msg") return play(frames[k][b.dataset.w], b);
+    const W = voiceWith(k), out = sing($("text").value, W, 1, { punctuation: $("punct").checked });
+    play(out.samples, b);
+    // read back on clean sound (no room): a sanity check that the decoder finds these frames
+    setTimeout(() => {
+      const d = decoders[W.key] ||= new Decoder(W);
+      $("readback").textContent = `${label}, read back on clean sound: “${readable(d.decode(out.samples, V.sr).text)}”`;
+    }, 50);
+  }));
+  $("synth").appendChild(row);
+}
+
+$("today").addEventListener("click", e => play(sing("", V, 1).samples, e.currentTarget));
+const picks = { open: new Set(), close: new Set() };
+function showPicks() {
+  const f = s => [...s].join(", ") || "–";
+  $("picks").textContent = `Opening: ${f(picks.open)} · Closing: ${f(picks.close)}`;
+}
+let rec = 0;
+for (const p of P) {
+  if (p.recording !== rec) {
+    rec = p.recording;
+    const h = document.createElement("h2");
+    h.className = "rec";
+    h.textContent = `Recording ${rec}`;
+    $("list").appendChild(h);
+    const box = document.createElement("div"); box.className = "list"; box.id = "rec" + rec;
+    $("list").appendChild(box);
+  }
+  const x = parseWav(await (await fetch(`birds/nightingale/${p.file}?v=1`)).arrayBuffer()).x;
+  const name = `${p.recording}.${p.phrase}`;
+  const el = document.createElement("article");
+  el.className = "ph";
+  el.innerHTML = `<div class="head"><b></b><span class="src"></span></div><div class="pic"><canvas></canvas></div>
+    <div class="row"><button class="secondary play" type="button">▶ Play</button>
+    <button class="secondary pick" data-k="open" type="button">Opening</button>
+    <button class="secondary pick" data-k="close" type="button">Closing</button></div>`;
+  el.querySelector("b").textContent = name;
+  el.querySelector(".src").textContent = `${p.dur.toFixed(1)} s · ${p.id} at ${p.t0} s`;
+  drawPicture(el.querySelector("canvas"), x, V.sr, [], 160);
+  const pb = el.querySelector(".play");
+  pb.addEventListener("click", () => play(x, pb));
+  el.querySelectorAll(".pick").forEach(b => b.addEventListener("click", () => {
+    const set = picks[b.dataset.k], on = !set.has(name);
+    on ? set.add(name) : set.delete(name);
+    b.setAttribute("aria-pressed", String(on));
+    showPicks();
+  }));
+  $("rec" + rec).appendChild(el);
+}
+const seen = {};
+for (const p of P) seen[p.id] = p;
+$("credits").textContent = "Recordings (CC BY-SA 4.0, via xeno-canto and Wikimedia Commons): " +
+  Object.values(seen).map(p => `${p.recording}: ${p.id}, ${p.recordist}`).join(" · ");
+showPicks();
+</script>
+</body>
+</html>

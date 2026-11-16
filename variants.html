@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Versions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .vers{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+  .ver{display:grid;gap:4px}
+  .ver small{color:var(--muted);font-size:.8rem;line-height:1.35}
+  .lgrid{display:grid;grid-template-columns:auto repeat(6,1fr);gap:6px 8px;align-items:center;font:500 .9rem var(--mono)}
+  .lgrid .h{color:var(--muted);font:500 .8rem var(--body)}
+  .lgrid button{padding:6px 8px;min-width:0}
+  .lgrid .ch{font-size:1.1rem;font-weight:600;color:var(--short)}
+  .lgrid .ch.v{color:var(--vowel)}
+  .lgrid .tag{display:block;font-size:.7rem;color:var(--muted)}
+  button.secondary[aria-pressed="true"]{border-color:var(--short)!important;color:var(--short)}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="score.html">Score</a><a href="variants.html" aria-current="page">Versions</a></nav>
+  <header>
+    <h1>Toward a <em>real</em> bird</h1>
+    <p class="lede">The same synthesizer and the same bird models as today's voice, one change at a time. Signs and the opening and closing calls are unchanged. Nothing here goes into the voice.</p>
+  </header>
+  <section class="panel" aria-label="Sentence">
+    <div class="row" id="samples"></div>
+    <textarea id="text" aria-label="Sentence"></textarea>
+    <label class="check"><input type="checkbox" id="punct"> sing punctuation (. ? ! , ' - :)</label>
+    <div class="vers" id="vers"></div>
+    <p class="stats" id="readback"></p>
+    <p class="lede" id="bylabel">Sound by sound (tap one to hear it alone):</p>
+    <div class="row" id="bysound" style="gap:6px"></div>
+  </section>
+  <section class="panel" aria-label="Letters">
+    <h2>Each letter, six ways</h2>
+    <div class="lgrid" id="letters"></div>
+  </section>
+</main>
+<script type="module">
+import { loadVoice, sing, parseWav, Decoder, readable } from "./js/birdsong.js?v=12";
+const $ = id => document.getElementById(id);
+const V = await loadVoice();
+const INFO = await (await fetch("birds/variants/variants.json?v=2")).json();
+const VERS = {
+  today: ["Today", "the approved voice"],
+  trill: ["A · little trills", `consonants under ${INFO.short_s * 1000} ms sung as two quick notes, the second a little lower and softer`],
+  cap: ["B · lower range", `every letter in the same order, the whole range squeezed under ${INFO.cap_hz / 1000} kHz`],
+  both: ["C · both", "little trills and the lower range together"],
+  gesture: ["D · bird gestures", "B, with each consonant group given a bird gesture: chip (t p k b d g c q), buzz (s f z v j x h), hum (m n), glide (l up, w down), roll (r)"],
+  scale: ["E · on the scale", "D, with every letter on a note without sharps or flats (do ré mi fa sol la si)"],
+};
+const voices = { today: V };
+for (const ver of ["trill", "cap", "both", "gesture", "scale"]) {
+  const snd = { ...V.snd };
+  await Promise.all(Object.entries(INFO.versions[ver]).map(async ([c, d]) => {
+    snd[c] = parseWav(await (await fetch(`birds/variants/${d.file}?v=2`)).arrayBuffer()).x;
+  }));
+  voices[ver] = { voice: V.voice, snd, sr: V.sr };
+}
+let ctx = null, src = null, pressed = null;
+function stop() {
+  if (src) { try { src.stop(); } catch (e) {} src = null; }
+  if (pressed) { pressed.setAttribute("aria-pressed", "false"); pressed = null; }
+}
+async function play(samples, btn) {
+  const was = pressed === btn;
+  stop();
+  if (was) return;
+  // at the voice's own rate (a converted buffer sounds metallic)
+  if (!ctx) { try { ctx = new AudioContext({ sampleRate: V.sr }); } catch (e) { ctx = new AudioContext(); } }
+  await ctx.resume();
+  const buf = ctx.createBuffer(1, samples.length, V.sr); buf.copyToChannel(samples, 0);
+  src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination);
+  const me = src; src.onended = () => { if (src === me) stop(); };
+  src.start(); pressed = btn; btn.setAttribute("aria-pressed", "true");
+}
+const SAMPLES = { English: "the hunter thinks the end is near", French: "l'été arrive, où es-tu ?",
+  German: "ich denke, die Kinder sind schon hier", Spanish: "en el centro de la ciudad hay una estrella",
+  Italian: "il treno per Roma parte alle otto" };
+$("text").value = SAMPLES.French;
+for (const [l, s] of Object.entries(SAMPLES)) {
+  const b = document.createElement("button");
+  b.className = "secondary"; b.type = "button"; b.textContent = l;
+  b.addEventListener("click", () => { $("text").value = s; });
+  $("samples").appendChild(b);
+}
+const dec = {};
+for (const [ver, [name, about]] of Object.entries(VERS)) {
+  const d = document.createElement("div");
+  d.className = "ver";
+  d.innerHTML = `<button class="primary" type="button"></button><small></small>`;
+  d.querySelector("button").textContent = name;
+  d.querySelector("small").textContent = about;
+  const b = d.querySelector("button");
+  b.addEventListener("click", () => {
+    const out = sing($("text").value, voices[ver], 1, { punctuation: $("punct").checked });
+    play(out.samples, b);
+    // the sentence sound by sound, in this version, to point at the one that hurts
+    $("bylabel").textContent = `${name}, sound by sound (tap one to hear it alone; orange = sign):`;
+    $("bysound").innerHTML = "";
+    for (const m of out.marks.filter(m => m.letter)) {
+      const sb = document.createElement("button");
+      sb.className = "secondary"; sb.type = "button"; sb.textContent = m.letter;
+      sb.style.cssText = "padding:6px 10px;min-width:2.2em;font-family:var(--mono)" + (V.voice.letters[m.letter].sign ? ";color:var(--long);border-color:var(--long)" : "");
+      sb.addEventListener("click", () => play(voices[ver].snd[m.letter], sb));
+      $("bysound").appendChild(sb);
+    }
+    // read back on clean sound (no room): a sanity check, not a real test
+    setTimeout(() => {
+      dec[ver] ||= new Decoder(voices[ver]);
+      $("readback").textContent = `${name}, read back on clean sound: “${readable(dec[ver].decode(out.samples, V.sr).text)}”`;
+    }, 50);
+  });
+  $("vers").appendChild(d);
+}
+// each letter alone, four ways
+const g = $("letters");
+g.innerHTML = `<span></span>` + Object.values(VERS).map(([n]) => `<span class="h">${n}</span>`).join("");
+const order = [..."aeiouy", ..."bcdfghjklmnpqrstvwxz"];
+for (const c of order) {
+  const s = document.createElement("span");
+  s.className = "ch" + ("aeiouy".includes(c) ? " v" : ""); s.textContent = c;
+  g.appendChild(s);
+  for (const ver of Object.keys(VERS)) {
+    const b = document.createElement("button");
+    b.className = "secondary"; b.type = "button";
+    const ch = ver === "today" ? "" : INFO.versions[ver][c].changed;
+    b.innerHTML = `▶<span class="tag"></span>`;
+    b.querySelector(".tag").textContent = ver === "today" ? "" : ch || "same";
+    b.setAttribute("aria-label", `${c}, ${VERS[ver][0]}`);
+    b.addEventListener("click", () => play(voices[ver].snd[c], b));
+    g.appendChild(b);
+  }
+}
+</script>
+</body>
+</html>

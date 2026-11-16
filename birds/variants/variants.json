@@ -1,0 +1,821 @@
+{
+ "short_s": 0.1,
+ "gap_s": 0.012,
+ "drift_oct": -0.03,
+ "softer_db": -3.0,
+ "cap_hz": 5500.0,
+ "versions": {
+  "trill": {
+   "e": {
+    "file": "trill/e.wav",
+    "dur": 0.2723,
+    "main": 5087,
+    "changed": ""
+   },
+   "a": {
+    "file": "trill/a.wav",
+    "dur": 0.3441,
+    "main": 2815,
+    "changed": ""
+   },
+   "o": {
+    "file": "trill/o.wav",
+    "dur": 0.2726,
+    "main": 2818,
+    "changed": ""
+   },
+   "i": {
+    "file": "trill/i.wav",
+    "dur": 0.3093,
+    "main": 7591,
+    "changed": ""
+   },
+   "u": {
+    "file": "trill/u.wav",
+    "dur": 0.3101,
+    "main": 5139,
+    "changed": ""
+   },
+   "y": {
+    "file": "trill/y.wav",
+    "dur": 0.3248,
+    "main": 4691,
+    "changed": ""
+   },
+   "t": {
+    "file": "trill/t.wav",
+    "dur": 0.1034,
+    "main": 6558,
+    "changed": "2 notes"
+   },
+   "n": {
+    "file": "trill/n.wav",
+    "dur": 0.1284,
+    "main": 5570,
+    "changed": "2 notes"
+   },
+   "s": {
+    "file": "trill/s.wav",
+    "dur": 0.1433,
+    "main": 3721,
+    "changed": "2 notes"
+   },
+   "r": {
+    "file": "trill/r.wav",
+    "dur": 0.1324,
+    "main": 4065,
+    "changed": "2 notes"
+   },
+   "l": {
+    "file": "trill/l.wav",
+    "dur": 0.1787,
+    "main": 7103,
+    "changed": "2 notes"
+   },
+   "d": {
+    "file": "trill/d.wav",
+    "dur": 0.1973,
+    "main": 6214,
+    "changed": "2 notes"
+   },
+   "c": {
+    "file": "trill/c.wav",
+    "dur": 0.1213,
+    "main": 4336,
+    "changed": ""
+   },
+   "m": {
+    "file": "trill/m.wav",
+    "dur": 0.1068,
+    "main": 5010,
+    "changed": ""
+   },
+   "p": {
+    "file": "trill/p.wav",
+    "dur": 0.2046,
+    "main": 4271,
+    "changed": "2 notes"
+   },
+   "h": {
+    "file": "trill/h.wav",
+    "dur": 0.1199,
+    "main": 7181,
+    "changed": ""
+   },
+   "v": {
+    "file": "trill/v.wav",
+    "dur": 0.1226,
+    "main": 3173,
+    "changed": ""
+   },
+   "g": {
+    "file": "trill/g.wav",
+    "dur": 0.1237,
+    "main": 3952,
+    "changed": ""
+   },
+   "f": {
+    "file": "trill/f.wav",
+    "dur": 0.126,
+    "main": 2891,
+    "changed": ""
+   },
+   "b": {
+    "file": "trill/b.wav",
+    "dur": 0.1246,
+    "main": 1867,
+    "changed": ""
+   },
+   "w": {
+    "file": "trill/w.wav",
+    "dur": 0.1867,
+    "main": 1444,
+    "changed": "2 notes"
+   },
+   "k": {
+    "file": "trill/k.wav",
+    "dur": 0.122,
+    "main": 3554,
+    "changed": ""
+   },
+   "j": {
+    "file": "trill/j.wav",
+    "dur": 0.1241,
+    "main": 4100,
+    "changed": ""
+   },
+   "q": {
+    "file": "trill/q.wav",
+    "dur": 0.122,
+    "main": 4640,
+    "changed": ""
+   },
+   "x": {
+    "file": "trill/x.wav",
+    "dur": 0.1223,
+    "main": 2931,
+    "changed": ""
+   },
+   "z": {
+    "file": "trill/z.wav",
+    "dur": 0.1226,
+    "main": 2046,
+    "changed": ""
+   }
+  },
+  "cap": {
+   "e": {
+    "file": "cap/e.wav",
+    "dur": 0.2723,
+    "main": 3984,
+    "changed": "-4.2 st"
+   },
+   "a": {
+    "file": "cap/a.wav",
+    "dur": 0.3441,
+    "main": 2473,
+    "changed": "-2.2 st"
+   },
+   "o": {
+    "file": "cap/o.wav",
+    "dur": 0.2726,
+    "main": 2475,
+    "changed": "-2.2 st"
+   },
+   "i": {
+    "file": "cap/i.wav",
+    "dur": 0.3093,
+    "main": 5500,
+    "changed": "-5.6 st"
+   },
+   "u": {
+    "file": "cap/u.wav",
+    "dur": 0.3101,
+    "main": 4016,
+    "changed": "-4.3 st"
+   },
+   "y": {
+    "file": "cap/y.wav",
+    "dur": 0.3249,
+    "main": 3732,
+    "changed": "-4.0 st"
+   },
+   "t": {
+    "file": "cap/t.wav",
+    "dur": 0.0474,
+    "main": 4888,
+    "changed": "-5.1 st"
+   },
+   "n": {
+    "file": "cap/n.wav",
+    "dur": 0.0625,
+    "main": 4286,
+    "changed": "-4.5 st"
+   },
+   "s": {
+    "file": "cap/s.wav",
+    "dur": 0.0681,
+    "main": 3096,
+    "changed": "-3.2 st"
+   },
+   "r": {
+    "file": "cap/r.wav",
+    "dur": 0.0602,
+    "main": 3325,
+    "changed": "-3.5 st"
+   },
+   "l": {
+    "file": "cap/l.wav",
+    "dur": 0.0902,
+    "main": 5213,
+    "changed": "-5.4 st"
+   },
+   "d": {
+    "file": "cap/d.wav",
+    "dur": 0.0943,
+    "main": 4681,
+    "changed": "-4.9 st"
+   },
+   "c": {
+    "file": "cap/c.wav",
+    "dur": 0.1213,
+    "main": 3502,
+    "changed": "-3.7 st"
+   },
+   "m": {
+    "file": "cap/m.wav",
+    "dur": 0.1068,
+    "main": 3935,
+    "changed": "-4.2 st"
+   },
+   "p": {
+    "file": "cap/p.wav",
+    "dur": 0.0969,
+    "main": 3460,
+    "changed": "-3.6 st"
+   },
+   "h": {
+    "file": "cap/h.wav",
+    "dur": 0.1199,
+    "main": 5259,
+    "changed": "-5.4 st"
+   },
+   "v": {
+    "file": "cap/v.wav",
+    "dur": 0.1226,
+    "main": 2723,
+    "changed": "-2.6 st"
+   },
+   "g": {
+    "file": "cap/g.wav",
+    "dur": 0.1237,
+    "main": 3250,
+    "changed": "-3.4 st"
+   },
+   "f": {
+    "file": "cap/f.wav",
+    "dur": 0.126,
+    "main": 2526,
+    "changed": "-2.3 st"
+   },
+   "b": {
+    "file": "cap/b.wav",
+    "dur": 0.1246,
+    "main": 1776,
+    "changed": "-0.9 st"
+   },
+   "w": {
+    "file": "cap/w.wav",
+    "dur": 0.086,
+    "main": 1444,
+    "changed": ""
+   },
+   "k": {
+    "file": "cap/k.wav",
+    "dur": 0.122,
+    "main": 2984,
+    "changed": "-3.0 st"
+   },
+   "j": {
+    "file": "cap/j.wav",
+    "dur": 0.1241,
+    "main": 3348,
+    "changed": "-3.5 st"
+   },
+   "q": {
+    "file": "cap/q.wav",
+    "dur": 0.122,
+    "main": 3699,
+    "changed": "-3.9 st"
+   },
+   "x": {
+    "file": "cap/x.wav",
+    "dur": 0.1224,
+    "main": 2555,
+    "changed": "-2.4 st"
+   },
+   "z": {
+    "file": "cap/z.wav",
+    "dur": 0.1226,
+    "main": 1912,
+    "changed": "-1.2 st"
+   }
+  },
+  "both": {
+   "e": {
+    "file": "both/e.wav",
+    "dur": 0.2723,
+    "main": 3984,
+    "changed": "-4.2 st"
+   },
+   "a": {
+    "file": "both/a.wav",
+    "dur": 0.3441,
+    "main": 2473,
+    "changed": "-2.2 st"
+   },
+   "o": {
+    "file": "both/o.wav",
+    "dur": 0.2726,
+    "main": 2475,
+    "changed": "-2.2 st"
+   },
+   "i": {
+    "file": "both/i.wav",
+    "dur": 0.3093,
+    "main": 5500,
+    "changed": "-5.6 st"
+   },
+   "u": {
+    "file": "both/u.wav",
+    "dur": 0.3101,
+    "main": 4016,
+    "changed": "-4.3 st"
+   },
+   "y": {
+    "file": "both/y.wav",
+    "dur": 0.3249,
+    "main": 3732,
+    "changed": "-4.0 st"
+   },
+   "t": {
+    "file": "both/t.wav",
+    "dur": 0.1034,
+    "main": 4888,
+    "changed": "2 notes, -5.1 st"
+   },
+   "n": {
+    "file": "both/n.wav",
+    "dur": 0.1285,
+    "main": 4286,
+    "changed": "2 notes, -4.5 st"
+   },
+   "s": {
+    "file": "both/s.wav",
+    "dur": 0.1433,
+    "main": 3096,
+    "changed": "2 notes, -3.2 st"
+   },
+   "r": {
+    "file": "both/r.wav",
+    "dur": 0.1324,
+    "main": 3325,
+    "changed": "2 notes, -3.5 st"
+   },
+   "l": {
+    "file": "both/l.wav",
+    "dur": 0.1787,
+    "main": 5213,
+    "changed": "2 notes, -5.4 st"
+   },
+   "d": {
+    "file": "both/d.wav",
+    "dur": 0.1973,
+    "main": 4681,
+    "changed": "2 notes, -4.9 st"
+   },
+   "c": {
+    "file": "both/c.wav",
+    "dur": 0.1213,
+    "main": 3502,
+    "changed": "-3.7 st"
+   },
+   "m": {
+    "file": "both/m.wav",
+    "dur": 0.1068,
+    "main": 3935,
+    "changed": "-4.2 st"
+   },
+   "p": {
+    "file": "both/p.wav",
+    "dur": 0.2046,
+    "main": 3460,
+    "changed": "2 notes, -3.6 st"
+   },
+   "h": {
+    "file": "both/h.wav",
+    "dur": 0.1199,
+    "main": 5259,
+    "changed": "-5.4 st"
+   },
+   "v": {
+    "file": "both/v.wav",
+    "dur": 0.1226,
+    "main": 2723,
+    "changed": "-2.6 st"
+   },
+   "g": {
+    "file": "both/g.wav",
+    "dur": 0.1237,
+    "main": 3250,
+    "changed": "-3.4 st"
+   },
+   "f": {
+    "file": "both/f.wav",
+    "dur": 0.126,
+    "main": 2526,
+    "changed": "-2.3 st"
+   },
+   "b": {
+    "file": "both/b.wav",
+    "dur": 0.1246,
+    "main": 1776,
+    "changed": "-0.9 st"
+   },
+   "w": {
+    "file": "both/w.wav",
+    "dur": 0.1867,
+    "main": 1444,
+    "changed": "2 notes"
+   },
+   "k": {
+    "file": "both/k.wav",
+    "dur": 0.122,
+    "main": 2984,
+    "changed": "-3.0 st"
+   },
+   "j": {
+    "file": "both/j.wav",
+    "dur": 0.1241,
+    "main": 3348,
+    "changed": "-3.5 st"
+   },
+   "q": {
+    "file": "both/q.wav",
+    "dur": 0.122,
+    "main": 3699,
+    "changed": "-3.9 st"
+   },
+   "x": {
+    "file": "both/x.wav",
+    "dur": 0.1224,
+    "main": 2555,
+    "changed": "-2.4 st"
+   },
+   "z": {
+    "file": "both/z.wav",
+    "dur": 0.1226,
+    "main": 1912,
+    "changed": "-1.2 st"
+   }
+  },
+  "gesture": {
+   "e": {
+    "file": "gesture/e.wav",
+    "dur": 0.2723,
+    "main": 3984,
+    "changed": "-4.2 st"
+   },
+   "a": {
+    "file": "gesture/a.wav",
+    "dur": 0.3441,
+    "main": 2473,
+    "changed": "-2.2 st"
+   },
+   "o": {
+    "file": "gesture/o.wav",
+    "dur": 0.2726,
+    "main": 2475,
+    "changed": "-2.2 st"
+   },
+   "i": {
+    "file": "gesture/i.wav",
+    "dur": 0.3093,
+    "main": 5500,
+    "changed": "-5.6 st"
+   },
+   "u": {
+    "file": "gesture/u.wav",
+    "dur": 0.3101,
+    "main": 4016,
+    "changed": "-4.3 st"
+   },
+   "y": {
+    "file": "gesture/y.wav",
+    "dur": 0.3249,
+    "main": 3732,
+    "changed": "-4.0 st"
+   },
+   "t": {
+    "file": "gesture/t.wav",
+    "dur": 0.0468,
+    "main": 4888,
+    "changed": "-5.1 st, chip"
+   },
+   "n": {
+    "file": "gesture/n.wav",
+    "dur": 0.1151,
+    "main": 4286,
+    "changed": "-4.5 st, hum"
+   },
+   "s": {
+    "file": "gesture/s.wav",
+    "dur": 0.1024,
+    "main": 3096,
+    "changed": "-3.2 st, buzz"
+   },
+   "r": {
+    "file": "gesture/r.wav",
+    "dur": 0.0938,
+    "main": 3325,
+    "changed": "-3.5 st, roll"
+   },
+   "l": {
+    "file": "gesture/l.wav",
+    "dur": 0.0977,
+    "main": 5213,
+    "changed": "-5.4 st, glide up"
+   },
+   "d": {
+    "file": "gesture/d.wav",
+    "dur": 0.0635,
+    "main": 4681,
+    "changed": "-4.9 st, chip"
+   },
+   "c": {
+    "file": "gesture/c.wav",
+    "dur": 0.0622,
+    "main": 3502,
+    "changed": "-3.7 st, chip"
+   },
+   "m": {
+    "file": "gesture/m.wav",
+    "dur": 0.1111,
+    "main": 3935,
+    "changed": "-4.2 st, hum"
+   },
+   "p": {
+    "file": "gesture/p.wav",
+    "dur": 0.061,
+    "main": 3460,
+    "changed": "-3.6 st, chip"
+   },
+   "h": {
+    "file": "gesture/h.wav",
+    "dur": 0.1025,
+    "main": 5259,
+    "changed": "-5.4 st, buzz"
+   },
+   "v": {
+    "file": "gesture/v.wav",
+    "dur": 0.1034,
+    "main": 2723,
+    "changed": "-2.6 st, buzz"
+   },
+   "g": {
+    "file": "gesture/g.wav",
+    "dur": 0.0633,
+    "main": 3250,
+    "changed": "-3.4 st, chip"
+   },
+   "f": {
+    "file": "gesture/f.wav",
+    "dur": 0.1035,
+    "main": 2526,
+    "changed": "-2.3 st, buzz"
+   },
+   "b": {
+    "file": "gesture/b.wav",
+    "dur": 0.0631,
+    "main": 1776,
+    "changed": "-0.9 st, chip"
+   },
+   "w": {
+    "file": "gesture/w.wav",
+    "dur": 0.09,
+    "main": 1444,
+    "changed": "glide down"
+   },
+   "k": {
+    "file": "gesture/k.wav",
+    "dur": 0.062,
+    "main": 2984,
+    "changed": "-3.0 st, chip"
+   },
+   "j": {
+    "file": "gesture/j.wav",
+    "dur": 0.1019,
+    "main": 3348,
+    "changed": "-3.5 st, buzz"
+   },
+   "q": {
+    "file": "gesture/q.wav",
+    "dur": 0.062,
+    "main": 3699,
+    "changed": "-3.9 st, chip"
+   },
+   "x": {
+    "file": "gesture/x.wav",
+    "dur": 0.1033,
+    "main": 2555,
+    "changed": "-2.4 st, buzz"
+   },
+   "z": {
+    "file": "gesture/z.wav",
+    "dur": 0.1018,
+    "main": 1912,
+    "changed": "-1.2 st, buzz"
+   }
+  },
+  "scale": {
+   "e": {
+    "file": "scale/e.wav",
+    "dur": 0.2723,
+    "main": 3951,
+    "changed": "-4.2 st, si7"
+   },
+   "a": {
+    "file": "scale/a.wav",
+    "dur": 0.3442,
+    "main": 2349,
+    "changed": "-2.2 st, ré7"
+   },
+   "o": {
+    "file": "scale/o.wav",
+    "dur": 0.2726,
+    "main": 2349,
+    "changed": "-2.2 st, ré7"
+   },
+   "i": {
+    "file": "scale/i.wav",
+    "dur": 0.3093,
+    "main": 5588,
+    "changed": "-5.6 st, fa8"
+   },
+   "u": {
+    "file": "scale/u.wav",
+    "dur": 0.3101,
+    "main": 3951,
+    "changed": "-4.3 st, si7"
+   },
+   "y": {
+    "file": "scale/y.wav",
+    "dur": 0.3248,
+    "main": 3951,
+    "changed": "-4.0 st, si7"
+   },
+   "t": {
+    "file": "scale/t.wav",
+    "dur": 0.0468,
+    "main": 4699,
+    "changed": "-5.1 st, chip, ré8"
+   },
+   "n": {
+    "file": "scale/n.wav",
+    "dur": 0.1151,
+    "main": 4186,
+    "changed": "-4.5 st, hum, do8"
+   },
+   "s": {
+    "file": "scale/s.wav",
+    "dur": 0.1024,
+    "main": 3136,
+    "changed": "-3.2 st, buzz, sol7"
+   },
+   "r": {
+    "file": "scale/r.wav",
+    "dur": 0.0938,
+    "main": 3520,
+    "changed": "-3.5 st, roll, la7"
+   },
+   "l": {
+    "file": "scale/l.wav",
+    "dur": 0.0977,
+    "main": 5274,
+    "changed": "-5.4 st, glide up, mi8"
+   },
+   "d": {
+    "file": "scale/d.wav",
+    "dur": 0.0635,
+    "main": 4699,
+    "changed": "-4.9 st, chip, ré8"
+   },
+   "c": {
+    "file": "scale/c.wav",
+    "dur": 0.0622,
+    "main": 3520,
+    "changed": "-3.7 st, chip, la7"
+   },
+   "m": {
+    "file": "scale/m.wav",
+    "dur": 0.1111,
+    "main": 3951,
+    "changed": "-4.2 st, hum, si7"
+   },
+   "p": {
+    "file": "scale/p.wav",
+    "dur": 0.061,
+    "main": 3520,
+    "changed": "-3.6 st, chip, la7"
+   },
+   "h": {
+    "file": "scale/h.wav",
+    "dur": 0.1026,
+    "main": 5274,
+    "changed": "-5.4 st, buzz, mi8"
+   },
+   "v": {
+    "file": "scale/v.wav",
+    "dur": 0.1035,
+    "main": 2794,
+    "changed": "-2.6 st, buzz, fa7"
+   },
+   "g": {
+    "file": "scale/g.wav",
+    "dur": 0.0633,
+    "main": 3136,
+    "changed": "-3.4 st, chip, sol7"
+   },
+   "f": {
+    "file": "scale/f.wav",
+    "dur": 0.1035,
+    "main": 2637,
+    "changed": "-2.3 st, buzz, mi7"
+   },
+   "b": {
+    "file": "scale/b.wav",
+    "dur": 0.0631,
+    "main": 1760,
+    "changed": "-0.9 st, chip, la6"
+   },
+   "w": {
+    "file": "scale/w.wav",
+    "dur": 0.09,
+    "main": 1397,
+    "changed": "glide down, fa6"
+   },
+   "k": {
+    "file": "scale/k.wav",
+    "dur": 0.062,
+    "main": 3136,
+    "changed": "-3.0 st, chip, sol7"
+   },
+   "j": {
+    "file": "scale/j.wav",
+    "dur": 0.1019,
+    "main": 3520,
+    "changed": "-3.5 st, buzz, la7"
+   },
+   "q": {
+    "file": "scale/q.wav",
+    "dur": 0.062,
+    "main": 3520,
+    "changed": "-3.9 st, chip, la7"
+   },
+   "x": {
+    "file": "scale/x.wav",
+    "dur": 0.1033,
+    "main": 2637,
+    "changed": "-2.4 st, buzz, mi7"
+   },
+   "z": {
+    "file": "scale/z.wav",
+    "dur": 0.1018,
+    "main": 1976,
+    "changed": "-1.2 st, buzz, si6"
+   }
+  }
+ },
+ "gestures": {
+  "t": "chip",
+  "p": "chip",
+  "k": "chip",
+  "b": "chip",
+  "d": "chip",
+  "g": "chip",
+  "c": "chip",
+  "q": "chip",
+  "s": "buzz",
+  "f": "buzz",
+  "z": "buzz",
+  "v": "buzz",
+  "j": "buzz",
+  "x": "buzz",
+  "h": "buzz",
+  "m": "hum",
+  "n": "hum",
+  "l": "glide up",
+  "w": "glide down",
+  "r": "roll"
+ }
+}

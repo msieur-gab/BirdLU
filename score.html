@@ -52,13 +52,26 @@
     <p class="stats" id="pairsum"></p>
     <div class="tablewrap"><table id="pairs"></table></div>
   </section>
+  <section class="panel" aria-label="Proposed placement">
+    <h2>Proposed placement, for your ear</h2>
+    <p class="lede">The same approved sounds, shared out again so that the most used pairs sing far apart: vowels still trills, consonants still single notes (lab/placement.py, method in MUSICOLOGY.md). Nothing in the voice is changed. The w sound is out of the pool; until a new one is chosen, w keeps today's sound in both versions.</p>
+    <p class="stats" id="plsum"></p>
+    <div class="row" id="samples"></div>
+    <textarea id="text" aria-label="Sentence"></textarea>
+    <div class="row">
+      <button class="primary" id="playToday" type="button">Today</button>
+      <button class="primary" id="playProp" type="button">Proposed</button>
+    </div>
+    <p class="stats" id="readback"></p>
+    <div class="tablewrap"><table id="map"></table></div>
+  </section>
   <section class="panel" aria-label="Table">
     <h2>All sounds</h2>
     <div class="tablewrap"><table id="table"></table></div>
   </section>
 </main>
 <script type="module">
-import { loadVoice } from "./js/birdsong.js?v=11";
+import { loadVoice } from "./js/birdsong.js?v=12";
 const $ = id => document.getElementById(id);
 const S = (await (await fetch("birds/score.json?v=1")).json()).sounds;
 const V = await loadVoice();
@@ -198,6 +211,47 @@ for (const l of ["all", ...BG.languages]) {
   $("langs").appendChild(lab);
 }
 showPairs();
+
+// proposed placement (lab/placement.py): which letter sings which approved sound
+const PL = await (await fetch("birds/placement.json?v=1")).json();
+const { sing, Decoder, readable } = await import("./js/birdsong.js?v=12");
+const propSnd = { ...V.snd };
+for (const [c, from] of Object.entries(PL.sound_of)) if (from) propSnd[c] = V.snd[from];
+const PROP = { voice: V.voice, snd: propSnd, sr: V.sr };
+const fmt = s => `${s.under2}% under 2 st, ${s.under4}% under 4 st, ${s.mean_apart} st apart on average`;
+$("plsum").textContent = `All pairs sung, five languages: today ${fmt(PL.today.all)}; proposed ${fmt(PL.proposed.all)}. A new w would sit best near ${PL.w_pitch.note} (${PL.w_pitch.hz} Hz).`;
+const SAMPLES = { English: "the hunter thinks the end is near", French: "l'été arrive, où es-tu ?",
+  German: "ich denke, die Kinder sind schon hier", Spanish: "en el centro de la ciudad hay una estrella",
+  Italian: "il treno per Roma parte alle otto" };
+$("text").value = SAMPLES.English;
+for (const [l, s] of Object.entries(SAMPLES)) {
+  const b = document.createElement("button");
+  b.className = "secondary"; b.type = "button"; b.textContent = l;
+  b.addEventListener("click", () => { $("text").value = s; });
+  $("samples").appendChild(b);
+}
+let decToday = null, decProp = null;
+async function playVoice(which) {
+  const V2 = which === "today" ? V : PROP;
+  const out = sing($("text").value, V2, 1);
+  if (src) { try { src.stop(); } catch (e) {} }
+  if (!ctx) { try { ctx = new AudioContext({ sampleRate: V.sr }); } catch (e) { ctx = new AudioContext(); } }
+  await ctx.resume();
+  const buf = ctx.createBuffer(1, out.samples.length, V.sr); buf.copyToChannel(out.samples, 0);
+  src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination); src.start();
+  // read back on clean sound (no room): a check that the placement still decodes, not a real test
+  setTimeout(() => {
+    const dec = which === "today" ? (decToday ||= new Decoder(V)) : (decProp ||= new Decoder(PROP));
+    $("readback").textContent = `${which === "today" ? "Today" : "Proposed"}, read back on clean sound: “${readable(dec.decode(out.samples, V.sr).text)}”`;
+  }, 50);
+}
+$("playToday").addEventListener("click", () => playVoice("today"));
+$("playProp").addEventListener("click", () => playVoice("proposed"));
+const letterKeys = Object.keys(PL.sound_of);
+$("map").innerHTML = `<tr><th>letter</th><th>today</th><th>proposed</th><th>sound of</th></tr>` + letterKeys.map(c => {
+  const from = PL.sound_of[c];
+  return `<tr><td><b>${c}</b></td><td>${S[c].main_note}</td><td>${from ? S[from].main_note : PL.w_pitch.note}</td><td>${from ? (from === c ? "its own" : from) : "a new sound, to choose"}</td></tr>`;
+}).join("");
 
 $("table").innerHTML = `<tr><th>sound</th><th>kind</th><th>main pitch</th><th>note</th><th>range</th><th>length</th></tr>` + rows.join("");
 </script>

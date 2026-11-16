@@ -20,6 +20,9 @@ TITLES = [
     "Turdus philomelos - Song Thrush XC541754.mp3", "Turdus philomelos - Song Thrush XC503633.mp3",
     "Chloris chloris - European Greenfinch XC482886.mp3", "Chloris chloris - European Greenfinch XC183761.mp3",
     "Emberiza citrinella - Yellowhammer XC531169.mp3", "Emberiza citrinella - Yellowhammer XC481630.mp3",
+    # 16 Nov: the nightingale, for the opening and closing (Gab: "the Chinese bird ... for the emperors? Rossignol?")
+    "Luscinia megarhynchos - Common Nightingale XC138451.mp3", "Luscinia megarhynchos - Common Nightingale XC473316.mp3",
+    "Luscinia megarhynchos - Common Nightingale XC546043.mp3",
 ]
 
 

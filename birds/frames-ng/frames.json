@@ -1,0 +1,42 @@
+{
+ "opening": {
+  "source": "XC473316-16.wav",
+  "versions": {
+   "copy": {
+    "file": "opening-copy.wav",
+    "dur": 1.527,
+    "notes": null
+   },
+   "notes": {
+    "file": "opening-notes.wav",
+    "dur": 1.533,
+    "notes": 21
+   },
+   "notes-lower": {
+    "file": "opening-notes-lower.wav",
+    "dur": 1.534,
+    "notes": 21
+   }
+  }
+ },
+ "closing": {
+  "source": "XC138451-4.wav",
+  "versions": {
+   "copy": {
+    "file": "closing-copy.wav",
+    "dur": 1.049,
+    "notes": null
+   },
+   "notes": {
+    "file": "closing-notes.wav",
+    "dur": 1.053,
+    "notes": 18
+   },
+   "notes-lower": {
+    "file": "closing-notes-lower.wav",
+    "dur": 1.053,
+    "notes": 18
+   }
+  }
+ }
+}
