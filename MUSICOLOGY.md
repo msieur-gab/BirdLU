@@ -562,6 +562,36 @@ the sounds, not from the test errors). Measured on the real recordings of D (v9)
 - Caveat: the presets are common words; names and rare words get no help, and a rare word one alike-swap away
   from a common one could be changed.
 
+## Step 17: a page to draw a letter (`draw.html`, `js/synth.js`, `lab/draw_models.py`, `lab/draw_check.py`)
+
+Gab: "a small drawing application to let me draw the [notes], which are not behaving properly ... a partition with the
+letters in the alphabetic order. And then below a place to draw letters ... test them into a context. Which means A
+within different words in different language, so then I can feel how it sounds, before we commit to it."
+
+- `lab/draw_models.py` writes D's 26 letters as synthesizer numbers (`birds/draw/models.json`; sung back by
+  `lab/synth.py` they match D's sound files, correlation 1.00) and words holding each letter in the five languages
+  (`birds/draw/words.json`, from the books).
+- `js/synth.js` is `sing` in the browser: same steps, another random wobble. To the decoder its letters match D's
+  files at 0.91–1.00.
+- `draw.html`: the partition (D's letters in alphabetical order, their note and their pitch line), then for the
+  chosen letter a pitch line and a loudness line to draw, sliders (notes, length, silence, drift, overtones), the
+  letter heard at once, inside words (with the drawn letters, or D as it is), a quick clean-sound likeness against
+  the other letters, export and import. Drawings stay in the browser; the voice is not touched.
+- `lab/draw_check.py <exported file>` makes test voice `drawn` (D with the drawn letters) and runs the conflict
+  scripts (likeness through a 1 s echo, presets clean and in simulated rooms) for D and for it. A guide; then a
+  real test with `?voice=drawn`.
+- The page's "Does it clash?" uses the script's measure (each letter heard through a 0.6 s and a 1 s echo, then
+  the decoder's comparison), live, with the closest pairs of the whole alphabet.
+- Gab drew 25 letters (all but y) over four exports (`birds/draw/mine/`). Version 5 = his version 3 with t moved
+  2 semitones down and a new n (two round notes, the second 2 semitones higher, around 3270 Hz, D's hum shape):
+  no pair above 0.65 (closest q/x 0.61), presets 0 of 177 wrong clean, 0.6 s and 1 s simulated echo (D: 1, 9, 7).
+  Gab: "sounds and feel near perfect". `5-short`: vowels 15 % shorter, consonants at most 150 ms, same clean
+  sheet, sentences as long as D's. `lab/draw_spread.py` moves alike letters apart in pitch only (a proposal file).
+- Next (Gab): numbers, the most common signs and punctuation, then accents. The nine approved signs are on the
+  page as synthesizer numbers fitted from their sounds (likeness to the files 0.78–0.93); against version 5's
+  letters 16 pairs are above 0.65 (e/- 0.82, b/' 0.82, a/' 0.78, ,/- 0.76 ...), so the signs need redrawing.
+- No real test of version 5 yet.
+
 ## Handover, end of 16 Nov (for a fresh session)
 
 Where things stand, in Gab's words where possible:

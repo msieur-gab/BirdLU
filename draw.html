@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Draw</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  main{max-width:1040px}
+  canvas{display:block;touch-action:none}
+  .staffwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+  #staff{cursor:pointer}
+  .pad{border:1px solid var(--line);border-radius:8px;background:var(--paper);cursor:crosshair;width:100%}
+  .padlabel{display:flex;justify-content:space-between;align-items:baseline;font-size:.85rem;color:var(--muted)}
+  .head{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+  .big{font:600 3rem/1 var(--mono);min-width:1.2em;text-align:center}
+  .big.vowel{color:var(--vowel)} .big.cons{color:var(--short)} .big.sign{color:var(--long)}
+  .tag{font:500 .78rem var(--mono);padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .tag.mine{border-color:var(--warn);color:var(--warn)}
+  .langs{display:grid;gap:8px}
+  .lang{display:grid;grid-template-columns:5.5em 1fr;gap:8px;align-items:baseline}
+  .lang h3{margin:0;font:600 .75rem var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .words{display:flex;flex-wrap:wrap;gap:6px}
+  .word{font:500 1rem var(--mono);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer}
+  .word:hover{border-color:var(--short)}
+  .word mark{background:none;color:var(--warn);font-weight:600}
+  input[type=text]{font:500 1.05rem var(--mono);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px 12px;flex:1;min-width:200px}
+  .scroll{overflow-x:auto;border-radius:8px;background:#fff}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .seg label{padding:6px 14px;cursor:pointer;font-size:.9rem;color:var(--muted)}
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg label:has(input:checked){background:var(--ink);color:var(--paper)}
+  .seg label:has(input:focus-visible){outline:2px solid var(--short);outline-offset:-2px}
+  .clash{display:flex;flex-wrap:wrap;gap:6px;font:400 .85rem var(--mono)}
+  .clash span{border:1px solid var(--line);border-radius:8px;padding:3px 8px}
+  .clash span.worse{border-color:var(--warn);color:var(--warn)}
+  .clash span.better{border-color:var(--ok)}
+  .clash b{font-weight:600}
+  .small{font-size:.85rem;color:var(--muted);margin:0;max-width:75ch}
+  code{font:400 .85em var(--mono)}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="letters.html">Letters</a><a href="draw.html" aria-current="page">Draw</a></nav>
+  <header>
+    <h1>Draw a <em>bird</em> letter</h1>
+    <p class="lede">The letters of version D on one partition, in alphabetical order, then the signs (a digit is sung as the number call # followed by a letter: 1 = a … 9 = i, 0 = j). Tap a letter to hear it, then redraw its pitch and its loudness below and hear it at once, alone and inside words. Everything is sung by the synthesizer the device will run. Nothing here changes the voice: your drawings stay in this browser until you export them.</p>
+    <p class="note" id="status">Loading the letters…</p>
+  </header>
+
+  <section aria-label="Partition">
+    <h2>The partition</h2>
+    <div class="staffwrap"><canvas id="staff"></canvas></div>
+    <div class="key">
+      <span><i class="sw" style="background:var(--vowel)"></i>vowel</span>
+      <span><i class="sw" style="background:var(--short)"></i>consonant</span>
+      <span><i class="sw" style="background:var(--long)"></i>sign</span>
+      <span><i class="sw" style="background:var(--warn)"></i>drawn by you (D's in grey behind)</span>
+      <span>● the letter's note · each column is 350 ms wide</span>
+    </div>
+    <div class="lang" style="grid-template-columns:auto 1fr;align-items:center">
+      <h3>Numbers</h3><div class="words" id="digits"></div>
+    </div>
+    <p class="small">A digit has no sound of its own: it is the number call <b>#</b> followed by a letter. Tap a digit to hear it; redraw <b>#</b> (last column) or the letter to change it.</p>
+  </section>
+
+  <section class="panel" aria-label="Draw">
+    <div class="head">
+      <span class="big" id="big">a</span>
+      <span class="tag" id="tag">version D</span>
+      <button class="primary" id="play" type="button">▶ Mine</button>
+      <button class="secondary" id="playD" type="button">▶ D's</button>
+      <span class="stats" id="facts"></span>
+    </div>
+    <div>
+      <div class="padlabel"><span>Pitch of one note: draw the line (grey: D's, small letters on the right: notes already taken)</span><span id="pitchRead"></span></div>
+      <canvas class="pad" id="pitch" height="280"></canvas>
+    </div>
+    <div>
+      <div class="padlabel"><span>Loudness of one note: draw the line (top is loud, bottom is silent)</span></div>
+      <canvas class="pad" id="loud" height="100"></canvas>
+    </div>
+    <div class="controls" id="controls"></div>
+    <div class="row">
+      <button class="secondary" id="down" type="button">Whole letter 1 semitone down</button>
+      <button class="secondary" id="up" type="button">1 semitone up</button>
+      <button class="secondary" id="smooth" type="button">Smooth the lines</button>
+      <button class="secondary" id="flat" type="button">Flat pitch</button>
+      <button class="secondary" id="reset" type="button">Back to D's letter</button>
+    </div>
+    <div class="row">
+      <label for="copyTo">Give this drawing to the letter</label>
+      <select id="copyTo"></select>
+      <button class="secondary" id="copy" type="button">Copy</button>
+    </div>
+  </section>
+
+  <section class="panel" aria-label="In words">
+    <h2>In words</h2>
+    <div class="row">
+      <div class="seg" role="radiogroup" aria-label="Which letters sing">
+        <label><input type="radio" name="who" value="mine" checked>With my letters</label>
+        <label><input type="radio" name="who" value="d">D as it is</label>
+      </div>
+      <label class="check"><input type="checkbox" id="punct" checked>Sing the punctuation ( . , ? ! ' - : )</label>
+      <span class="small">Tap a word; tap again after switching to compare.</span>
+    </div>
+    <div class="langs" id="langs"></div>
+    <div class="langs"><div class="lang"><h3>Sentences</h3><div class="words" id="sentences"></div></div></div>
+    <div class="row">
+      <input type="text" id="free" value="the quick brown fox jumps over the lazy dog" spellcheck="false" aria-label="Your own words">
+      <button class="secondary" id="singFree" type="button">▶ Sing</button>
+    </div>
+    <div class="scroll"><canvas id="picture"></canvas></div>
+  </section>
+
+  <section class="panel" aria-label="Clashes">
+    <h2>Does it clash?</h2>
+    <p class="small" id="shares"></p>
+    <p class="small">This letter against its closest letters, as the decoder sees them through an echo (1.00 = the same picture; orange = above 0.65, too close; green = under 0.55; D's value in brackets):</p>
+    <div class="clash" id="clash"></div>
+    <p class="small"><b id="clashSum"></b> The closest pairs of the whole alphabet now:</p>
+    <div class="clash" id="clashAll"></div>
+    <p class="small">The same measure as the conflict script, updated each time you lift the pen (the room's echo is drawn at random, so values can differ from the script's by a few hundredths). The script also sings and decodes the test sentences: <code>.venv/bin/python lab/draw_check.py &lt;exported file&gt;</code>. Then a real test decides.</p>
+  </section>
+
+  <section class="panel" aria-label="Keep">
+    <h2>Keep</h2>
+    <p class="small" id="kept"></p>
+    <div class="row">
+      <button class="primary" id="export" type="button">Export my letters</button>
+      <button class="secondary" id="importBtn" type="button">Import letters</button><input type="file" id="import" hidden>
+      <span class="small">or drop the exported file anywhere on this page</span>
+    </div>
+    <div class="row" id="filesRow" hidden>
+      <span class="small">Load a letters file from <code>birds/draw/mine/</code>, no file picker needed:</span>
+      <span class="row" id="files"></span>
+      <button class="secondary" id="wav" type="button">Save this letter as WAV</button>
+      <button class="secondary" id="clear" type="button">Forget all my drawings</button>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { loadVoice, sing, features, shape, template, match, setBand, drawPicture, encodeWav } from "./js/birdsong.js?v=14";
+import { letterSound, contour, SR } from "./js/synth.js?v=1";
+
+const $ = id => document.getElementById(id);
+let AZ = [..."abcdefghijklmnopqrstuvwxyz"];        // then the signs of the voice (. , ? ! ' - : @ #), once loaded
+const SIGNS = [".", ",", "?", "!", "'", "-", ":", "@", "#"];
+const colourOf = c => D[c].vowel ? css("--vowel") : D[c].sign ? css("--long") : css("--short");
+const KEY = "birdlu-draw-v1";
+const LO = 77, HI = 116;                       // the partition: F5 (698 Hz) to G♯8 (6645 Hz), in MIDI notes
+const midi = hz => 69 + 12 * Math.log2(hz / 440), hz = m => 440 * Math.pow(2, (m - 69) / 12);
+const NAMES = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
+const noteName = m => { const r = Math.round(m); return NAMES[((r % 12) + 12) % 12] + (Math.floor(r / 12) - 1); };
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const clone = m => JSON.parse(JSON.stringify(m));
+
+let D, WORDS, V, mine = {}, sel = "w", sndD = {}, sndMine = {}, lastSung = null;
+try { mine = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { mine = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(mine)); } catch (e) {} };
+const model = c => mine[c] || D[c];
+const snd = c => mine[c] ? (sndMine[c] ||= letterSound(mine[c])) : sndD[c];
+
+// the letter's note: its loudness-weighted mean pitch, as a MIDI number
+function noteOf(m) {
+  let s = 0, w = 0;
+  for (const n of contour(m)) for (let k = 0; k <= 24; k++) { const a = n.a(k / 24) ** 2; s += a * Math.log2(n.f(k / 24)); w += a; }
+  return midi(Math.pow(2, s / (w || 1)));
+}
+
+// ---------- sound ----------
+let ctx, src;
+function play(samples) {
+  if (!ctx) { try { ctx = new AudioContext({ sampleRate: SR }); } catch (e) { ctx = new AudioContext(); } }
+  if (src) { try { src.stop(); } catch (e) {} }
+  const buf = ctx.createBuffer(1, samples.length, SR); buf.copyToChannel(samples, 0);
+  src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination); src.start();
+}
+function sungWith(text, who) {
+  const s = { ...V.snd };
+  for (const c of AZ) s[c] = who === "d" ? sndD[c] : snd(c);
+  return sing(text, { voice: V.voice, snd: s, sr: SR }, 1, { punctuation: $("punct").checked, frames: false });
+}
+function singText(text) {
+  const who = document.querySelector("input[name=who]:checked").value;
+  const out = sungWith(text, who);
+  lastSung = text;
+  play(out.samples);
+  drawPicture($("picture"), out.samples, SR, out.marks);
+}
+const playLetter = (c, who = "mine") => play(sungWith(c, who).samples);
+
+// ---------- the partition ----------
+function sizeCanvas(cv, w, h) {
+  const dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.width = w + "px"; cv.style.height = h + "px";
+  const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return c;
+}
+function gridLines(c, x0, x1, y, labels = true) {
+  c.font = "400 10px 'IBM Plex Mono', monospace"; c.textAlign = "left"; c.textBaseline = "middle";
+  for (let m = LO; m <= HI; m++) {
+    const pc = m % 12;
+    if (![0, 4, 7].includes(pc)) continue;
+    c.strokeStyle = css("--line"); c.globalAlpha = pc === 0 ? 1 : 0.45; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(x0, y(m)); c.lineTo(x1, y(m)); c.stroke(); c.globalAlpha = 1;
+    if (pc === 0 && labels) { c.fillStyle = css("--muted"); c.fillText(noteName(m), 4, y(m) - 7); }
+  }
+  // Gab's ceiling: above 5.5 kHz letters sound harsh
+  const yc = y(midi(5500));
+  c.strokeStyle = css("--long"); c.setLineDash([4, 4]); c.beginPath(); c.moveTo(x0, yc); c.lineTo(x1, yc); c.stroke(); c.setLineDash([]);
+  if (labels) { c.fillStyle = css("--long"); c.fillText("5.5 kHz", 4, yc - 7); }
+}
+function trace(c, m, x0, w, y, colour, width = 2.4, span = 0.35) {
+  c.strokeStyle = colour; c.lineWidth = width; c.lineCap = "round";
+  for (const n of contour(m)) {
+    for (let k = 0; k < 24; k++) {
+      const u0 = k / 24, u1 = (k + 1) / 24, a = n.a((u0 + u1) / 2);
+      if (a < 0.04) continue;
+      c.globalAlpha = Math.min(1, 0.25 + a);
+      c.beginPath();
+      c.moveTo(x0 + (n.t0 + (n.t1 - n.t0) * u0) / span * w, y(midi(n.f(u0))));
+      c.lineTo(x0 + (n.t0 + (n.t1 - n.t0) * u1) / span * w, y(midi(n.f(u1))));
+      c.stroke();
+    }
+  }
+  c.globalAlpha = 1;
+}
+let staffGeo;
+function drawStaff() {
+  const wrap = $("staff").parentElement, left = 34, colW = Math.max(24, Math.floor((wrap.clientWidth - left - 4) / AZ.length)), H = 330, foot = 30;
+  const W = left + colW * AZ.length + 4, c = sizeCanvas($("staff"), W, H);
+  const y = m => 8 + (HI - m) / (HI - LO) * (H - foot - 16);
+  staffGeo = { left, colW };
+  c.clearRect(0, 0, W, H);
+  const i = AZ.indexOf(sel);
+  c.fillStyle = css("--paper"); c.fillRect(left + i * colW, 0, colW, H);
+  gridLines(c, left, W, y);
+  AZ.forEach((ch, k) => {
+    const x0 = left + k * colW, col = colourOf(ch);
+    c.strokeStyle = css("--line"); c.globalAlpha = 0.5; c.beginPath(); c.moveTo(x0, 0); c.lineTo(x0, H - foot); c.stroke(); c.globalAlpha = 1;
+    if (mine[ch]) trace(c, D[ch], x0 + 9, colW - 12, y, css("--muted"), 1.4);
+    const m = model(ch), colour = mine[ch] ? css("--warn") : col;
+    trace(c, m, x0 + 9, colW - 12, y, colour);
+    c.fillStyle = colour; c.beginPath(); c.ellipse(x0 + 5, y(noteOf(m)), 3.6, 2.8, -0.3, 0, 2 * Math.PI); c.fill();
+    c.fillStyle = col; c.font = `${ch === sel ? 600 : 500} 16px 'IBM Plex Mono', monospace`; c.textAlign = "center"; c.textBaseline = "alphabetic";
+    c.fillText(ch, x0 + colW / 2, H - 9);
+  });
+}
+$("staff").addEventListener("click", e => {
+  const k = Math.floor((e.offsetX - staffGeo.left) / staffGeo.colW);
+  if (k < 0 || k >= AZ.length) return;
+  select(AZ[k]); playLetter(AZ[k]);
+});
+
+// ---------- the drawing pads ----------
+const PW = () => $("pitch").parentElement.clientWidth, GUT = 70;
+const py = m => 6 + (HI - m) / (HI - LO) * (280 - 12), pm = y => HI - (y - 6) / (280 - 12) * (HI - LO);
+function drawPads() {
+  const W = PW(), m = model(sel), n = m.shape.length;
+  let c = sizeCanvas($("pitch"), W, 280);
+  gridLines(c, 0, W - GUT, py);
+  // notes already taken, on the right
+  c.font = "500 11px 'IBM Plex Mono', monospace"; c.textAlign = "center"; c.textBaseline = "middle";
+  const seen = {};
+  for (const ch of AZ) {
+    if (ch === sel) continue;
+    const yy = Math.round(py(noteOf(model(ch))) / 10); seen[yy] = (seen[yy] || 0) + 1;
+    c.fillStyle = colourOf(ch);
+    c.fillText(ch, W - GUT + 9 + ((seen[yy] - 1) % 6) * 10, yy * 10);
+  }
+  const line = (mm, colour, width) => {
+    c.strokeStyle = colour; c.lineWidth = width; c.lineJoin = "round"; c.beginPath();
+    mm.shape.forEach((s, k) => { const x = k / (n - 1) * (W - GUT), yy = py(midi(mm.pitch) + 12 * s); k ? c.lineTo(x, yy) : c.moveTo(x, yy); });
+    c.stroke();
+  };
+  if (mine[sel]) line(D[sel], css("--muted"), 1.2);
+  line(m, mine[sel] ? css("--warn") : css("--ink"), 2.4);
+  c = sizeCanvas($("loud"), W, 100);
+  const env = (mm, colour, width, fill) => {
+    c.strokeStyle = colour; c.lineWidth = width; c.beginPath();
+    mm.env.forEach((a, k) => { const x = k / (n - 1) * (W - GUT), yy = 4 + (1 - a) * 92; k ? c.lineTo(x, yy) : c.moveTo(x, yy); });
+    c.stroke();
+    if (fill) { c.lineTo(W - GUT, 96); c.lineTo(0, 96); c.closePath(); c.globalAlpha = 0.1; c.fillStyle = colour; c.fill(); c.globalAlpha = 1; }
+  };
+  if (mine[sel]) env(D[sel], css("--muted"), 1.2, false);
+  env(m, mine[sel] ? css("--warn") : css("--ink"), 2.2, true);
+}
+function edit() { if (!mine[sel]) mine[sel] = clone(D[sel]); return mine[sel]; }
+function changed({ sound = true } = {}) {
+  delete sndMine[sel]; save();
+  drawPads(); drawStaff(); head(); controls();
+  if (sound) { playLetter(sel); clash(); kept(); }
+}
+function pad(cv, set, read) {
+  let last = null;
+  const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top, r.width - GUT]; };
+  const stroke = e => {
+    const [x, y, w] = pos(e), m = edit(), n = m.shape.length;
+    const k = Math.max(0, Math.min(n - 1, Math.round(x / w * (n - 1))));
+    const from = last || [k, y];
+    const a = Math.min(from[0], k), b = Math.max(from[0], k);
+    for (let j = a; j <= b; j++) {
+      const yy = a === b ? y : from[1] + (y - from[1]) * ((j - from[0]) / (k - from[0]));
+      set(m, j, yy);
+    }
+    last = [k, y];
+    if (read) read(y);
+    delete sndMine[sel]; drawPads();
+  };
+  cv.addEventListener("pointerdown", e => { cv.setPointerCapture(e.pointerId); last = null; stroke(e); });
+  cv.addEventListener("pointermove", e => { if (last) stroke(e); else if (read) read(pos(e)[1]); });
+  const end = () => { if (last) { last = null; changed(); } };
+  cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+}
+pad($("pitch"), (m, j, y) => { m.shape[j] = +((Math.max(LO, Math.min(HI, pm(y))) - midi(m.pitch)) / 12).toFixed(4); },
+    y => { const mm = pm(y); $("pitchRead").textContent = `${noteName(mm)} · ${Math.round(hz(mm))} Hz`; });
+pad($("loud"), (m, j, y) => { m.env[j] = +Math.max(0, Math.min(1, 1 - (y - 4) / 92)).toFixed(3); });
+
+// ---------- sliders ----------
+const CTL = [
+  ["notes", "Notes in the letter", 1, 8, 1, m => m.notes, (m, v) => { m.notes = v; }, v => v],
+  ["len", "Length of one note", 15, 350, 1, m => Math.round(m.note_dur * 1000), (m, v) => { const gap = m.period - m.note_dur; m.note_dur = v / 1000; m.period = m.note_dur + gap; }, v => v + " ms"],
+  ["gap", "Silence between notes", 0, 120, 1, m => Math.max(0, Math.round((m.period - m.note_dur) * 1000)), (m, v) => { m.period = m.note_dur + v / 1000; }, v => v + " ms"],
+  ["pd", "Each next note: lower / higher", -4, 4, 0.1, m => +(m.pitch_drift * 12).toFixed(1), (m, v) => { m.pitch_drift = v / 12; }, v => (v > 0 ? "+" : "") + v + " st"],
+  ["ld", "Each next note: softer / louder", -8, 4, 0.5, m => m.level_drift, (m, v) => { m.level_drift = v; }, v => (v > 0 ? "+" : "") + v + " dB"],
+  ["o2", "Overtone, one octave above", 0, 1, 0.01, m => m.overtones[0] ?? 0, (m, v) => { m.overtones[0] = v; }, v => v.toFixed(2)],
+  ["o3", "Overtone, higher still", 0, 1, 0.01, m => m.overtones[1] ?? 0, (m, v) => { m.overtones[1] = v; }, v => v.toFixed(2)],
+];
+function controls() {
+  const m = model(sel), box = $("controls");
+  if (!box.children.length) {
+    for (const [id, label, min, max, step, , set] of CTL) {
+      const d = document.createElement("div"); d.className = "ctl";
+      d.innerHTML = `<div class="top"><label for="c-${id}">${label}</label><output id="o-${id}"></output></div><input type="range" id="c-${id}" min="${min}" max="${max}" step="${step}">`;
+      box.append(d);
+      const inp = d.querySelector("input");
+      inp.addEventListener("input", () => { set(edit(), +inp.value); $("o-" + id).textContent = CTL.find(c => c[0] === id)[7](+inp.value); delete sndMine[sel]; drawStaff(); });
+      inp.addEventListener("change", () => changed());
+    }
+  }
+  for (const [id, , , , , get, , fmt] of CTL) { const v = get(m); $("c-" + id).value = v; $("o-" + id).textContent = fmt(+v); }
+}
+
+// ---------- the rest ----------
+function head() {
+  const m = model(sel);
+  $("big").textContent = sel; $("big").className = "big " + (D[sel].vowel ? "vowel" : D[sel].sign ? "sign" : "cons");
+  $("tag").textContent = mine[sel] ? "drawn by you" : "version D"; $("tag").className = "tag" + (mine[sel] ? " mine" : "");
+  const n = noteOf(m);
+  $("facts").textContent = `note ${noteName(n)} · ${Math.round(hz(n))} Hz · ${Math.round(snd(sel).length / SR * 1000)} ms`;
+}
+// a sign is heard in short phrases; a digit is sung as the number call # then a letter (1 = a … 9 = i, 0 = j)
+const PHRASES = {
+  ".": ["see you soon. take care.", "je suis là. tout va bien.", "bis bald. alles gut."],
+  ",": ["yes, of course", "oui, bien sûr, demain", "hola, qué tal", "ciao, a dopo"],
+  "?": ["where are you?", "tu viens ?", "wo bist du?", "come stai?"],
+  "!": ["happy birthday!", "bravo !", "hasta luego!", "achtung!"],
+  "'": ["it's me", "l'été", "j'arrive", "c'è", "don't worry"],
+  "-": ["es-tu là", "rendez-vous", "week-end", "twenty-one"],
+  ":": ["note: call me", "à midi: gare du nord", "wichtig: morgen"],
+  "@": ["gab@home", "write @ noon", "moi@maison"],
+  "#": ["18h30", "quai 2", "2026", "room 407", "call 0612", "1 2 3 4 5 6 7 8 9 0"],
+};
+function words() {
+  const box = $("langs"); box.textContent = "";
+  const lists = WORDS[sel] || { [sel === "#" ? "Numbers" : "Phrases"]: PHRASES[sel] || [] };
+  for (const [lang, list] of Object.entries(lists)) {
+    if (!list.length) continue;
+    const row = document.createElement("div"); row.className = "lang";
+    const h = document.createElement("h3"); h.textContent = lang;
+    const ws = document.createElement("div"); ws.className = "words";
+    for (const w of list) {
+      const b = document.createElement("button"); b.type = "button"; b.className = "word";
+      for (const chr of w) { const plain = sel === "#" && /[0-9]/.test(chr) ? "#" : chr.normalize("NFD")[0]; const el = plain === sel ? document.createElement("mark") : document.createTextNode(chr); if (plain === sel) el.textContent = chr; b.append(el); }
+      b.addEventListener("click", () => singText(w));
+      ws.append(b);
+    }
+    row.append(h, ws); box.append(row);
+  }
+}
+// How alike two letters look to the decoder through an echo: the measure of lab/likeness.py and lab/draw_check.py,
+// in the page. Each letter is heard through two simple rooms (the direct sound plus a fading noise tail, 0.6 s and
+// 1 s to fade 60 dB), then compared with the other letter's template; the largest value counts. 1.00 = same picture.
+const ROOMS = [0.6, 1.0].map((rt, k) => {
+  const n = Math.floor(rt * SR), h = new Float32Array(n);
+  let a = 12345 + k, e = 0;
+  const u = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  for (let i = 0; i < n; i++) { h[i] = Math.sqrt(-2 * Math.log(1 - u())) * Math.cos(2 * Math.PI * u()) * Math.exp(-6.91 * i / SR / rt); e += h[i] * h[i]; }
+  for (let i = 0; i < n; i++) h[i] /= Math.sqrt(e);
+  h[0] += 1;
+  return h;
+});
+async function heardPics(x) {
+  const len = x.length + Math.round(0.35 * SR), pics = [];
+  for (const h of ROOMS) {
+    const oc = new OfflineAudioContext(1, len, SR);
+    const b = oc.createBuffer(1, len, SR); b.getChannelData(0).set(x, Math.round(0.05 * SR));
+    const hb = oc.createBuffer(1, h.length, SR); hb.copyToChannel(h, 0);
+    const src = oc.createBufferSource(), cv = oc.createConvolver();
+    cv.normalize = false; cv.buffer = hb; src.buffer = b; src.connect(cv); cv.connect(oc.destination); src.start();
+    const y = (await oc.startRendering()).getChannelData(0), { db, T } = features(y, SR);
+    pics.push({ S: shape(db, T), T });
+  }
+  return pics;
+}
+const best = (pic, tpl) => { let m = -1; for (const v of match(pic.S, pic.T, tpl)) m = Math.max(m, v); return m; };
+const alike = (a, b) => Math.max(...a.pics.map(p => best(p, b.tpl)), ...b.pics.map(p => best(p, a.tpl)));
+const lookD = {}, lookMine = {}, pairD = {}, pairNow = {};
+const pk = (a, b) => a < b ? a + b : b + a;
+async function lookOf(c) {
+  if (!mine[c]) return lookD[c];
+  const x = snd(c);
+  if (lookMine[c]?.x !== x) lookMine[c] = { x, tpl: template(x, SR), pics: await heardPics(x) };
+  return lookMine[c];
+}
+let clashRun = 0;
+async function clash() {
+  const run = ++clashRun;
+  const n = noteOf(model(sel)), near = AZ.filter(c => c !== sel && Math.abs(noteOf(model(c)) - n) < 1);
+  $("shares").textContent = near.length ? `Less than 1 semitone from the note of: ${near.join(", ")}.` : "No other letter within 1 semitone of its note.";
+  const look = {};
+  for (const c of AZ) look[c] = await lookOf(c);
+  if (run !== clashRun) return;
+  for (let i = 0; i < AZ.length; i++) for (let j = i + 1; j < AZ.length; j++) {
+    const a = AZ[i], b = AZ[j], k = pk(a, b);
+    if (pairNow[k]?.a !== look[a] || pairNow[k]?.b !== look[b]) pairNow[k] = { a: look[a], b: look[b], v: alike(look[a], look[b]), pair: [a, b] };
+  }
+  const chip = (a, b) => { const now = pairNow[pk(a, b)].v, was = pairD[pk(a, b)];
+    return `<span class="${now > 0.65 ? "worse" : now < 0.55 ? "better" : ""}"><b>${a}/${b}</b> ${now.toFixed(2)} (${was.toFixed(2)})</span>`; };
+  const mineRows = AZ.filter(c => c !== sel).sort((x, y) => pairNow[pk(sel, y)].v - pairNow[pk(sel, x)].v).slice(0, 6);
+  $("clash").innerHTML = mineRows.map(c => chip(sel, c)).join("");
+  const all = Object.keys(pairNow).sort((x, y) => pairNow[y].v - pairNow[x].v).slice(0, 10);
+  const over = Object.values(pairNow).filter(p => p.v > 0.65).length;
+  $("clashAll").innerHTML = all.map(k => chip(...pairNow[k].pair)).join("");
+  $("clashSum").textContent = over ? `${over} pair${over > 1 ? "s" : ""} above 0.65 in the whole alphabet.` : "No pair above 0.65 in the whole alphabet.";
+}
+function kept() {
+  const k = Object.keys(mine).sort();
+  $("kept").textContent = k.length ? `Drawn by you: ${k.join(", ")}. Kept in this browser; export them to keep a file and to run the conflict script.` : "No letter drawn yet.";
+}
+function select(c) {
+  sel = c;
+  drawStaff(); drawPads(); head(); controls(); words(); clash();
+}
+
+$("play").addEventListener("click", () => playLetter(sel));
+$("playD").addEventListener("click", () => playLetter(sel, "d"));
+$("up").addEventListener("click", () => { edit().pitch *= Math.pow(2, 1 / 12); changed(); });
+$("down").addEventListener("click", () => { edit().pitch /= Math.pow(2, 1 / 12); changed(); });
+$("flat").addEventListener("click", () => { const m = edit(); m.shape = m.shape.map(() => 0); changed(); });
+$("smooth").addEventListener("click", () => {
+  const m = edit(), sm = v => v.map((_, k) => (v[Math.max(0, k - 1)] + 2 * v[k] + v[Math.min(v.length - 1, k + 1)]) / 4);
+  m.shape = sm(sm(m.shape)).map(v => +v.toFixed(4)); m.env = sm(m.env).map(v => +v.toFixed(3)); changed();
+});
+$("reset").addEventListener("click", () => { delete mine[sel]; changed(); });
+$("copy").addEventListener("click", () => {
+  const to = $("copyTo").value, m = clone(model(sel));
+  m.vowel = D[to].vowel; m.seed = D[to].seed; if (D[to].sign) m.sign = true; else delete m.sign;
+  mine[to] = m; delete sndMine[to]; save(); select(to); playLetter(to); kept();
+});
+$("punct").addEventListener("change", () => { if (lastSung) singText(lastSung); });
+document.querySelectorAll("input[name=who]").forEach(r => r.addEventListener("change", () => { if (lastSung) singText(lastSung); }));
+for (const dgt of "1234567890") {
+  const b = document.createElement("button"); b.type = "button"; b.className = "word";
+  b.innerHTML = `<mark>${dgt}</mark> <span style="color:var(--muted);font-size:.8em">= # ${"jabcdefghi"[+dgt]}</span>`;
+  b.addEventListener("click", () => singText(dgt));
+  $("digits").append(b);
+}
+// the test sentences of the Send page and of the conflict check, plus one in Spanish and one in Italian
+for (const t of ["you are not alone on this train", "l'été arrive, où es-tu ?", "meet me at the old bridge at noon", "ich bin gleich wieder da",
+                 "Rendez-vous à 18h30, quai n°2 !", "arrive belle Wasser carro little", "the quick brown fox jumps over the lazy dog",
+                 "nos vemos mañana en la plaza", "ci vediamo domani alla stazione"]) {
+  const b = document.createElement("button"); b.type = "button"; b.className = "word"; b.textContent = t;
+  b.addEventListener("click", () => { $("free").value = t; singText(t); });
+  $("sentences").append(b);
+}
+$("singFree").addEventListener("click", () => singText($("free").value));
+$("free").addEventListener("keydown", e => { if (e.key === "Enter") singText($("free").value); });
+const download = (blob, name) => { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
+$("export").addEventListener("click", () => download(new Blob([JSON.stringify({
+  note: "Letters drawn on draw.html, to replace the same letters of version D (birds/draw/models.json). Check with lab/draw_check.py.",
+  base: "nightingale-d", sample_rate: SR, letters: mine }, null, 1)], { type: "application/json" }), "bird-drawn-letters.json"));
+$("importBtn").addEventListener("click", () => $("import").click());
+$("import").addEventListener("change", async e => { await importFile(e.target.files[0]); e.target.value = ""; });
+window.addEventListener("dragover", e => e.preventDefault());
+window.addEventListener("drop", e => { e.preventDefault(); importFile(e.dataTransfer.files[0]); });
+// on the local server: the letters files lying in the project folder, one button each (no file picker)
+async function listFiles() {
+  try {
+    const html = await (await fetch("birds/draw/mine/?list=" + Date.now())).text();
+    const names = [...new Set([...html.matchAll(/href="([^"\/]*\.json)"/g)].map(m => decodeURIComponent(m[1])))].filter(n => /letters/i.test(n)).sort();
+    $("files").textContent = "";
+    for (const n of names) {
+      const b = document.createElement("button"); b.type = "button"; b.className = "secondary"; b.textContent = n;
+      b.addEventListener("click", async () => importFile(new File([await (await fetch("birds/draw/mine/" + encodeURIComponent(n) + "?t=" + Date.now())).text()], n)));
+      $("files").append(b);
+    }
+    $("filesRow").hidden = !names.length;
+  } catch (e) {}
+}
+async function importFile(f) {
+  if (!f || !D) return;
+  try {
+    const got = JSON.parse(await f.text()).letters || {};
+    for (const [c, m] of Object.entries(got)) if (D[c] && Array.isArray(m.shape) && Array.isArray(m.env)) { mine[c] = m; delete sndMine[c]; }
+    save(); select(sel); kept();
+    $("status").textContent = `Imported: ${Object.keys(got).join(", ")}.`;
+    $("kept").textContent = `Imported from ${f.name}: ${Object.keys(got).sort().join(", ")}.`;
+  } catch (err) { $("kept").textContent = $("status").textContent = `${f.name} could not be read as exported letters.`; }
+}
+$("wav").addEventListener("click", () => download(encodeWav(snd(sel), SR), `letter-${sel}.wav`));
+$("clear").addEventListener("click", () => {
+  if (!Object.keys(mine).length) return;
+  if ($("clear").dataset.sure !== "1") { $("clear").dataset.sure = "1"; $("clear").textContent = "Tap again to forget them all"; setTimeout(() => { $("clear").dataset.sure = ""; $("clear").textContent = "Forget all my drawings"; }, 4000); return; }
+  mine = {}; sndMine = {}; save(); select(sel); kept(); $("clear").dataset.sure = ""; $("clear").textContent = "Forget all my drawings";
+});
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (D) { drawStaff(); drawPads(); } }, 120); });
+
+try {
+  [D, WORDS, V] = await Promise.all([
+    fetch("birds/draw/models.json?v=2").then(r => r.json()).then(j => j.letters),
+    fetch("birds/draw/words.json?v=1").then(r => r.json()),
+    loadVoice("birds/voices/nightingale-d/", "vt1"),
+  ]);
+  setBand(V.voice.decoder);
+  AZ = [...AZ, ...SIGNS.filter(c => D[c])];
+  for (const c of Object.keys(mine)) if (!D[c]) delete mine[c];
+  for (const c of AZ) { sndD[c] = letterSound(D[c]); }
+  for (const c of AZ) lookD[c] = { x: sndD[c], tpl: template(sndD[c], SR), pics: await heardPics(sndD[c]) };
+  for (let i = 0; i < AZ.length; i++) for (let j = i + 1; j < AZ.length; j++) pairD[pk(AZ[i], AZ[j])] = alike(lookD[AZ[i]], lookD[AZ[j]]);
+  for (const c of AZ) { const o = document.createElement("option"); o.textContent = c; $("copyTo").append(o); }
+  window.birdDraw = { D, V, sndD, snd, model, match, template, features, shape };   // for checks from the console
+  select(sel); kept();
+  $("status").textContent = "";
+  listFiles();
+} catch (err) {
+  $("status").textContent = "The letters could not be loaded: " + err.message;
+}
+</script>
+</body>
+</html>
