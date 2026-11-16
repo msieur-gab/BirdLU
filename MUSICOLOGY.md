@@ -395,6 +395,87 @@ The swapped pairs of test v9 move apart:
   was first read as "li-tle", because t now sits on the hyphen's note. # and @ are kept.
 - All 7 Send presets read back correctly on clean sound.
 
+**Result, real test v10** (`test/recordings-v10`, `lab/real_test_set.py`)
+- Setup: 7 recordings, taken to be the laptop at about 20 cm (the 5–6 kHz band is boosted as in v9's
+  20 cm set). "you are not alone…" was played twice; "l'été…" is missing.
+- **20 of 186 letters wrong (10.8 %)**, against 6.3 % for D at 20 cm. All are swaps but one.
+- New swaps, all among the letters F moved to the bottom of the range, where eight consonants sit on
+  eight neighbouring semitones (F6 to C7: n r b s l d z w):
+
+  | Swap | Times | In F |
+  |---|---|---|
+  | r → n | 6 | F#6 roll / F6 hum, 1 semitone apart |
+  | d → z | 5 | A#6 chip / B6 buzz, 1 semitone |
+  | b → s | 4 | G6 chip / G#6 buzz, 1 semitone |
+
+- The swaps of v9 (r/j, t/h, p/q) are gone.
+
+**What it teaches**
+- One semitone between different gestures is not enough. That rule was Claude's addition, and the
+  search used it to pack the frequent letters into the empty bottom of the range.
+- Gab: "pitch will not be enough. It should be pitch plus the envelope of the sound."
+- The decoder reads the pitch line over time (where the sound sits, and how it bends), not the
+  loudness. Letters that are close in pitch must therefore bend clearly differently.
+
+## Step 11: note + curve, version G (`lab/likeness.py`, `lab/curves.py`)
+
+Gab: "pitch will not be enough. It should be pitch plus the envelope of the sound" → "go ahead with
+note + curve". The curves are his: "the trill is like a wave ... an arc going down, arc going up. A
+line going up, a line going down".
+
+**A guide that predicts the room** (`lab/likeness.py`)
+- It measures how alike two letters look to the decoder itself: the sound picture, the shape of each
+  5 ms column, and the template slid along. The sound first passes through a simple echo: the direct
+  sound plus a fading noise tail of 0.6 s, at equal energy.
+- Checked against the real tests, the pairs that actually swapped rank among the most alike of all 325
+  pairs:
+  - D (v9): b/z 1st, t/h 2nd, r/j 5th, p/q 7th, g/q 8th;
+  - F (v10): b/s 1st, d/z 3rd, r/n 4th.
+- It is a design guide, not a test.
+
+**Design** (`lab/curves.py`)
+- Each consonant keeps the texture of its D group:
+  - chip: short, sharp attack;
+  - buzz: four pulses;
+  - hum: soft and round;
+  - glide;
+  - roll (r): three pulses.
+- It also keeps its own bird's overtones, and 15 % of its own pitch line.
+- On top it gets a **note** (G6–D8) and a **curve** spanning half an octave: rise, fall, arc, valley,
+  flat or warble.
+- The vowels, # and @ do not change.
+- 2,400 candidates were made (20 consonants × 6 curves × 20 notes), and their likeness compared pair by
+  pair: about 2 million pairs.
+- Cost: the sum over letter pairs of (frequency of x + frequency of y) × (likeness − 0.5)², plus a
+  little of the step 3 cost.
+- The search ran from 12 seeded starts and took 11 minutes.
+
+**Result**
+
+| Voice | pairs above 0.75 | pairs above 0.65 | sum of (likeness − 0.5)² |
+|---|---|---|---|
+| approved (v8: 2.6 %) | 3 | 10 | 0.54 |
+| D (v9: 6.3 %) | 6 | 23 | 1.42 |
+| F (v10: 10.8 %) | 7 | 19 | 1.38 |
+| **G** | **0** | **1** (a/o, vowels untouched) | **0.09** |
+
+- G's most alike consonants: d/h 0.58, s/d 0.57, d/q 0.57.
+- Caveat: G was chosen using this measure, so it scores well on it by design. The real test decides.
+- Test voice `nightingale-g`: no punctuation, # and @ kept. All 7 Send presets read back correctly on
+  clean sound.
+
+**Result, real test v11** (`test/recordings-v11`, `lab/real_test_set.py`): laptop at about 20 cm, the 7
+Send presets. **1 of 177 letters wrong (0.6 %)**, against 6.3 % for D (v9) and 10.8 % for F (v10) in the
+same setup, and 2.6 % for the approved voice at 30 cm (v8). The only error: "little" heard as "liptle",
+t read as p. Both sit on D8 (t arc, p rise); the guide gave them 0.56, just under its most alike pairs (0.58). Echo measured 0.62–0.91 s.
+
+**Result, real test v11 far** (`test/recordings-v11-far`): speaker at 4–5 m in the living room, echo measured
+0.84–1.00 s. **19 of 187 letters wrong (10.2 %)**: swapped 15, missing 3, extra 1. D made 16.9 % at 2.5 m (v9).
+Every consonant swap was between letters 0 or 1 semitone apart: t→p three times (both D8), d→q (both F7),
+s→d and q→h (F#7/F7), c→f (C#8/D8), r→l (A6/A#6). In an echo this long the curve alone no longer keeps two
+letters on the same note apart. The guide (at 0.6 s or 1.0 s echo) ranked t/p, d/q, s/d among its 7 most alike,
+but q/h, c/f, r/l only 25th–37th: it does not see one-semitone neighbours as a risk.
+
 ## Next steps (to be agreed with Gab)
 
 - Gab's ear on whether wide leaps still sound like a bird.

@@ -18,7 +18,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VOICE = os.path.join(ROOT, "birds", "voice")
 VOICES = os.path.join(ROOT, "birds", "voices")
 VERSIONS = {"nightingale-d": ("gesture", "notes"), "nightingale-d-lower": ("gesture", "notes-lower"),
-            "nightingale-f": ("placed", "notes")}   # 16 Nov: letters F (lab/placement_d.py), after real test v9
+            "nightingale-f": ("placed", "notes"),
+            "nightingale-g": ("curves", "notes")}   # 16 Nov: letters G, note + curve (lab/curves.py)   # 16 Nov: letters F (lab/placement_d.py), after real test v9
 
 
 def main():
@@ -31,11 +32,11 @@ def main():
         out = os.path.join(VOICES, name)
         os.makedirs(out, exist_ok=True)
         v = copy.deepcopy(base)
-        v["note"] = (f"Test voice {name} (16 Nov): letters of version {'D' if lv == 'gesture' else 'F'} (lower range + bird gestures"
-                     f"{'' if lv == 'gesture' else ', placed again: same gesture 3 semitones apart'}), "
+        v["note"] = (f"Test voice {name} (16 Nov): letters of version {dict(gesture='D', placed='F', curves='G')[lv]} (lower range + bird gestures"
+                     f"{dict(gesture='', placed=', placed again: same gesture 3 semitones apart', curves=', each consonant a note and a curve')[lv]}), "
                      f"{'signs as approved' if lv == 'gesture' else 'no punctuation (# and @ kept)'}, "
                      f"nightingale opening 2.16 and closing 1.4 ({fv}). Made by lab/make_test_voice.py.")
-        if lv == "placed":
+        if lv in ("placed", "curves"):
             # punctuation is not sung for now (Gab, 16 Nov), so this voice has none: the listener cannot read a
             # letter as a sign it never hears (the clean check read "little" as "li-tle", t now sits on "-"'s note)
             for c in ".?!,'-:":
@@ -60,8 +61,8 @@ def main():
                                      url=f"https://xeno-canto.org/{rid[2:]}", letters=["opening" if rid == "XC473316" else "closing"])
         json.dump(v, open(os.path.join(out, "voice.json"), "w"), ensure_ascii=False, indent=1)
         index = [e for e in index if e["name"] != name] + [dict(
-            name=name, about=f"Letters {'D' if lv == 'gesture' else 'F'} (lower range + bird gestures"
-                             f"{'' if lv == 'gesture' else ', placed again'}), nightingale opening and closing ({fv}).")]
+            name=name, about=f"Letters {dict(gesture='D', placed='F', curves='G')[lv]} (lower range + bird gestures"
+                             f"{dict(gesture='', placed=', placed again', curves=', note + curve')[lv]}), nightingale opening and closing ({fv}).")]
         print(name, len(v["letters"]), "letters and signs,", list(v["frames"]))
     json.dump(index, open(os.path.join(VOICES, "index.json"), "w"), ensure_ascii=False, indent=1)
 

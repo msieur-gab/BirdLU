@@ -1,0 +1,105 @@
+{
+ "cost": 1.61,
+ "consonants": {
+  "b": {
+   "group": "chip",
+   "curve": "arc",
+   "note": "B7"
+  },
+  "c": {
+   "group": "chip",
+   "curve": "fall",
+   "note": "C#8"
+  },
+  "d": {
+   "group": "chip",
+   "curve": "arc",
+   "note": "F7"
+  },
+  "f": {
+   "group": "buzz",
+   "curve": "flat",
+   "note": "D8"
+  },
+  "g": {
+   "group": "chip",
+   "curve": "fall",
+   "note": "D7"
+  },
+  "h": {
+   "group": "buzz",
+   "curve": "fall",
+   "note": "F#7"
+  },
+  "j": {
+   "group": "buzz",
+   "curve": "flat",
+   "note": "C7"
+  },
+  "k": {
+   "group": "chip",
+   "curve": "valley",
+   "note": "A7"
+  },
+  "l": {
+   "group": "glide up",
+   "curve": "flat",
+   "note": "A#6"
+  },
+  "m": {
+   "group": "hum",
+   "curve": "flat",
+   "note": "G6"
+  },
+  "n": {
+   "group": "hum",
+   "curve": "valley",
+   "note": "G6"
+  },
+  "p": {
+   "group": "chip",
+   "curve": "rise",
+   "note": "D8"
+  },
+  "q": {
+   "group": "chip",
+   "curve": "valley",
+   "note": "F7"
+  },
+  "r": {
+   "group": "roll",
+   "curve": "flat",
+   "note": "A6"
+  },
+  "s": {
+   "group": "buzz",
+   "curve": "arc",
+   "note": "F#7"
+  },
+  "t": {
+   "group": "chip",
+   "curve": "arc",
+   "note": "D8"
+  },
+  "v": {
+   "group": "buzz",
+   "curve": "arc",
+   "note": "B6"
+  },
+  "w": {
+   "group": "glide down",
+   "curve": "fall",
+   "note": "A#7"
+  },
+  "x": {
+   "group": "buzz",
+   "curve": "rise",
+   "note": "A7"
+  },
+  "z": {
+   "group": "buzz",
+   "curve": "flat",
+   "note": "G#7"
+  }
+ }
+}

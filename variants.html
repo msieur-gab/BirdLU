@@ -12,7 +12,7 @@
   .vers{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
   .ver{display:grid;gap:4px}
   .ver small{color:var(--muted);font-size:.8rem;line-height:1.35}
-  .lgrid{display:grid;grid-template-columns:auto repeat(7,1fr);gap:6px 8px;align-items:center;font:500 .9rem var(--mono)}
+  .lgrid{display:grid;grid-template-columns:auto repeat(8,1fr);gap:6px 8px;align-items:center;font:500 .9rem var(--mono)}
   .lgrid .h{color:var(--muted);font:500 .8rem var(--body)}
   .lgrid button{padding:6px 8px;min-width:0}
   .lgrid .ch{font-size:1.1rem;font-weight:600;color:var(--short)}
@@ -45,7 +45,7 @@
     <div class="row" id="bysound" style="gap:6px"></div>
   </section>
   <section class="panel" aria-label="Letters">
-    <h2>Each letter, seven ways</h2>
+    <h2>Each letter, eight ways</h2>
     <div class="lgrid" id="letters"></div>
   </section>
 </main>
@@ -53,7 +53,7 @@
 import { loadVoice, sing, parseWav, Decoder, readable } from "./js/birdsong.js?v=13";
 const $ = id => document.getElementById(id);
 const V = await loadVoice();
-const INFO = await (await fetch("birds/variants/variants.json?v=3")).json();
+const INFO = await (await fetch("birds/variants/variants.json?v=4")).json();
 const VERS = {
   today: ["Today", "the approved voice"],
   trill: ["A · little trills", `consonants under ${INFO.short_s * 1000} ms sung as two quick notes, the second a little lower and softer`],
@@ -61,13 +61,14 @@ const VERS = {
   both: ["C · both", "little trills and the lower range together"],
   gesture: ["D · bird gestures", "B, with each consonant group given a bird gesture: chip (t p k b d g c q), buzz (s f z v j x h), hum (m n), glide (l up, w down), roll (r)"],
   scale: ["E · on the scale", "D, with every letter on a note without sharps or flats (do ré mi fa sol la si)"],
+  curves: ["G · note + curve", "D's textures (chip, buzz, hum, glide, roll), each consonant on its own note with a curve: rise, fall, arc, valley, flat or warble, chosen so no two letters look alike to the decoder"],
   placed: ["F · D placed again", "D's sounds, consonants moved so that the same gesture is 3 semitones apart and no two share a note (after real test v9)"],
 };
 const voices = { today: V };
-for (const ver of ["trill", "cap", "both", "gesture", "scale", "placed"]) {
+for (const ver of ["trill", "cap", "both", "gesture", "scale", "placed", "curves"]) {
   const snd = { ...V.snd };
   await Promise.all(Object.entries(INFO.versions[ver]).map(async ([c, d]) => {
-    snd[c] = parseWav(await (await fetch(`birds/variants/${d.file}?v=3`)).arrayBuffer()).x;
+    snd[c] = parseWav(await (await fetch(`birds/variants/${d.file}?v=4`)).arrayBuffer()).x;
   }));
   voices[ver] = { voice: V.voice, snd, sr: V.sr };
 }

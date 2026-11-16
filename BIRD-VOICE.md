@@ -94,6 +94,10 @@ There is no trained model. The decoder is hand-built:
 
 | v9 (16 Nov, branch `musicology`) | 20 cm laptop; 2.5 m Bluetooth | test voice nightingale-d: letters D (lower range + bird gestures), nightingale frames, punctuation unsung | 20 cm: 6.3 % of letters wrong; 2.5 m: 16.9 %; almost all swaps of pairs left 0–2 semitones apart (r/j, t/h, b/z, p/q, g/q, x/v); see MUSICOLOGY.md |
 
+| v10 (16 Nov, branch `musicology`) | laptop, ~20 cm (to confirm) | test voice nightingale-f: letters F (D placed again) | 10.8 % of letters wrong; new swaps among 8 consonants packed one semitone apart at the bottom (r/n, d/z, b/s); see MUSICOLOGY.md |
+| v11 (16 Nov, branch `musicology`) | laptop, ~20 cm | test voice nightingale-g: letters G (note + curve) | 0.6 % of letters wrong (1 of 177: t read as p in "little", both on D8); see MUSICOLOGY.md step 11 |
+| v11 far (16 Nov, branch `musicology`) | speaker, 4–5 m, living room, echo ~1 s | test voice nightingale-g | 10.2 % of letters wrong; all consonant swaps 0–1 semitone apart (t→p ×3, d→q, s→d, q→h, c→f, r→l); see MUSICOLOGY.md step 11 |
+
 Earlier sets (v3–v5) were recorded with the defective Listen page.
 
 ## Open
