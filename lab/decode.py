@@ -25,7 +25,14 @@ import echo
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VOICE_DIR = os.path.join(ROOT, "birds", "voice")
 HOP_S, WIN_S = 0.005, 0.0116
-NB, F_LO, F_HI = 48, 1000, 9000
+NB, F_LO, F_HI, NFFT_MIN = 48, 1000, 9000, 0
+
+
+def set_band(cfg=None):
+    """The band the decoder listens to; a voice may set its own (voice.json "decoder": f_lo, f_hi, bands, nfft)."""
+    global NB, F_LO, F_HI, NFFT_MIN
+    cfg = cfg or {}
+    NB, F_LO, F_HI, NFFT_MIN = cfg.get("bands", 48), cfg.get("f_lo", 1000), cfg.get("f_hi", 9000), cfg.get("nfft", 0)
 
 
 # ---------- the voice and the sender ----------
@@ -33,6 +40,7 @@ NB, F_LO, F_HI = 48, 1000, 9000
 def load_voice(voice_dir=VOICE_DIR):
     VOICE_DIR = voice_dir
     v = json.load(open(os.path.join(VOICE_DIR, "voice.json")))
+    set_band(v.get("decoder"))      # the band this voice is heard in (default 48 bands, 1–9 kHz)
     sr = v["sample_rate"]
     snd = {}
     for ch, d in v["letters"].items():
@@ -133,7 +141,7 @@ def sing(text, v, snd, seed=0):
 def features(x, sr):
     """Band levels in dB (NB × frames) and the frame level in dB."""
     hop, win = int(round(sr * HOP_S)), int(round(sr * WIN_S))
-    nfft = 1 << (win - 1).bit_length()
+    nfft = max(1 << (win - 1).bit_length(), NFFT_MIN)
     w = np.hanning(win)
     n = 1 + max(0, (len(x) - win) // hop)
     idx = np.arange(win)[None, :] + hop * np.arange(n)[:, None]
@@ -198,6 +206,7 @@ def rises(db, look=6):
 
 class Decoder:
     def __init__(self, v, snd, sr_tpl):
+        set_band(v.get("decoder"))
         self.v = v
         self.letters = list(v["letters"])
         # an accent call can only follow a plain letter (not a word start, a sign or another accent)
@@ -212,7 +221,8 @@ class Decoder:
         self.tpl_close = template(mix([(a * sr_tpl, x, g) for a, x, g in cl], int((d + 0.05) * sr_tpl)), sr_tpl)
 
     def decode(self, x, sr, bias_ratio=0.72, letter_cost=4.0, new_cost=0.5, onset_gain=10.0, onset_full_db=8.0, repeat_cost=3.0,
-               dereverb=True, echo_delay=0.03, echo_floor=15.0, rt60=None, rises_from="raw", echo_weight=None, onset_look=6, verbose=False):
+               dereverb=True, echo_delay=0.03, echo_floor=15.0, rt60=None, rises_from="raw", echo_weight=None, onset_look=6, verbose=False,
+               lm=None, lm_weight=0.0):
         db, level = features(x, sr)
         S = shape(db)
         fps = 1 / HOP_S
@@ -316,6 +326,8 @@ class Decoder:
                     if ch in self.accents and lc not in self.bases:
                         continue
                     sc2 = sc - repeat_cost if lc == ch else sc
+                    if lm is not None:      # how likely ch follows lc in the five languages (lc None: a word start)
+                        sc2 += lm_weight * lm(lc, ch)
                     if sc2 > best:
                         best, prev = sc2, p
                 if prev is None:

@@ -4,7 +4,13 @@
 // The voice is birds/voice/: one WAV per letter (synthesized from models of real birds) and
 // voice.json (timing rules). Sender and listener read the same files.
 
-export const HOP_S = 0.005, WIN_S = 0.0116, NB = 48, F_LO = 1000, F_HI = 9000, FLOOR_DB = 20;
+export const HOP_S = 0.005, WIN_S = 0.0116, FLOOR_DB = 20;
+// the band the decoder listens to; a voice may set its own (voice.decoder: f_lo, f_hi, bands, nfft), e.g. a low voice
+// (16 Nov, Gab: "perhaps what we use in terms of hertz is too narrow"); every other voice keeps 48 bands, 1–9 kHz
+export let NB = 48, F_LO = 1000, F_HI = 9000, NFFT_MIN = 0;
+export function setBand(cfg = {}) {
+  NB = cfg.bands ?? 48; F_LO = cfg.f_lo ?? 1000; F_HI = cfg.f_hi ?? 9000; NFFT_MIN = cfg.nfft ?? 0;
+}
 
 // ---------- voice ----------
 
@@ -192,6 +198,7 @@ const roundEven = v => { const f = Math.floor(v), d = v - f; return d > 0.5 + 1e
 export function features(x, sr) {
   const hop = roundEven(sr * HOP_S), win = roundEven(sr * WIN_S);
   let nfft = 1; while (nfft < win) nfft <<= 1;
+  while (nfft < NFFT_MIN) nfft <<= 1;     // zero padding: a low note's peak lands in the right narrow band
   const T = 1 + Math.max(0, Math.floor((x.length - win) / hop));
   const w = new Float64Array(win);
   for (let i = 0; i < win; i++) w[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / (win - 1));
@@ -369,6 +376,7 @@ export function dereverb(db, T, rt60, delayS = 0.03, floorDb = 15) {
 
 export class Decoder {
   constructor({ voice, snd, sr }) {
+    setBand(voice.decoder);
     this.voice = voice;
     this.letters = Object.keys(voice.letters);
     // an accent call can only follow a plain letter (not a word start, a sign or another accent)

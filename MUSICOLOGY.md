@@ -476,8 +476,115 @@ s→d and q→h (F#7/F7), c→f (C#8/D8), r→l (A6/A#6). In an echo this long t
 letters on the same note apart. The guide (at 0.6 s or 1.0 s echo) ranked t/p, d/q, s/d among its 7 most alike,
 but q/h, c/f, r/l only 25th–37th: it does not see one-semitone neighbours as a risk.
 
-## Next steps (to be agreed with Gab)
+## Step 12: version H, G spaced for an echoing room (`lab/curves_h.py`)
 
-- Gab's ear on whether wide leaps still sound like a bird.
-- Rising and falling shape as a second step.
-- Real tests decide, as always.
+Real test v11 far showed that in a long echo (about 1 s) the curve is smeared and only the note keeps letters
+apart: every swap was between letters 0 or 1 semitone apart. Gab: "yes, commit G then build H".
+
+- The 13 most used consonants (n s t r l d c h m p g b v, five languages) each get a note of their own on a
+  whole-tone grid from E6 to E8 (1319–5274 Hz, under Gab's 5.5 kHz), so any two are at least 2 semitones apart.
+- The 7 rarest (f w q z k j x; f is slightly rarer than v, 1.31 % against 1.37 %) share one of those notes with
+  a more used letter, told apart by curve and texture.
+- Textures and curves as in G. Chosen with the same cost as G, the guide's echo set to 1.0 s.
+
+| Note | Letters (rare in brackets) |
+|---|---|
+| E6 | n flat |
+| F#6 | r flat |
+| G#6 | l flat |
+| A#6 | s flat |
+| C7 | b fall (z flat) |
+| D7 | g fall |
+| E7 | d arc |
+| F#7 | m flat (q rise) |
+| G#7 | t valley |
+| A#7 | c rise |
+| C8 | p valley (w arc) |
+| D8 | v arc (x fall) |
+| E8 | h warble (f arc, j flat, k rise) |
+
+- Guide: sum 0.07 (G 0.09), most alike consonants d/q 0.57, f/k 0.55, h/v 0.54 (at 1.0 s echo).
+- Every letter reads back on clean sound. With a simulated 1 s echo, 4 of 177 wrong (G 7): a guide only,
+  simulated rooms are not evidence.
+- Test voice `nightingale-h`.
+- Watch: E8 carries four letters (h and three rare ones).
+
+## Step 13: back to the birds (`lab/birdsong_stats.py`, `lab/spaced_d.py`)
+
+Gab heard G and H as "R2D2 ... the best version was the version D", and asked whether Claude still had a feeling
+of what a bird song is, and why the research was not used. The research (dolphin and whale covert modems) keeps
+the animal's own calls and chooses among them; G and H drew new shapes instead.
+
+Measured on the 19 recordings (first minute each) and on our voices singing the 7 presets, with the same note
+cutter (median per species):
+
+| | note length | pitch movement inside a note | leap to next note | leaps over 7 st | gap |
+|---|---|---|---|---|---|
+| 9 species (range) | 22–46 ms | 0.3–1.4 st | 1.5–4.3 st | 10–30 % | 3–10 ms |
+| our D | 29 ms | 1.6 st | 0.8 st | 9 % | 1 ms |
+| our G / H | 54 ms | 2.3 / 1.8 st | 3.9 st | 17–19 % | 17 ms |
+
+- A bird's note is short and nearly steady; the melody comes from many short notes moving 2–4 semitones, with
+  wide leaps now and then. G and H sing long notes that slide (the drawn curves span half an octave): R2D2.
+- Wide spacing between letters is not unbirdlike in itself: thrush and nightingale leap over 7 semitones in
+  27–30 % of their notes.
+- Version I (`lab/spaced_d.py`, page only): D's own sounds, moved onto H's spaced notes, 0.03 per semitone moved.
+  Some letters move far (r −28 st, s −13, h −8).
+
+## Step 14–15 in short: versions J, K, L, the partition (16 Nov, afternoon)
+
+- J (`lab/down_trills.py`), K (`lab/trill_voice.py`), L (`lab/two_note.py`): D with trills, own places + trills,
+  two notes per letter. Gab: still robotic; "It's not about the envelope itself. It's the sound itself".
+- Spectrograms of L against real birds (`lab/out/robot-vs-birds*.png`): birds repeat one syllable many times
+  and their sweeps are big and steep; L hops between flat pitch steps, every note different.
+- D on a staff (`lab/out/partition-d.png`): several letters share one note (a o f x on D♯7, g r j on G♯7, m e u
+  on B7). The partition (`lab/partition.py`, Gab's rule only: most used pairs and confused letters on opposite
+  sides) over three octaves C5–C8, as sound (`lab/partition_voice.py`, test voices `partition3`,
+  `partition3-double`, decoder band per voice, `setBand` in `js/birdsong.js`): Gab, "too down ... birds from the
+  jungle or monkeys". Bug found by Gab's ear: voice names with digits were refused by the pages (fixed).
+
+## Step 16: keep D's sound, fix the mix-ups in the decoder (`lab/lm_test.py`)
+
+Gab: "the D version was really good". The sound stays; the decoder corrects its own mix-ups with words from the
+five-language books (lab/corpus), like a phone keyboard: a decoded word that is not a known word is replaced by
+a known word reachable by swapping letters the decoder finds alike (likeness > 0.65 for the voice, decided from
+the sounds, not from the test errors). Measured on the real recordings of D (v9), nothing re-recorded:
+
+| | decoder alone | + word check (only alike swaps) | + word check (also one other change) |
+|---|---|---|---|
+| D, 20 cm | 6.3 % | **2.9 %** | 3.4 % |
+| D, 2.5 m | 15.8 % | **6.8 %** | 5.6 % |
+
+- What is left: mix-ups that give another real word (at→ah, bin→zin, tu→hu); a check of word pairs could take
+  some of them.
+- Letter pairs inside the decoder (log probability of the next letter) made it drop letters: not kept.
+- On G far (v11) the word check did not help: its errors were mostly missing letters and real-word swaps.
+- Caveat: the presets are common words; names and rare words get no help, and a rare word one alike-swap away
+  from a common one could be changed.
+
+## Handover, end of 16 Nov (for a fresh session)
+
+Where things stand, in Gab's words where possible:
+- **D is the reference sound** ("the best version we had so far is the version D"). Test voice `nightingale-d`.
+  Every attempt to change the sound today was rejected: G, H ("R2D2"), I ("a robot under the water"), J, K, L,
+  the letter-by-letter page ("It's not about the envelope itself. It's the sound itself, which is terrible"), and
+  the three-octave partition ("too down ... birds from the jungle or monkeys"). D moved down 5/9/12 semitones was
+  heard only after a page bug was fixed (voice names with digits were refused).
+- **D's problem is on the staff** (`lab/out/partition-d.png`): several letters share one note (a o f x, g r j,
+  m e u, p c, q y, l h), and half the alphabet sits in the harsh top octave. Gab: "That's why it's wrong since
+  the beginning."
+- **Gab still hears some letters as very bad sounds** (w above all). His proposal: a small interface where he
+  draws a simple shape (pitch line, loudness) for a letter and hears it at once, "giving a special feeling".
+- **Constraint** (Gab): the receiving device has no room to store sounds, so letters must come from a
+  synthesizer; and he wants to hear exactly what the device will produce ("you go straight with the synthesizer,
+  then I know what I'm testing and checking is what I will get"). So the drawing tool should synthesize in the
+  browser with the same synthesizer the device would run (a JS port of `lab/synth.py` `sing`).
+- **Good idea for later, not now** (Gab: "the word fixing is a good idea, but we need first to solve the sound
+  problem"): the word check (step 16), 6.3 → 2.9 % at 20 cm and 15.8 → 6.8 % at 2.5 m on the real D recordings.
+- **Question Gab asked**: could a small model solve the encoder/decoder problem? Claude's view: a small trained
+  decoder (letters from sound pictures, trained on synthesized letters through simulated and real rooms) could
+  replace template matching later; it cannot choose the sounds, which is Gab's ear.
+- Not committed at the time of writing (last commit eb72c01, version G and tests v10–v11): versions H to L, the
+  partition voices, the listening pages, the lab scripts of steps 12–16, the per-voice decoder band and the
+  voice-name fix. Check `git status`.
+- Real tests still decide; Gab's ear decides the sound.

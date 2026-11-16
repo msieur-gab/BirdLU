@@ -1,8 +1,8 @@
 // Decodes in the background, so the page (and its microphone) never waits for it.
-import { loadVoice, Decoder } from "./birdsong.js?v=13";
+import { loadVoice, Decoder } from "./birdsong.js?v=14";
 
 let dec = null;
-const VOICE = (new URLSearchParams(self.location.search).get("voice") || "").match(/^[a-z-]{1,30}$/)?.[0] || null;
+const VOICE = (new URLSearchParams(self.location.search).get("voice") || "").match(/^[a-z0-9-]{1,30}$/)?.[0] || null;
 const ready = (VOICE ? loadVoice(`../birds/voices/${VOICE}/`, "vt1") : loadVoice("../birds/voice/")).then(V => { dec = new Decoder(V); });
 
 self.onmessage = async e => {

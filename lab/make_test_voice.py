@@ -19,12 +19,20 @@ VOICE = os.path.join(ROOT, "birds", "voice")
 VOICES = os.path.join(ROOT, "birds", "voices")
 VERSIONS = {"nightingale-d": ("gesture", "notes"), "nightingale-d-lower": ("gesture", "notes-lower"),
             "nightingale-f": ("placed", "notes"),
-            "nightingale-g": ("curves", "notes")}   # 16 Nov: letters G, note + curve (lab/curves.py)   # 16 Nov: letters F (lab/placement_d.py), after real test v9
+            "nightingale-g": ("curves", "notes"),
+            "nightingale-h": ("spaced", "notes"),
+            "nightingale-i": ("dspaced", "notes"),
+            "nightingale-k": ("trills", "notes"),
+            "nightingale-l": ("twonote", "notes"),
+            "nightingale-d5": ("d-5", "notes"), "nightingale-d9": ("d-9", "notes"),
+            "nightingale-d12": ("d-12", "notes"),
+            "partition3": ("p3", "notes"), "partition3-double": ("p3x2", "notes")}   # 16 Nov: the three-octave partition (lab/partition_voice.py)   # 16 Nov: D moved down 5, 9, 12 semitones (lab/lower_d.py), for listening   # 16 Nov: letters L, two bird notes from 7 levels (lab/two_note.py)   # 16 Nov: letters K, own places + down/bow trills (lab/trill_voice.py)   # 16 Nov: letters I, D's sounds on H's spaced notes (lab/spaced_d.py)   # 16 Nov: letters H, G spaced for an echoing room (lab/curves_h.py)   # 16 Nov: letters G, note + curve (lab/curves.py)   # 16 Nov: letters F (lab/placement_d.py), after real test v9
 
 
 def main():
     base = json.load(open(os.path.join(VOICE, "voice.json")))
-    VI = json.load(open(os.path.join(ROOT, "birds", "variants", "variants.json")))["versions"]
+    VI_ALL = json.load(open(os.path.join(ROOT, "birds", "variants", "variants.json")))
+    VI = VI_ALL["versions"]
     F = json.load(open(os.path.join(ROOT, "birds", "frames-ng", "frames.json")))
     index = json.load(open(os.path.join(VOICES, "index.json")))
     for name, (lv, fv) in VERSIONS.items():
@@ -32,11 +40,11 @@ def main():
         out = os.path.join(VOICES, name)
         os.makedirs(out, exist_ok=True)
         v = copy.deepcopy(base)
-        v["note"] = (f"Test voice {name} (16 Nov): letters of version {dict(gesture='D', placed='F', curves='G')[lv]} (lower range + bird gestures"
-                     f"{dict(gesture='', placed=', placed again: same gesture 3 semitones apart', curves=', each consonant a note and a curve')[lv]}), "
-                     f"{'signs as approved' if lv == 'gesture' else 'no punctuation (# and @ kept)'}, "
+        v["note"] = (f"Test voice {name} (16 Nov): letters of version {dict(gesture='D', placed='F', curves='G', spaced='H', dspaced='I', trills='K', twonote='L', **{'p3': 'P (partition, 3 octaves)', 'p3x2': 'P×2 (partition, consonants twice)', 'd-5': 'D −5 st', 'd-9': 'D −9 st', 'd-12': 'D −12 st'})[lv]} (lower range + bird gestures"
+                     f"{dict(gesture='', placed=', placed again: same gesture 3 semitones apart', curves=', each consonant a note and a curve', spaced=', note + curve, used letters 2 semitones apart', dspaced=', moved to notes 2 semitones apart', trills=', every consonant its own place and a down or bow trill', twonote=', every consonant two short notes from 7 levels a major third apart', **{'p3': ', on the partition', 'p3x2': ', on the partition', 'd-5': ', moved down', 'd-9': ', moved down', 'd-12': ', moved down'})[lv]}), "
+                     f"{'signs as approved' if lv == 'gesture' or lv.startswith('d-') else 'no punctuation (# and @ kept)'}, "
                      f"nightingale opening 2.16 and closing 1.4 ({fv}). Made by lab/make_test_voice.py.")
-        if lv in ("placed", "curves"):
+        if lv in ("placed", "curves", "spaced", "dspaced", "trills", "twonote"):
             # punctuation is not sung for now (Gab, 16 Nov), so this voice has none: the listener cannot read a
             # letter as a sign it never hears (the clean check read "little" as "li-tle", t now sits on "-"'s note)
             for c in ".?!,'-:":
@@ -47,6 +55,8 @@ def main():
             shutil.copy(src, os.path.join(out, fn))
             if ch in D:
                 d["dur"] = D[ch]["dur"]; d["gesture"] = D[ch]["changed"]
+        if lv.startswith("p3"):
+            v["decoder"] = VI_ALL["decoder_p3"]       # heard in 0.45–8 kHz, 64 bands (js/birdsong.js setBand)
         v["frames"] = {}
         for k, which in (("ngopen", "opening"), ("ngclose", "closing")):
             fn = F[which]["versions"][fv]["file"]
@@ -61,8 +71,8 @@ def main():
                                      url=f"https://xeno-canto.org/{rid[2:]}", letters=["opening" if rid == "XC473316" else "closing"])
         json.dump(v, open(os.path.join(out, "voice.json"), "w"), ensure_ascii=False, indent=1)
         index = [e for e in index if e["name"] != name] + [dict(
-            name=name, about=f"Letters {dict(gesture='D', placed='F', curves='G')[lv]} (lower range + bird gestures"
-                             f"{dict(gesture='', placed=', placed again', curves=', note + curve')[lv]}), nightingale opening and closing ({fv}).")]
+            name=name, about=f"Letters {dict(gesture='D', placed='F', curves='G', spaced='H', dspaced='I', trills='K', twonote='L', **{'p3': 'P (partition, 3 octaves)', 'p3x2': 'P×2 (partition, consonants twice)', 'd-5': 'D −5 st', 'd-9': 'D −9 st', 'd-12': 'D −12 st'})[lv]} (lower range + bird gestures"
+                             f"{dict(gesture='', placed=', placed again', curves=', note + curve', spaced=', note + curve, spaced', dspaced=', spaced', trills=', own places + trills', twonote=', two notes', **{'p3': ', on the partition', 'p3x2': ', on the partition', 'd-5': ', moved down', 'd-9': ', moved down', 'd-12': ', moved down'})[lv]}), nightingale opening and closing ({fv}).")]
         print(name, len(v["letters"]), "letters and signs,", list(v["frames"]))
     json.dump(index, open(os.path.join(VOICES, "index.json"), "w"), ensure_ascii=False, indent=1)
 

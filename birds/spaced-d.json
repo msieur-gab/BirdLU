@@ -1,0 +1,141 @@
+{
+ "cost": 6.399,
+ "rt60": 1.0,
+ "slots": [
+  "E6",
+  "F#6",
+  "G#6",
+  "A#6",
+  "C7",
+  "D7",
+  "E7",
+  "F#7",
+  "G#7",
+  "A#7",
+  "C8",
+  "D8",
+  "E8"
+ ],
+ "consonants": {
+  "b": {
+   "group": "chip",
+   "note": "A#6",
+   "from_D": "A6",
+   "rare": false
+  },
+  "c": {
+   "group": "chip",
+   "note": "E7",
+   "from_D": "A7",
+   "rare": false
+  },
+  "d": {
+   "group": "chip",
+   "note": "E8",
+   "from_D": "D8",
+   "rare": false
+  },
+  "f": {
+   "group": "buzz",
+   "note": "F#7",
+   "from_D": "D#7",
+   "rare": true
+  },
+  "g": {
+   "group": "chip",
+   "note": "D7",
+   "from_D": "G#7",
+   "rare": false
+  },
+  "h": {
+   "group": "buzz",
+   "note": "G#7",
+   "from_D": "E8",
+   "rare": false
+  },
+  "j": {
+   "group": "buzz",
+   "note": "D8",
+   "from_D": "G#7",
+   "rare": true
+  },
+  "k": {
+   "group": "chip",
+   "note": "G#7",
+   "from_D": "F#7",
+   "rare": true
+  },
+  "l": {
+   "group": "glide up",
+   "note": "A#7",
+   "from_D": "E8",
+   "rare": false
+  },
+  "m": {
+   "group": "hum",
+   "note": "C8",
+   "from_D": "B7",
+   "rare": false
+  },
+  "n": {
+   "group": "hum",
+   "note": "F#7",
+   "from_D": "C8",
+   "rare": false
+  },
+  "p": {
+   "group": "chip",
+   "note": "C7",
+   "from_D": "A7",
+   "rare": false
+  },
+  "q": {
+   "group": "chip",
+   "note": "G#7",
+   "from_D": "A#7",
+   "rare": true
+  },
+  "r": {
+   "group": "roll",
+   "note": "E6",
+   "from_D": "G#7",
+   "rare": false
+  },
+  "s": {
+   "group": "buzz",
+   "note": "F#6",
+   "from_D": "G7",
+   "rare": false
+  },
+  "t": {
+   "group": "chip",
+   "note": "D8",
+   "from_D": "D#8",
+   "rare": false
+  },
+  "v": {
+   "group": "buzz",
+   "note": "G#6",
+   "from_D": "F7",
+   "rare": false
+  },
+  "w": {
+   "group": "glide down",
+   "note": "G#6",
+   "from_D": "F#6",
+   "rare": true
+  },
+  "x": {
+   "group": "buzz",
+   "note": "C7",
+   "from_D": "D#7",
+   "rare": true
+  },
+  "z": {
+   "group": "buzz",
+   "note": "A#6",
+   "from_D": "A#6",
+   "rare": true
+  }
+ }
+}

@@ -59,12 +59,12 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing, Decoder, drawPicture, encodeWav, readable } from "./js/birdsong.js?v=13";
+import { loadVoice, sing, Decoder, drawPicture, encodeWav, readable } from "./js/birdsong.js?v=14";
 const $ = id => document.getElementById(id);
 let SR_PLAY = 44100;
 let V, dec, msg, ctx, src = null, raf = 0, timer = 0, pps = 140;
 // ?voice=<name> sings with a test voice from birds/voices/ (the Listen page must use the same one)
-const VOICE = (new URLSearchParams(location.search).get("voice") || "").match(/^[a-z-]{1,30}$/)?.[0] || null;
+const VOICE = (new URLSearchParams(location.search).get("voice") || "").match(/^[a-z0-9-]{1,30}$/)?.[0] || null;
 
 function build() {
   // punctuation unsung unless ticked (Gab, 16 Nov: "let's not play them, because I think that's what

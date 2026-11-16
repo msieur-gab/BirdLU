@@ -1,0 +1,64 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Letter by letter</title>
+<style>
+  :root{color-scheme:light dark;--line:color-mix(in srgb,CanvasText 18%,transparent);--muted:color-mix(in srgb,CanvasText 60%,transparent);--pick:#2f8f5b}
+  body{font:16px system-ui;margin:24px 16px;max-width:780px;background:Canvas;color:CanvasText}
+  p{color:var(--muted);line-height:1.45}
+  .pair{border-top:1px solid var(--line);padding:12px 0}
+  .pair h2{font-size:.85rem;font-weight:500;color:var(--muted);margin:0 0 6px}
+  .row{display:grid;grid-template-columns:2.2rem repeat(6,1fr);gap:6px;align-items:center;margin:6px 0}
+  .ch{font:600 1.3rem ui-monospace,monospace}
+  button{font:inherit;font-size:.85rem;padding:8px 2px;min-width:0;border-radius:6px;border:1px solid var(--line);background:transparent;color:inherit;cursor:pointer}
+  button[aria-pressed="true"]{border-color:var(--pick);box-shadow:inset 0 0 0 2px var(--pick)}
+  .both{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
+  .both button{padding:8px 10px}
+  #sum{font:500 .95rem ui-monospace,monospace;border:1px solid var(--line);border-radius:6px;padding:10px;user-select:all;word-break:break-word}
+</style>
+<h1>Letter by letter</h1>
+<p>Everything here comes straight out of the synthesizer: what you hear is what the phone will get.
+"D" is today's sound. ×2 and ×3: D repeated, as the vowels repeat. Sweep: one steep fall of an octave in 35 ms.
+Long: the same fall in 80 ms. Sweep ×3: the steep fall three times. Tap a button to hear it; tap it again to choose it
+(green). "Pair" plays both letters with your choices, one after the other.</p>
+<div id="pairs"></div>
+<p>Your choices (copy and paste them to me):</p>
+<div id="sum"></div>
+<script type="module">
+const PAIRS = [["w"],["r","j"],["t","h"],["b","z"],["p","q"],["g","q"],["x","v"]];
+const OPTS = [["D","D"],["x2","×2"],["x3","×3"],["sweep","sweep"],["long","long"],["sweep-x3","sweep ×3"]];
+const pick = {};
+try { Object.assign(pick, JSON.parse(localStorage.getItem("letters2") || "{}")); } catch {}
+const url = (c, k) => `${c}-${k}.wav?v=1`;
+const seq = async files => { for (const f of files) { const a = new Audio(f); await a.play(); await new Promise(r => a.onended = r); await new Promise(r => setTimeout(r, 200)); } };
+const btns = {};
+function refresh() {
+  for (const [key, b] of Object.entries(btns)) { const [c, k] = key.split("|"); b.setAttribute("aria-pressed", pick[c] === k ? "true" : "false"); }
+  document.getElementById("sum").textContent = [...new Set(PAIRS.flat())].map(c => `${c}: ${pick[c] || "?"}`).join("  ");
+  try { localStorage.setItem("letters2", JSON.stringify(pick)); } catch {}
+}
+const root = document.getElementById("pairs");
+for (const pair of PAIRS) {
+  const box = document.createElement("div"); box.className = "pair";
+  box.innerHTML = pair.length === 1 ? `<h2>${pair[0]}: "extremely bad" in D</h2>` : `<h2>${pair[0]} and ${pair[1]} were confused</h2>`;
+  for (const c of pair) {
+    const row = document.createElement("div"); row.className = "row";
+    row.innerHTML = `<span class="ch">${c}</span>`;
+    for (const [k, label] of OPTS) {
+      const b = document.createElement("button"); b.textContent = label;
+      b.setAttribute("aria-label", `${c}, ${label}`);
+      b.onclick = () => { if (b.dataset.heard) { pick[c] = pick[c] === k ? undefined : k; refresh(); } b.dataset.heard = 1; seq([url(c, k)]); };
+      btns[`${c}|${k}`] = b; row.append(b);
+    }
+    box.append(row);
+  }
+  if (pair.length === 2) {
+    const both = document.createElement("div"); both.className = "both";
+    const b1 = document.createElement("button"); b1.textContent = `Pair in D: ${pair.join(" then ")}`;
+    b1.onclick = () => seq(pair.map(c => url(c, "D")));
+    const b2 = document.createElement("button"); b2.textContent = `Pair with your choices`;
+    b2.onclick = () => seq(pair.map(c => url(c, pick[c] || "D")));
+    both.append(b1, b2); box.append(both);
+  }
+  root.append(box);
+}
+refresh();
+</script>

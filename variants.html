@@ -12,7 +12,7 @@
   .vers{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
   .ver{display:grid;gap:4px}
   .ver small{color:var(--muted);font-size:.8rem;line-height:1.35}
-  .lgrid{display:grid;grid-template-columns:auto repeat(8,1fr);gap:6px 8px;align-items:center;font:500 .9rem var(--mono)}
+  .lgrid{display:grid;grid-template-columns:auto repeat(13,1fr);gap:6px 8px;align-items:center;font:500 .9rem var(--mono)}
   .lgrid .h{color:var(--muted);font:500 .8rem var(--body)}
   .lgrid button{padding:6px 8px;min-width:0}
   .lgrid .ch{font-size:1.1rem;font-weight:600;color:var(--short)}
@@ -50,10 +50,10 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing, parseWav, Decoder, readable } from "./js/birdsong.js?v=13";
+import { loadVoice, sing, parseWav, Decoder, readable } from "./js/birdsong.js?v=14";
 const $ = id => document.getElementById(id);
 const V = await loadVoice();
-const INFO = await (await fetch("birds/variants/variants.json?v=4")).json();
+const INFO = await (await fetch("birds/variants/variants.json?v=9")).json();
 const VERS = {
   today: ["Today", "the approved voice"],
   trill: ["A · little trills", `consonants under ${INFO.short_s * 1000} ms sung as two quick notes, the second a little lower and softer`],
@@ -62,10 +62,15 @@ const VERS = {
   gesture: ["D · bird gestures", "B, with each consonant group given a bird gesture: chip (t p k b d g c q), buzz (s f z v j x h), hum (m n), glide (l up, w down), roll (r)"],
   scale: ["E · on the scale", "D, with every letter on a note without sharps or flats (do ré mi fa sol la si)"],
   curves: ["G · note + curve", "D's textures (chip, buzz, hum, glide, roll), each consonant on its own note with a curve: rise, fall, arc, valley, flat or warble, chosen so no two letters look alike to the decoder"],
+  spaced: ["H · note + curve, spaced", "G for an echoing room: the 13 most used consonants each on a note of their own, 2 semitones apart (E6 to E8); the 7 rarest share a note and are told apart by curve and texture"],
+  dspaced: ["I · D on spaced notes", "D's own sounds (no drawn curves), only moved to other notes: the 13 most used consonants each on a note of their own, 2 semitones apart (E6 to E8); the 7 rarest share a note"],
+  down: ["J · D with down and bow trills", "D, with only the 12 letters confused in the tests (and w) changed: a down or bow trill of four short notes, or D's sound moved 2–3 semitones; confused pairs differ in shape or sit 3 semitones apart"],
+  trills: ["K · own places + trills", "Every consonant on a place of its own (letters ever confused at least 5 semitones apart), sung as a fast trill of four short notes, down or bow; vowels as D"],
+  twonote: ["L · two notes", "Every consonant two short bird notes (34 ms) from 7 levels a major third apart (E6 to E8), like the chiffchaff's two notes; vowels as D"],
   placed: ["F · D placed again", "D's sounds, consonants moved so that the same gesture is 3 semitones apart and no two share a note (after real test v9)"],
 };
 const voices = { today: V };
-for (const ver of ["trill", "cap", "both", "gesture", "scale", "placed", "curves"]) {
+for (const ver of ["trill", "cap", "both", "gesture", "scale", "placed", "curves", "spaced", "dspaced", "down", "trills", "twonote"]) {
   const snd = { ...V.snd };
   await Promise.all(Object.entries(INFO.versions[ver]).map(async ([c, d]) => {
     snd[c] = parseWav(await (await fetch(`birds/variants/${d.file}?v=4`)).arrayBuffer()).x;

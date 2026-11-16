@@ -65,12 +65,12 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, Decoder, encodeWav, drawPicture, parseWav, readable } from "./js/birdsong.js?v=13";
+import { loadVoice, Decoder, encodeWav, drawPicture, parseWav, readable } from "./js/birdsong.js?v=14";
 const $ = id => document.getElementById(id);
 const OPEN_MIN = 0.45, CLOSE_MIN = 0.45, WINDOW_S = 22, KEEP_S = 45;
 let V, dec, ctx, stream, proc, sr = 48000;
 // ?voice=<name> listens for a test voice from birds/voices/ (the Send page must use the same one)
-const VOICE = (new URLSearchParams(location.search).get("voice") || "").match(/^[a-z-]{1,30}$/)?.[0] || null;
+const VOICE = (new URLSearchParams(location.search).get("voice") || "").match(/^[a-z0-9-]{1,30}$/)?.[0] || null;
 let chunks = [], total = 0, consumed = 0, busy = false, timer = 0, lastMsg = null;
 // sound the page failed to receive: [position in the recording, samples]; filled with silence so
 // the timing of the letters stays right
@@ -158,7 +158,7 @@ function stopListening() {
 }
 
 // decoding runs in a background worker; the page only collects sound and shows results
-const worker = new Worker(`js/decode-worker.js?v=7${VOICE ? "&voice=" + VOICE : ""}`, { type: "module" });
+const worker = new Worker(`js/decode-worker.js?v=9${VOICE ? "&voice=" + VOICE : ""}`, { type: "module" });
 let scanId = 0;
 function scan() {
   if (busy || !ctx) return;

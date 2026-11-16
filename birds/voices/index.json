@@ -34,5 +34,41 @@
  {
   "name": "nightingale-g",
   "about": "Letters G (lower range + bird gestures, note + curve), nightingale opening and closing (notes)."
+ },
+ {
+  "name": "nightingale-h",
+  "about": "Letters H (lower range + bird gestures, note + curve, spaced), nightingale opening and closing (notes)."
+ },
+ {
+  "name": "nightingale-i",
+  "about": "Letters I (lower range + bird gestures, spaced), nightingale opening and closing (notes)."
+ },
+ {
+  "name": "nightingale-k",
+  "about": "Letters K (lower range + bird gestures, own places + trills), nightingale opening and closing (notes)."
+ },
+ {
+  "name": "nightingale-l",
+  "about": "Letters L (lower range + bird gestures, two notes), nightingale opening and closing (notes)."
+ },
+ {
+  "name": "nightingale-d5",
+  "about": "Letters D −5 st (lower range + bird gestures, moved down), nightingale opening and closing (notes)."
+ },
+ {
+  "name": "nightingale-d9",
+  "about": "Letters D −9 st (lower range + bird gestures, moved down), nightingale opening and closing (notes)."
+ },
+ {
+  "name": "nightingale-d12",
+  "about": "Letters D −12 st (lower range + bird gestures, moved down), nightingale opening and closing (notes)."
+ },
+ {
+  "name": "partition3",
+  "about": "Letters P (partition, 3 octaves) (lower range + bird gestures, on the partition), nightingale opening and closing (notes)."
+ },
+ {
+  "name": "partition3-double",
+  "about": "Letters P×2 (partition, consonants twice) (lower range + bird gestures, on the partition), nightingale opening and closing (notes)."
  }
 ]

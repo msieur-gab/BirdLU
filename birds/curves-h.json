@@ -1,0 +1,141 @@
+{
+ "cost": 1.27,
+ "rt60": 1.0,
+ "slots": [
+  "E6",
+  "F#6",
+  "G#6",
+  "A#6",
+  "C7",
+  "D7",
+  "E7",
+  "F#7",
+  "G#7",
+  "A#7",
+  "C8",
+  "D8",
+  "E8"
+ ],
+ "consonants": {
+  "b": {
+   "group": "chip",
+   "curve": "fall",
+   "note": "C7",
+   "rare": false
+  },
+  "c": {
+   "group": "chip",
+   "curve": "rise",
+   "note": "A#7",
+   "rare": false
+  },
+  "d": {
+   "group": "chip",
+   "curve": "arc",
+   "note": "E7",
+   "rare": false
+  },
+  "f": {
+   "group": "buzz",
+   "curve": "arc",
+   "note": "E8",
+   "rare": true
+  },
+  "g": {
+   "group": "chip",
+   "curve": "fall",
+   "note": "D7",
+   "rare": false
+  },
+  "h": {
+   "group": "buzz",
+   "curve": "warble",
+   "note": "E8",
+   "rare": false
+  },
+  "j": {
+   "group": "buzz",
+   "curve": "flat",
+   "note": "E8",
+   "rare": true
+  },
+  "k": {
+   "group": "chip",
+   "curve": "rise",
+   "note": "E8",
+   "rare": true
+  },
+  "l": {
+   "group": "glide up",
+   "curve": "flat",
+   "note": "G#6",
+   "rare": false
+  },
+  "m": {
+   "group": "hum",
+   "curve": "flat",
+   "note": "F#7",
+   "rare": false
+  },
+  "n": {
+   "group": "hum",
+   "curve": "flat",
+   "note": "E6",
+   "rare": false
+  },
+  "p": {
+   "group": "chip",
+   "curve": "valley",
+   "note": "C8",
+   "rare": false
+  },
+  "q": {
+   "group": "chip",
+   "curve": "rise",
+   "note": "F#7",
+   "rare": true
+  },
+  "r": {
+   "group": "roll",
+   "curve": "flat",
+   "note": "F#6",
+   "rare": false
+  },
+  "s": {
+   "group": "buzz",
+   "curve": "flat",
+   "note": "A#6",
+   "rare": false
+  },
+  "t": {
+   "group": "chip",
+   "curve": "valley",
+   "note": "G#7",
+   "rare": false
+  },
+  "v": {
+   "group": "buzz",
+   "curve": "arc",
+   "note": "D8",
+   "rare": false
+  },
+  "w": {
+   "group": "glide down",
+   "curve": "arc",
+   "note": "C8",
+   "rare": true
+  },
+  "x": {
+   "group": "buzz",
+   "curve": "fall",
+   "note": "D8",
+   "rare": true
+  },
+  "z": {
+   "group": "buzz",
+   "curve": "flat",
+   "note": "C7",
+   "rare": true
+  }
+ }
+}

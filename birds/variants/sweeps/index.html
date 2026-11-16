@@ -1,0 +1,63 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sweep trills</title>
+<style>
+  :root{color-scheme:light dark;--line:color-mix(in srgb,CanvasText 18%,transparent);--muted:color-mix(in srgb,CanvasText 60%,transparent)}
+  body{font:16px system-ui;margin:24px 16px;max-width:760px;background:Canvas;color:CanvasText}
+  p{color:var(--muted);line-height:1.45}
+  .pair{border-top:1px solid var(--line);padding:12px 0}
+  .pair h2{font-size:.85rem;font-weight:500;color:var(--muted);margin:0 0 6px}
+  .row{display:grid;grid-template-columns:2.2rem repeat(6,1fr);gap:6px;align-items:center;margin:4px 0}
+  .ch{font:600 1.3rem ui-monospace,monospace}
+  button{font:inherit;font-size:.9rem;padding:8px 4px;min-width:0;border-radius:6px;border:1px solid var(--line);background:transparent;color:inherit;cursor:pointer}
+  button.d{font-weight:600}
+  button:active{background:var(--line)}
+</style>
+<h1>Letters to change: D or a trill</h1>
+<p>The letters that were confused in the real tests, in their pairs. "D" is the sound you like today. The other five
+are the same letter on the same note, sung as four short notes (26 ms) repeated fast, each note with the same shape:
+flat, up-sweep, down-sweep, bell (up then down), bow (down then up).</p>
+<h2 style="font-size:1.2rem;color:inherit;margin-top:28px">Proposal J</h2>
+<p>D, with only these 12 letters changed (down or bow trill, or D's sound moved a little). Within each pair the
+two letters now differ in shape or sit at least 3 semitones apart. Play the pair to hear whether they differ.</p>
+<div id="j"></div>
+<h2 style="font-size:1.2rem;color:inherit;margin-top:28px">All shapes, letter by letter</h2>
+<div id="pairs"></div>
+<script type="module">
+const PAIRS = [["w"],["r","j"],["t","h"],["b","z"],["p","q"],["g","q"],["x","v"]];
+const KINDS = [["D","D"],["flat","flat"],["up","up"],["down","down"],["bell","bell"],["bow","bow"]];
+const play = f => new Audio(`${f}.wav?v=1`).play();
+const seq = async files => { for (const f of files) { const a = new Audio(f); await a.play(); await new Promise(r => a.onended = r); await new Promise(r => setTimeout(r, 250)); } };
+const J = (await (await fetch("../variants.json?v=7")).json()).versions.down;
+const jroot = document.getElementById("j");
+for (const pair of [["w"], ...PAIRS.slice(1)]) {
+  const box = document.createElement("div"); box.className = "pair";
+  box.innerHTML = `<h2>${pair.map(c => `${c}: ${J[c].changed}`).join(" · ")}</h2>`;
+  const row = document.createElement("div"); row.className = "row";
+  row.style.gridTemplateColumns = "repeat(auto-fit,minmax(120px,1fr))";
+  const add = (label, files) => { const b = document.createElement("button"); b.textContent = label; b.onclick = () => seq(files); row.append(b); };
+  for (const c of pair) { add(`${c} in D`, [`${c}-D.wav?v=1`]); add(`${c} in J`, [`../down/${c}.wav?v=1`]); }
+  if (pair.length === 2) {
+    add(`${pair.join(" then ")}, D`, pair.map(c => `${c}-D.wav?v=1`));
+    add(`${pair.join(" then ")}, J`, pair.map(c => `../down/${c}.wav?v=1`));
+  }
+  box.append(row); jroot.append(box);
+}
+const root = document.getElementById("pairs");
+for (const pair of PAIRS) {
+  const box = document.createElement("div"); box.className = "pair";
+  box.innerHTML = pair.length === 1 ? `<h2>${pair[0]}: "unbearable" in D</h2>` : `<h2>${pair[0]} and ${pair[1]} were confused</h2>`;
+  for (const c of pair) {
+    const row = document.createElement("div"); row.className = "row";
+    row.innerHTML = `<span class="ch">${c}</span>`;
+    for (const [k, label] of KINDS) {
+      const btn = document.createElement("button"); btn.textContent = label;
+      if (k === "D") btn.className = "d";
+      btn.setAttribute("aria-label", `${c}, ${label}`);
+      btn.onclick = () => play(`${c}-${k}`);
+      row.append(btn);
+    }
+    box.append(row);
+  }
+  root.append(box);
+}
+</script>

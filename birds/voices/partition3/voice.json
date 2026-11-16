@@ -1,0 +1,470 @@
+{
+ "note": "Test voice partition3 (16 Nov): letters of version P (partition, 3 octaves) (lower range + bird gestures, on the partition), no punctuation (# and @ kept), nightingale opening 2.16 and closing 1.4 (notes). Made by lab/make_test_voice.py.",
+ "sample_rate": 44100,
+ "letters": {
+  "e": {
+   "file": "e.wav",
+   "vowel": true,
+   "dur": 0.2721,
+   "gesture": "partition 523 Hz"
+  },
+  "a": {
+   "file": "a.wav",
+   "vowel": true,
+   "dur": 0.3441,
+   "gesture": "partition 569 Hz"
+  },
+  "o": {
+   "file": "o.wav",
+   "vowel": true,
+   "dur": 0.2726,
+   "gesture": "partition 862 Hz"
+  },
+  "i": {
+   "file": "i.wav",
+   "vowel": true,
+   "dur": 0.3093,
+   "gesture": "partition 730 Hz"
+  },
+  "u": {
+   "file": "u.wav",
+   "vowel": true,
+   "dur": 0.31,
+   "gesture": "partition 1202 Hz"
+  },
+  "y": {
+   "file": "y.wav",
+   "vowel": true,
+   "dur": 0.3248,
+   "gesture": "partition 793 Hz"
+  },
+  "t": {
+   "file": "t.wav",
+   "vowel": false,
+   "dur": 0.0468,
+   "gesture": "partition 1677 Hz"
+  },
+  "n": {
+   "file": "n.wav",
+   "vowel": false,
+   "dur": 0.1151,
+   "gesture": "partition 2762 Hz"
+  },
+  "s": {
+   "file": "s.wav",
+   "vowel": false,
+   "dur": 0.1024,
+   "gesture": "partition 3544 Hz"
+  },
+  "r": {
+   "file": "r.wav",
+   "vowel": false,
+   "dur": 0.0937,
+   "gesture": "partition 4186 Hz"
+  },
+  "l": {
+   "file": "l.wav",
+   "vowel": false,
+   "dur": 0.0977,
+   "gesture": "partition 2541 Hz"
+  },
+  "d": {
+   "file": "d.wav",
+   "vowel": false,
+   "dur": 0.0634,
+   "gesture": "partition 1420 Hz"
+  },
+  "c": {
+   "file": "c.wav",
+   "vowel": false,
+   "dur": 0.0622,
+   "gesture": "partition 1822 Hz"
+  },
+  "m": {
+   "file": "m.wav",
+   "vowel": false,
+   "dur": 0.1111,
+   "gesture": "partition 2338 Hz"
+  },
+  "p": {
+   "file": "p.wav",
+   "vowel": false,
+   "dur": 0.061,
+   "gesture": "partition 1106 Hz"
+  },
+  "h": {
+   "file": "h.wav",
+   "vowel": false,
+   "dur": 0.1025,
+   "gesture": "partition 3852 Hz"
+  },
+  "v": {
+   "file": "v.wav",
+   "vowel": false,
+   "dur": 0.1034,
+   "gesture": "partition 2152 Hz"
+  },
+  "g": {
+   "file": "g.wav",
+   "vowel": false,
+   "dur": 0.0632,
+   "gesture": "partition 1306 Hz"
+  },
+  "f": {
+   "file": "f.wav",
+   "vowel": false,
+   "dur": 0.1035,
+   "gesture": "partition 3001 Hz"
+  },
+  "b": {
+   "file": "b.wav",
+   "vowel": false,
+   "dur": 0.0631,
+   "gesture": "partition 1543 Hz"
+  },
+  "w": {
+   "file": "w.wav",
+   "vowel": false,
+   "dur": 0.09,
+   "gesture": "partition 1980 Hz"
+  },
+  "k": {
+   "file": "k.wav",
+   "vowel": false,
+   "dur": 0.0621,
+   "gesture": "partition 937 Hz"
+  },
+  "j": {
+   "file": "j.wav",
+   "vowel": false,
+   "dur": 0.1019,
+   "gesture": "partition 1018 Hz"
+  },
+  "q": {
+   "file": "q.wav",
+   "vowel": false,
+   "dur": 0.062,
+   "gesture": "partition 618 Hz"
+  },
+  "x": {
+   "file": "x.wav",
+   "vowel": false,
+   "dur": 0.1033,
+   "gesture": "partition 672 Hz"
+  },
+  "z": {
+   "file": "z.wav",
+   "vowel": false,
+   "dur": 0.1018,
+   "gesture": "partition 3262 Hz"
+  },
+  ".": {
+   "file": "sign-period.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.126,
+   "source": "XC533763 1.73 (Common Blackbird)"
+  },
+  "?": {
+   "file": "sign-question.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.111,
+   "source": "XC531169 32.03 (Yellowhammer)"
+  },
+  "!": {
+   "file": "sign-exclamation.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.078,
+   "source": "XC478019 75.67 (Common Chiffchaff)"
+  },
+  ",": {
+   "file": "sign-comma.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.099,
+   "source": "XC541754 51.17 (Song Thrush)"
+  },
+  "'": {
+   "file": "sign-apostrophe.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.045,
+   "source": "XC446151 6.06 (Common Blackbird)"
+  },
+  "-": {
+   "file": "sign-hyphen.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.069,
+   "source": "XC541754 6.65 (Song Thrush)"
+  },
+  ":": {
+   "file": "sign-colon.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.127,
+   "source": "XC446151 36.04 (Common Blackbird)"
+  },
+  "@": {
+   "file": "sign-at.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.127,
+   "source": "XC541754 40.64 (Song Thrush)"
+  },
+  "#": {
+   "file": "sign-number.wav",
+   "vowel": false,
+   "sign": true,
+   "dur": 0.127,
+   "source": "XC533763 45.13 (Common Blackbird)"
+  }
+ },
+ "frames": {
+  "ngopen": {
+   "file": "ngopen.wav",
+   "dur": 1.533,
+   "source": "Common Nightingale XC473316-16.wav (XC138451/XC473316, CC BY-SA 4.0)"
+  },
+  "ngclose": {
+   "file": "ngclose.wav",
+   "dur": 1.053,
+   "source": "Common Nightingale XC138451-4.wav (XC138451/XC473316, CC BY-SA 4.0)"
+  }
+ },
+ "timing": {
+  "lead": 0.4,
+  "gap_in_word": 0.025,
+  "gap_jitter": [
+   0.6,
+   1.4
+  ],
+  "word_gap": [
+   0.32,
+   0.45
+  ],
+  "open_pattern": [
+   "ngopen"
+  ],
+  "open_period": 0,
+  "after_open": 0.35,
+  "close_pattern": [
+   {
+    "note": "ngclose",
+    "gap": 0,
+    "level": 1.0
+   }
+  ],
+  "before_close": 0.3,
+  "level_jitter_db": 2
+ },
+ "credits": {
+  "XC315114": {
+   "species": "Eurasian Blue Tit",
+   "recordist": "Ad Postma",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/315114",
+   "letters": [
+    "e",
+    "n",
+    "m"
+   ]
+  },
+  "XC433160": {
+   "species": "Eurasian Nuthatch",
+   "recordist": "Joost van Bruggen",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Sitta_europaea_-_Eurasian_Nuthatch_XC433160.mp3",
+   "letters": [
+    "a",
+    "o"
+   ]
+  },
+  "XC543697": {
+   "species": "Eurasian Wren",
+   "recordist": "Benoît Van Hecke",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC543697.mp3",
+   "letters": [
+    "i",
+    "u"
+   ]
+  },
+  "XC538310": {
+   "species": "Common Chaffinch",
+   "recordist": "Benoît Van Hecke",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Fringilla_coelebs_-_Common_Chaffinch_XC538310.mp3",
+   "letters": [
+    "y"
+   ]
+  },
+  "XC760778": {
+   "species": "European Robin",
+   "recordist": "Benjamin Allegrini",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/760778",
+   "letters": [
+    "t",
+    "s",
+    "r"
+   ]
+  },
+  "XC541754": {
+   "species": "Song Thrush",
+   "recordist": "Benoît Van Hecke",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Turdus_philomelos_-_Song_Thrush_XC541754.mp3",
+   "letters": [
+    "l",
+    ",",
+    "-",
+    "@"
+   ]
+  },
+  "XC778131": {
+   "species": "Eurasian Blue Tit",
+   "recordist": "Paul Driver",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/778131",
+   "letters": [
+    "d"
+   ]
+  },
+  "XC303416": {
+   "species": "Great Tit",
+   "recordist": "Timo Schnabel",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/303416",
+   "letters": [
+    "c",
+    "g",
+    "f"
+   ]
+  },
+  "XC637984": {
+   "species": "Eurasian Blue Tit",
+   "recordist": "Georg Amann",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/637984",
+   "letters": [
+    "p"
+   ]
+  },
+  "XC461185": {
+   "species": "Eurasian Wren",
+   "recordist": "Marie-Lan Taÿ Pamart",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Troglodytes_troglodytes_-_Eurasian_Wren_XC461185.mp3",
+   "letters": [
+    "h"
+   ]
+  },
+  "XC857749": {
+   "species": "European Robin",
+   "recordist": "Olivier Swift, Hélène Cartaud",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/857749",
+   "letters": [
+    "v",
+    "j",
+    "x"
+   ]
+  },
+  "XC533763": {
+   "species": "Common Blackbird",
+   "recordist": "Marie-Lan Taÿ Pamart",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC533763.mp3",
+   "letters": [
+    "b",
+    "z",
+    ".",
+    "#"
+   ]
+  },
+  "XC446151": {
+   "species": "Common Blackbird",
+   "recordist": "James Ray",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Turdus_merula_-_Common_Blackbird_XC446151.mp3",
+   "letters": [
+    "w",
+    "'",
+    ":"
+   ]
+  },
+  "XC880931": {
+   "species": "Great Tit",
+   "recordist": "Lee Alder",
+   "licence": "CC BY-NC-SA 4.0",
+   "url": "https://xeno-canto.org/880931",
+   "letters": [
+    "k",
+    "q"
+   ]
+  },
+  "XC478019": {
+   "species": "Common Chiffchaff",
+   "recordist": "Marie-Lan Taÿ Pamart",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Phylloscopus_collybita_-_Common_Chiffchaff_XC478019.mp3",
+   "letters": [
+    "chiff",
+    "chaff",
+    "!"
+   ]
+  },
+  "XC531169": {
+   "species": "Yellowhammer",
+   "recordist": "Benoît Van Hecke",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://commons.wikimedia.org/wiki/File:Emberiza_citrinella_-_Yellowhammer_XC531169.mp3",
+   "letters": [
+    "?"
+   ]
+  },
+  "XC473316": {
+   "species": "Common Nightingale",
+   "recordist": "Marie-Lan Taÿ Pamart",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://xeno-canto.org/473316",
+   "letters": [
+    "opening"
+   ]
+  },
+  "XC138451": {
+   "species": "Common Nightingale",
+   "recordist": "Sander Pieterse",
+   "licence": "CC BY-SA 4.0",
+   "url": "https://xeno-canto.org/138451",
+   "letters": [
+    "closing"
+   ]
+  }
+ },
+ "digits": "jabcdefghi",
+ "accents": {
+  "´": "́",
+  "`": "̀",
+  "^": "̂",
+  "¨": "̈",
+  "~": "̃",
+  "¸": "̧",
+  "˚": "̊",
+  "ˇ": "̌",
+  "¯": "̄",
+  "˛": "̨",
+  "˙": "̇",
+  "˝": "̋",
+  "˘": "̆"
+ },
+ "decoder": {
+  "f_lo": 450,
+  "f_hi": 8000,
+  "bands": 64,
+  "nfft": 4096
+ }
+}

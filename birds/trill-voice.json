@@ -1,0 +1,85 @@
+{
+ "cost": 8.234,
+ "consonants": {
+  "b": {
+   "shape": "down",
+   "hz": 2714
+  },
+  "c": {
+   "shape": "down",
+   "hz": 3623
+  },
+  "d": {
+   "shape": "bow",
+   "hz": 3371
+  },
+  "f": {
+   "shape": "down",
+   "hz": 2033
+  },
+  "g": {
+   "shape": "down",
+   "hz": 4186
+  },
+  "h": {
+   "shape": "bow",
+   "hz": 2186
+  },
+  "j": {
+   "shape": "bow",
+   "hz": 2918
+  },
+  "k": {
+   "shape": "bow",
+   "hz": 2525
+  },
+  "l": {
+   "shape": "bow",
+   "hz": 1892
+  },
+  "m": {
+   "shape": "bow",
+   "hz": 1637
+  },
+  "n": {
+   "shape": "down",
+   "hz": 1760
+  },
+  "p": {
+   "shape": "down",
+   "hz": 3136
+  },
+  "q": {
+   "shape": "bow",
+   "hz": 1417
+  },
+  "r": {
+   "shape": "bow",
+   "hz": 5198
+  },
+  "s": {
+   "shape": "bow",
+   "hz": 4499
+  },
+  "t": {
+   "shape": "down",
+   "hz": 4836
+  },
+  "v": {
+   "shape": "down",
+   "hz": 1523
+  },
+  "w": {
+   "shape": "bow",
+   "hz": 3894
+  },
+  "x": {
+   "shape": "down",
+   "hz": 2349
+  },
+  "z": {
+   "shape": "down",
+   "hz": 1319
+  }
+ }
+}

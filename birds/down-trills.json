@@ -1,0 +1,54 @@
+{
+ "cost_D": 126.764,
+ "cost": 1.44,
+ "letters": {
+  "r": {
+   "kind": "bow",
+   "shift_st": -2
+  },
+  "j": {
+   "kind": "bow",
+   "shift_st": 2
+  },
+  "t": {
+   "kind": "down",
+   "shift_st": 3
+  },
+  "h": {
+   "kind": "D",
+   "shift_st": 3
+  },
+  "b": {
+   "kind": "down",
+   "shift_st": -2
+  },
+  "z": {
+   "kind": "bow",
+   "shift_st": 0
+  },
+  "p": {
+   "kind": "D",
+   "shift_st": -2
+  },
+  "q": {
+   "kind": "down",
+   "shift_st": 0
+  },
+  "g": {
+   "kind": "D",
+   "shift_st": -2
+  },
+  "x": {
+   "kind": "bow",
+   "shift_st": -3
+  },
+  "v": {
+   "kind": "down",
+   "shift_st": -3
+  },
+  "w": {
+   "kind": "bow",
+   "shift_st": 0
+  }
+ }
+}
