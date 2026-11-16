@@ -606,6 +606,12 @@ within different words in different language, so then I can feel how it sounds, 
   accents (three new Send presets: ça va très bien, mañana, grüße), sung and decoded: 0 of 267 sounds wrong
   clean, with a simulated 0.6 s and 1 s echo, in Python and in the browser. `lab/real_test_any.py <voice> <folder>`
   scores real recordings with the decoder alone (no word check).
+- The opening and closing calls as synthesizer numbers (`birds/draw/frames.json`, 21 and 18 notes, each a model
+  like a letter with its start time and level; `frameSound` in `js/synth.js`, `frame_sound` in
+  `lab/draw_models.py`). No filter: an overtone that would rise above 9 kHz is left out. Rebuilt in Python they
+  are 0.99 alike to the files in the voice; from the browser synthesizer 0.94 and 0.96.
+- Everything from numbers, nothing from a file: the ten sentences sung with all 36 sounds and both calls made
+  live by the browser synthesizer, decoded by the `v9` decoder: 0 of 267 sounds wrong (clean sound).
 - No real test of version 9 yet.
 
 ## Handover, end of 16 Nov (for a fresh session)

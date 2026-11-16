@@ -77,6 +77,53 @@ def accent_call():
                 pitch_drift=0.0, level_drift=0.0, accel=0.0)
 
 
+def frame_models():
+    """The nightingale opening and closing calls as synthesizer numbers: the "notes" version of lab/frames_ng.py (the
+    one in the test voices) is already the phrase cut into notes, each modelled like a letter and sung by `sing`.
+    Here the same notes are kept as numbers: when each starts (s), how loud (0–1), its seed, its model.
+    Instead of the 9 kHz low-pass of frames_ng.py (a filter the device would have to run), an overtone is left out of
+    a note when it would rise above 9 kHz (key "top_hz"; js/synth.js and frame_sound below do the same)."""
+    import numpy as np, soundfile as sf
+    from scipy.signal import medfilt
+    from synth import track, notes_of, note_model, norm, HOP
+    from frames_ng import PICKS
+    out = {}
+    for which, fn in PICKS.items():
+        x, _ = sf.read(os.path.join(ROOT, "birds", "nightingale", fn))
+        x = norm(x)
+        t, p, A = track(x)
+        p = medfilt(p, 5)
+        peak = A[0].max()
+        notes = []
+        for k, (s, e) in enumerate(notes_of(t, p, A)):
+            seg = x[max(0, int(t[s] * SR) - 4 * HOP): int(t[e] * SR) + 4 * HOP]
+            if len(seg) < int(0.015 * SR):
+                continue
+            m = note_model(norm(np.pad(seg, 1024)))
+            notes.append(dict(at=round(max(0, int(t[s] * SR) - HOP) / SR, 5), level=round(float(A[0][s:e + 1].max() / peak), 3), seed=1 + k,
+                              model=dict(notes=1, period=float(m["period"]), note_dur=float(m["note_dur"]), pitch=float(m["pitch"]),
+                                         shape=m["shape"], env=m["env"], overtones=m["overtones"],
+                                         pitch_drift=0.0, level_drift=0.0, accel=0.0)))
+        out[which] = dict(source=fn, top_hz=9000, notes=notes)
+    return out
+
+
+def frame_sound(frame):
+    """A frame call sung from its numbers (the Python twin of js/synth.js frameSound)."""
+    import numpy as np
+    from synth import sing, trim
+    from variants import level
+    y = np.zeros(int((max(n["at"] for n in frame["notes"]) + 1.0) * SR))
+    for n in frame["notes"]:
+        m = dict(n["model"])
+        top = m["pitch"] * 2 ** max(m["shape"])
+        m["overtones"] = [o if top * (h + 2) <= frame["top_hz"] else 0.0 for h, o in enumerate(m["overtones"])]
+        z = sing(m, seed=n["seed"])
+        o = int(n["at"] * SR)
+        y[o:o + len(z)] += n["level"] * z[: len(y) - o]
+    return level(trim(y))
+
+
 def words():
     out = {c: {} for c in "abcdefghijklmnopqrstuvwxyz"}
     for lang, books in BOOKS.items():
@@ -104,6 +151,11 @@ def main():
     json.dump(dict(note="Version D's letters as synthesizer numbers (lab/draw_models.py). shape: octaves from pitch; "
                         "env: loudness 0–1; period, note_dur: seconds; pitch_drift: octaves per note; level_drift: dB per note.",
                    sample_rate=SR, letters=M), open(os.path.join(OUT, "models.json"), "w"), ensure_ascii=False)
+    F = frame_models()
+    json.dump(dict(note="The nightingale opening and closing calls as synthesizer numbers (lab/draw_models.py frame_models): "
+                        "each note starts at `at` seconds, at `level`, sung from `model` like a letter; overtones above top_hz left out.",
+                   sample_rate=SR, **F), open(os.path.join(OUT, "frames.json"), "w"), ensure_ascii=False)
+    print({k: len(f["notes"]) for k, f in F.items()}, "frame notes")
     W = words()
     json.dump(W, open(os.path.join(OUT, "words.json"), "w"), ensure_ascii=False, indent=0)
     print(len(M), "letters and signs;", {c: (m["notes"], round(m["pitch"])) for c, m in M.items()})

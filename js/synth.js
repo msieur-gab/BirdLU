@@ -89,6 +89,22 @@ export function level(y) {
   return y.map(v => v * g);
 }
 
+/** An opening or closing call from its numbers (birds/draw/frames.json): each note starts at `at` seconds, at `level`,
+ *  sung from its model like a letter; an overtone that would rise above frame.top_hz is left out.
+ *  The twin of lab/draw_models.py frame_sound. */
+export function frameSound(frame) {
+  let end = 0;
+  for (const n of frame.notes) end = Math.max(end, n.at);
+  const y = new Float32Array(Math.floor((end + 1) * SR));
+  for (const n of frame.notes) {
+    const top = n.model.pitch * Math.pow(2, Math.max(...n.model.shape));
+    const m = { ...n.model, overtones: n.model.overtones.map((o, h) => top * (h + 2) <= frame.top_hz ? o : 0) };
+    const z = singModel(m, n.seed), o = Math.floor(n.at * SR);
+    for (let i = 0; i < z.length && o + i < y.length; i++) y[o + i] += n.level * z[i];
+  }
+  return level(trim(y));
+}
+
 /** A letter ready for the voice, as the lab writes its WAV files. */
 export const letterSound = m => level(trim(singModel(m, m.seed ?? 0)));
 

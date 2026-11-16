@@ -48,7 +48,7 @@
   <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="letters.html">Letters</a><a href="draw.html" aria-current="page">Draw</a></nav>
   <header>
     <h1>Draw a <em>bird</em> letter</h1>
-    <p class="lede">The letters of version D on one partition, in alphabetical order, then the signs, the number call # and the accent call *. Tap a letter to hear it, then redraw its pitch and its loudness below and hear it at once, alone and inside words. Everything is sung by the synthesizer the device will run. Nothing here changes the voice: your drawings stay in this browser until you export them.</p>
+    <p class="lede">The letters of version D on one partition, in alphabetical order, then the signs, the number call # and the accent call *. Tap a letter to hear it, then redraw its pitch and its loudness below and hear it at once, alone and inside words. Everything is sung by the synthesizer the device will run, the opening and closing calls included. Nothing here changes the voice: your drawings stay in this browser until you export them.</p>
     <p class="note" id="status">Loading the letters…</p>
   </header>
 
@@ -110,6 +110,9 @@
         <label><input type="radio" name="who" value="d">D as it is</label>
       </div>
       <label class="check"><input type="checkbox" id="punct" checked>Sing the punctuation ( . , ? ! ' - : )</label>
+      <label class="check"><input type="checkbox" id="frames">With the opening and closing calls</label>
+      <button class="secondary" id="playOpen" type="button">▶ Opening</button>
+      <button class="secondary" id="playClose" type="button">▶ Closing</button>
       <span class="small">Tap a word; tap again after switching to compare.</span>
     </div>
     <div class="langs" id="langs"></div>
@@ -150,7 +153,7 @@
 
 <script type="module">
 import { loadVoice, sing, features, shape, template, match, setBand, drawPicture, encodeWav } from "./js/birdsong.js?v=15";
-import { letterSound, contour, SR } from "./js/synth.js?v=1";
+import { letterSound, frameSound, contour, SR } from "./js/synth.js?v=2";
 
 const $ = id => document.getElementById(id);
 let AZ = [..."abcdefghijklmnopqrstuvwxyz"];        // then the signs of the voice (. , ? ! ' - : @ #), once loaded
@@ -169,7 +172,7 @@ const noteName = m => { const r = Math.round(m); return NAMES[((r % 12) + 12) % 
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const clone = m => JSON.parse(JSON.stringify(m));
 
-let D, WORDS, V, mine = {}, sel = "w", sndD = {}, sndMine = {}, lastSung = null;
+let D, WORDS, V, FR, sndFrame = {}, mine = {}, sel = "w", sndD = {}, sndMine = {}, lastSung = null;
 try { mine = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { mine = {}; }
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(mine)); } catch (e) {} };
 const model = c => mine[c] || D[c];
@@ -193,8 +196,9 @@ function play(samples) {
 function sungWith(text, who) {
   const s = { ...V.snd };
   for (const c of AZ) s[c] = who === "d" ? sndD[c] : snd(c);
+  Object.assign(s, sndFrame);      // the opening and closing calls, sung by the synthesizer too
   const voice = { ...V.voice, letters: { ...V.voice.letters, "*": { vowel: false, sign: true } } };
-  return sing(accentCode(text), { voice, snd: s, sr: SR }, 1, { punctuation: $("punct").checked, frames: false });
+  return sing(accentCode(text), { voice, snd: s, sr: SR }, 1, { punctuation: $("punct").checked, frames: $("frames").checked });
 }
 function singText(text) {
   const who = document.querySelector("input[name=who]:checked").value;
@@ -476,6 +480,10 @@ $("copy").addEventListener("click", () => {
   mine[to] = m; delete sndMine[to]; save(); select(to); playLetter(to); kept();
 });
 $("punct").addEventListener("change", () => { if (lastSung) singText(lastSung); });
+$("frames").addEventListener("change", () => { if (lastSung) singText(lastSung); });
+const playFrame = k => { const x = sndFrame[k], y = new Float32Array(x.length + 4410); let p = 0; for (const v of x) p = Math.max(p, Math.abs(v)); for (let i = 0; i < x.length; i++) y[i + 2205] = x[i] * 0.9 / (p || 1); play(y); };
+$("playOpen").addEventListener("click", () => playFrame("ngopen"));
+$("playClose").addEventListener("click", () => playFrame("ngclose"));
 document.querySelectorAll("input[name=who]").forEach(r => r.addEventListener("change", () => { if (lastSung) singText(lastSung); }));
 for (const dgt of "1234567890") {
   const b = document.createElement("button"); b.type = "button"; b.className = "word";
@@ -540,11 +548,14 @@ $("clear").addEventListener("click", () => {
 let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (D) { drawStaff(); drawPads(); } }, 120); });
 
 try {
-  [D, WORDS, V] = await Promise.all([
+  [D, WORDS, V, FR] = await Promise.all([
     fetch("birds/draw/models.json?v=3").then(r => r.json()).then(j => j.letters),
     fetch("birds/draw/words.json?v=1").then(r => r.json()),
     loadVoice("birds/voices/nightingale-d/", "vt1"),
+    fetch("birds/draw/frames.json?v=1").then(r => r.json()),
   ]);
+  const wavFrame = { ngopen: V.snd.ngopen, ngclose: V.snd.ngclose };
+  sndFrame = { ngopen: frameSound(FR.opening), ngclose: frameSound(FR.closing) };
   setBand(V.voice.decoder);
   AZ = [...AZ, ...SIGNS.filter(c => D[c])];
   for (const c of Object.keys(mine)) if (!D[c]) delete mine[c];
@@ -552,7 +563,7 @@ try {
   for (const c of AZ) lookD[c] = { x: sndD[c], tpl: template(sndD[c], SR), pics: await heardPics(sndD[c]) };
   for (let i = 0; i < AZ.length; i++) for (let j = i + 1; j < AZ.length; j++) pairD[pk(AZ[i], AZ[j])] = alike(lookD[AZ[i]], lookD[AZ[j]]);
   for (const c of AZ) { const o = document.createElement("option"); o.textContent = c; $("copyTo").append(o); }
-  window.birdDraw = { D, V, sndD, snd, model, match, template, features, shape };   // for checks from the console
+  window.birdDraw = { D, V, sndD, snd, model, match, template, features, shape, sndFrame, wavFrame };   // for checks from the console
   select(sel); kept();
   $("status").textContent = "";
   listFiles();
