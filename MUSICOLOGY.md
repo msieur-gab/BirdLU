@@ -584,7 +584,7 @@ Where things stand, in Gab's words where possible:
 - **Question Gab asked**: could a small model solve the encoder/decoder problem? Claude's view: a small trained
   decoder (letters from sound pictures, trained on synthesized letters through simulated and real rooms) could
   replace template matching later; it cannot choose the sounds, which is Gab's ear.
-- Not committed at the time of writing (last commit eb72c01, version G and tests v10–v11): versions H to L, the
-  partition voices, the listening pages, the lab scripts of steps 12–16, the per-voice decoder band and the
-  voice-name fix. Check `git status`.
+- Committed in 77806d9 (branch `musicology`, 16 Nov 17:45): versions H to L, the partition voices, the listening
+  pages, the lab scripts of steps 12–16, the per-voice decoder band and the voice-name fix. Left untracked:
+  `bird-letter.wav`, `bird-letter (1).wav` and `download/` (four `heard-*.wav` recordings from 13 Nov).
 - Real tests still decide; Gab's ear decides the sound.
