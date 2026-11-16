@@ -92,6 +92,8 @@ There is no trained model. The decoder is hand-built:
 | v7 | 6–7 m, corridor through a door, people and a smart speaker talking | room-chosen | 2 of 8 perfect, about 7% of letters wrong, all readable |
 | v8 | 30 cm, voice restored, with signs | restored + signs | 8 of 12 perfect, 2.6% of letters wrong; every sign and number read |
 
+| v9 (16 Nov, branch `musicology`) | 20 cm laptop; 2.5 m Bluetooth | test voice nightingale-d: letters D (lower range + bird gestures), nightingale frames, punctuation unsung | 20 cm: 6.3 % of letters wrong; 2.5 m: 16.9 %; almost all swaps of pairs left 0–2 semitones apart (r/j, t/h, b/z, p/q, g/q, x/v); see MUSICOLOGY.md |
+
 Earlier sets (v3–v5) were recorded with the defective Listen page.
 
 ## Open

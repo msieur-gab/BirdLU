@@ -34,10 +34,13 @@
       <button class="secondary preset" type="button">meet me at the old bridge at noon</button>
       <button class="secondary preset" type="button">ich bin gleich wieder da</button>
       <button class="secondary preset" type="button">Rendez-vous à 18h30, quai n°2 !</button>
+      <button class="secondary preset" type="button">arrive belle Wasser carro little</button>
+      <button class="secondary preset" type="button">the quick brown fox jumps over the lazy dog</button>
     </div>
     <div class="row">
       <button class="primary" id="play" type="button" aria-pressed="false">Play</button>
       <label class="check"><input type="checkbox" id="repeat"> Repeat every 3 s</label>
+      <label class="check"><input type="checkbox" id="punct"> Sing punctuation (. ? ! , ' - :)</label>
       <button class="secondary" id="save" type="button">Save as WAV</button>
       <span class="stats" id="stats"></span>
     </div>
@@ -64,7 +67,9 @@ let V, dec, msg, ctx, src = null, raf = 0, timer = 0, pps = 140;
 const VOICE = (new URLSearchParams(location.search).get("voice") || "").match(/^[a-z-]{1,30}$/)?.[0] || null;
 
 function build() {
-  msg = sing($("text").value, V, 1);
+  // punctuation unsung unless ticked (Gab, 16 Nov: "let's not play them, because I think that's what
+  // actually breaks the melody")
+  msg = sing($("text").value, V, 1, { punctuation: $("punct").checked });
   const letters = msg.marks.filter(m => m.letter).length;
   $("stats").textContent = `${letters} letters · ${msg.dur.toFixed(1)} s`;
   ({ pps } = drawPicture($("pic"), msg.samples, V.sr, msg.marks));
@@ -120,6 +125,7 @@ try {
 } catch (e) { $("status").textContent = "Could not load the bird voice."; throw e; }
 build();
 $("text").addEventListener("input", () => { stop(); build(); });
+$("punct").addEventListener("change", () => { stop(); build(); });
 document.querySelectorAll(".preset").forEach(b => b.addEventListener("click", () => { $("text").value = b.textContent; stop(); build(); }));
 $("play").addEventListener("click", () => { if (src || timer) { stop(); timer = 0; } else play(); });
 $("save").addEventListener("click", () => {

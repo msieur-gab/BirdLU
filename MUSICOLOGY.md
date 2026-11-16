@@ -290,6 +290,111 @@ because they are very annoying ... or add a toggle."
   checks the same letters, with the same timing, sung inside the chiffchaff frames.
 - The Send page is unchanged.
 
+**Gab:** "the nightingale version with D bird gesture is the most enjoyable and appealing version."
+
+## Step 9: the real test, laptop sings and phone listens (`lab/make_test_voice.py`, `lab/serve_https.py`)
+
+**Test voices** (in `birds/voices/`)
+- Both take the approved voice (signs, timing, credits) with the letters of version D and the
+  nightingale opening 2.16 and closing 1.4:
+  - `nightingale-d` uses the frames in the "notes" version;
+  - `nightingale-d-lower` uses the frames in the "notes, lower" version.
+- They are used as `send-bird.html?voice=<name>` on the laptop and `listen-bird.html?voice=<name>`
+  on the phone.
+
+**Send page**
+- A "sing punctuation" box was added, unchecked.
+- Two presets were added: "arrive belle Wasser carro little" (doubled letters) and "the quick brown
+  fox jumps over the lazy dog" (all 26 letters).
+
+**HTTPS.** `lab/serve_https.py` serves the repo on port 8443 with a self-signed certificate, because
+the phone's microphone needs HTTPS.
+
+**Clean check before the test** (Send page, `nightingale-d`)
+- 6 of 7 presets read back correctly.
+- "little" came back "litdle": the second t was read as d. In version D, t and d are both chips and
+  sit only about 1 semitone apart. This is the doubled-letter problem, made worse by the gestures.
+
+**Result, real test v9** (`test/recordings-v9`, `lab/real_test_v9.py`)
+
+Gab played the 7 presets once per setup. The first set is taken as the Bluetooth one: its echo times
+are longer (0.8–1.0 s against 0.5–0.8 s), and its sound has no laptop-speaker colouring. The 20 cm set
+has "meet me…" twice and lacks "arrive belle…".
+
+| Setup | Letters wrong | Swapped / missing / extra |
+|---|---|---|
+| Laptop speakers, 20 cm | 11 of 175 (6.3 %) | 11 / 0 / 0 |
+| Bluetooth speaker, 2.5 m | 30 of 177 (16.9 %) | 26 / 1 / 3 |
+| v8 for comparison: approved voice, 30 cm | 2.6 % | |
+
+**Readings of the result**
+- The laptop did sing the test voice. The approved voice's decoder reads nonsense from the recordings;
+  the test voice's decoder reads them.
+- D's letters are lower than today's: median 3.6 kHz against 4.1, top 5.9 kHz against 8.2, and nothing
+  above 6 kHz against 16 % today.
+- Gab heard the laptop as "high again", and he was right. At 20 cm, the 5–6 kHz band carries 28 % of
+  the recorded sound against 13 % in the synthesized sound: the laptop speakers boost it. Through the
+  Bluetooth speaker, the recording matches the synthesis.
+- The errors are almost all swaps, and the same pairs every time. Squeezing the range (B) and giving
+  groups the same gesture (D) left these pairs 0.1 to 2.2 semitones apart:
+
+  | Swap | Pitch distance | Gestures |
+  |---|---|---|
+  | r → j | 0.1 st | roll / buzz |
+  | t → h | 1.3 st | chip / buzz |
+  | b → z | 1.3 st | chip / buzz |
+  | p → q | 1.2 st | chip / chip |
+  | g → q | 2.2 st | chip / chip |
+  | x → v | 1.1 st | buzz / buzz |
+
+- Doubled letters are not the main problem here. "arrive" → "arjive" and "carro" → "carjo" are the
+  r → j swap, which also hits single r's ("wassej", "ovej", "jendez").
+
+## Step 10: version F, version D placed again (`lab/placement_d.py`)
+
+Gab: "yes, redo the placement with the 3 semitones rule".
+
+**What moves.** Only the consonants' pitch. Gestures and timbre stay those of D; vowels, signs and
+frames do not move.
+
+**Rules**, on a semitone grid from F6 to F8 (1397–5588 Hz):
+1. Consonants with the same gesture sit at least 3 semitones apart. The gestures are chip, buzz and
+   hum; l, w and r each have a gesture of their own. This is Gab's rule.
+2. No two consonants share a semitone. This was added because the test's worst swaps crossed
+   gestures: r/j at 0.1 semitones and t/h at 1.3.
+
+**Cost.** The step 3 cost (most used pairs pushed apart), plus 0.03 per semitone a consonant moves
+from D. Search: 400 seeded starts, moving or swapping consonants.
+
+**Penalty for moving.** Stronger values were tried and rejected:
+- At 0.10 or 0.25, the letters move less, but t/h stays only 2 semitones apart, and t → h was the most
+  frequent swap in test v9.
+- 0.03 was kept, at the price of large moves: n and l go down about 19 semitones, r about 14.
+
+**Result**
+
+| Pairs sung | under 2 semitones apart | under 4 semitones | mean distance |
+|---|---|---|---|
+| D | 15.9 % | 37.4 % | 5.9 st |
+| F | 5.0 % | 10.5 % | 10.3 st |
+
+The swapped pairs of test v9 move apart:
+
+| Pair | In D | In F |
+|---|---|---|
+| r/j | 0.1 st | 17 st |
+| t/h | 1.3 st | 10 st |
+| p/q | 1.2 st | 12 st |
+| x/v | 1.1 st | 6 st |
+| b/z | 1.3 st | 4 st |
+| g/q | 2.2 st | 3 st |
+
+**Test voice `nightingale-f`**
+- Letters F, with the nightingale frames ("notes" version).
+- No punctuation: it is not sung for now, so the listener should not expect it. On clean sound, "little"
+  was first read as "li-tle", because t now sits on the hyphen's note. # and @ are kept.
+- All 7 Send presets read back correctly on clean sound.
+
 ## Next steps (to be agreed with Gab)
 
 - Gab's ear on whether wide leaps still sound like a bird.

@@ -1,0 +1,144 @@
+{
+ "rules": {
+  "same_gesture_min_st": 3,
+  "distinct_semitones": true,
+  "grid": [
+   "F6",
+   "F8"
+  ],
+  "move_cost": 0.03
+ },
+ "cost": 14.45,
+ "D": {
+  "under2": 15.9,
+  "under4": 37.4,
+  "mean_apart": 5.89
+ },
+ "placed": {
+  "under2": 4.98,
+  "under4": 10.45,
+  "mean_apart": 10.32
+ },
+ "consonants": {
+  "b": {
+   "group": "chip",
+   "from_note": "A6",
+   "to_note": "G6",
+   "moved_st": -2.2
+  },
+  "c": {
+   "group": "chip",
+   "from_note": "A7",
+   "to_note": "A#7",
+   "moved_st": 1.1
+  },
+  "d": {
+   "group": "chip",
+   "from_note": "D8",
+   "to_note": "A#6",
+   "moved_st": -15.9
+  },
+  "f": {
+   "group": "buzz",
+   "from_note": "D#7",
+   "to_note": "F7",
+   "moved_st": 1.7
+  },
+  "g": {
+   "group": "chip",
+   "from_note": "G#7",
+   "to_note": "C#7",
+   "moved_st": -6.6
+  },
+  "h": {
+   "group": "buzz",
+   "from_note": "E8",
+   "to_note": "F8",
+   "moved_st": 1.0
+  },
+  "j": {
+   "group": "buzz",
+   "from_note": "G#7",
+   "to_note": "B7",
+   "moved_st": 2.9
+  },
+  "k": {
+   "group": "chip",
+   "from_note": "F#7",
+   "to_note": "C#8",
+   "moved_st": 6.9
+  },
+  "l": {
+   "group": "glide up",
+   "from_note": "E8",
+   "to_note": "A6",
+   "moved_st": -18.8
+  },
+  "m": {
+   "group": "hum",
+   "from_note": "B7",
+   "to_note": "A7",
+   "moved_st": -1.9
+  },
+  "n": {
+   "group": "hum",
+   "from_note": "C8",
+   "to_note": "F6",
+   "moved_st": -19.4
+  },
+  "p": {
+   "group": "chip",
+   "from_note": "A7",
+   "to_note": "E8",
+   "moved_st": 7.3
+  },
+  "q": {
+   "group": "chip",
+   "from_note": "A#7",
+   "to_note": "E7",
+   "moved_st": -5.9
+  },
+  "r": {
+   "group": "roll",
+   "from_note": "G#7",
+   "to_note": "F#6",
+   "moved_st": -14.0
+  },
+  "s": {
+   "group": "buzz",
+   "from_note": "G7",
+   "to_note": "G#6",
+   "moved_st": -10.8
+  },
+  "t": {
+   "group": "chip",
+   "from_note": "D#8",
+   "to_note": "G7",
+   "moved_st": -7.7
+  },
+  "v": {
+   "group": "buzz",
+   "from_note": "F7",
+   "to_note": "G#7",
+   "moved_st": 3.4
+  },
+  "w": {
+   "group": "glide down",
+   "from_note": "F#6",
+   "to_note": "C7",
+   "moved_st": 6.4
+  },
+  "x": {
+   "group": "buzz",
+   "from_note": "D#7",
+   "to_note": "D7",
+   "moved_st": -1.5
+  },
+  "z": {
+   "group": "buzz",
+   "from_note": "A#6",
+   "to_note": "B6",
+   "moved_st": 0.6
+  }
+ }
+}

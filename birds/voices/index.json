@@ -18,5 +18,17 @@
  {
   "name": "earlier-melodic",
   "about": "The earlier notes, made melodic and alive."
+ },
+ {
+  "name": "nightingale-d",
+  "about": "Letters D (lower range + bird gestures), nightingale opening and closing (notes)."
+ },
+ {
+  "name": "nightingale-d-lower",
+  "about": "Letters D (lower range + bird gestures), nightingale opening and closing (notes-lower)."
+ },
+ {
+  "name": "nightingale-f",
+  "about": "Letters F (lower range + bird gestures, placed again), nightingale opening and closing (notes)."
  }
 ]
