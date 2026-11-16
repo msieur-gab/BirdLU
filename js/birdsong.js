@@ -119,18 +119,21 @@ function mix(parts, n, sr) {
 export const PUNCTUATION = new Set([".", "?", "!", ",", "'", "-", ":"]);
 
 /** The message as the sender sings it: samples, the text actually sung, and the timeline.
- *  punctuation: false leaves . ? ! , ' - : unsung. */
-export function sing(text, { voice, snd, sr }, seed = 1, { punctuation = true } = {}) {
+ *  punctuation: false leaves . ? ! , ' - : unsung. frames: false leaves out the opening and closing
+ *  calls (listening tests only, Gab 16 Nov: "very annoying"; the listener needs them to find a message). */
+export function sing(text, { voice, snd, sr }, seed = 1, { punctuation = true, frames = true } = {}) {
   const R = rng(seed), T = voice.timing, between = (a, b) => a + (b - a) * R();
   // unsung punctuation inside a word ("l'été", "es-tu") leaves a word pause, so the words do not run together
   const plain = punctuation ? normalize(text) : [...normalize(text)].map(c => PUNCTUATION.has(c) ? " " : c).join("");
   const words = plain.split(/\s+/).map(w => [...w].filter(c => voice.letters[c])).filter(w => w.length);
   const parts = [], marks = [];
-  let t = T.lead;
-  const op = openingParts(voice, snd);
-  op.parts.forEach(p => parts.push({ ...p, t: t + p.t }));
-  marks.push({ frame: "opening", t0: t, t1: t + op.dur });
-  t += op.dur + T.after_open;
+  let t = frames ? T.lead : 0.1;
+  if (frames) {
+    const op = openingParts(voice, snd);
+    op.parts.forEach(p => parts.push({ ...p, t: t + p.t }));
+    marks.push({ frame: "opening", t0: t, t1: t + op.dur });
+    t += op.dur + T.after_open;
+  }
   words.forEach((w, wi) => {
     w.forEach((c, ci) => {
       const g = Math.pow(10, (R() * 2 - 1) * T.level_jitter_db / 20);
@@ -141,11 +144,13 @@ export function sing(text, { voice, snd, sr }, seed = 1, { punctuation = true } 
     });
     if (wi < words.length - 1) t += between(...T.word_gap);
   });
-  t += T.before_close;
-  const cl = closingParts(voice, snd);
-  cl.parts.forEach(p => parts.push({ ...p, t: t + p.t }));
-  marks.push({ frame: "closing", t0: t, t1: t + cl.dur });
-  t += cl.dur + 0.5;
+  if (frames) {
+    t += T.before_close;
+    const cl = closingParts(voice, snd);
+    cl.parts.forEach(p => parts.push({ ...p, t: t + p.t }));
+    marks.push({ frame: "closing", t0: t, t1: t + cl.dur });
+    t += cl.dur + 0.5;
+  } else t += 0.3;
   const y = mix(parts, Math.ceil(t * sr), sr);
   let peak = 0; for (const v of y) peak = Math.max(peak, Math.abs(v));
   if (peak) for (let i = 0; i < y.length; i++) y[i] *= 0.9 / peak;

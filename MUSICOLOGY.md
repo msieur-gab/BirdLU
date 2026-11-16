@@ -277,6 +277,19 @@ the melody."
   default.
 - The Send page and the approved voice are unchanged.
 
+## Step 8: tests without the opening and closing (`sing`, option `frames`)
+
+Gab: "for the tests, remove the entrance and the singing for the entry and the end of the message,
+because they are very annoying ... or add a toggle."
+
+- `sing(..., { frames: false })` sings the letters only. "the end" lasts 1.7 s instead of 5.5 s.
+- On `variants.html`, a selector chooses the opening and closing: none (the default), nightingale
+  (notes), nightingale (notes, lower), or chiffchaff (today).
+- `score.html` plays its Today/Proposed comparison without frames.
+- The listener needs an opening and a closing to find a message. So with none, the clean read-back
+  checks the same letters, with the same timing, sung inside the chiffchaff frames.
+- The Send page is unchanged.
+
 ## Next steps (to be agreed with Gab)
 
 - Gab's ear on whether wide leaps still sound like a bird.

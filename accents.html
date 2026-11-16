@@ -36,7 +36,7 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing } from "./js/birdsong.js?v=12";
+import { loadVoice, sing } from "./js/birdsong.js?v=13";
 const $ = id => document.getElementById(id);
 const ABOUT = { "´": "acute: a short rising call", "`": "grave: a short falling call", "^": "circumflex: up then down",
   "ˇ": "caron: down then up", "~": "tilde: a wavering call", "˝": "double acute: two rising ticks", "˘": "breve: a small dip",
@@ -52,7 +52,7 @@ const V = await loadVoice();
 const C = await (await fetch("birds/accents/candidates.json?v=2")).json();
 const snd = {};
 await Promise.all(Object.values(C.candidates).flat().map(async c => {
-  const { parseWav } = await import("./js/birdsong.js?v=12");
+  const { parseWav } = await import("./js/birdsong.js?v=13");
   snd[c.file] = parseWav(await (await fetch(`birds/accents/${c.file}?v=2`)).arrayBuffer()).x;
 }));
 const chosen = {};

@@ -36,7 +36,7 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing } from "./js/birdsong.js?v=12";
+import { loadVoice, sing } from "./js/birdsong.js?v=13";
 const $ = id => document.getElementById(id);
 const ABOUT = { ".": "a falling call: the end of a phrase", "?": "a rising call: a question", "!": "a short, bright call",
   ",": "a breath: soft, low, short", "'": "a tiny tick (l'été)", "-": "a tiny tick (es-tu)", ":": "a short call",
@@ -48,7 +48,7 @@ const V = await loadVoice();
 const C = await (await fetch("birds/signs/candidates.json?v=1")).json();
 const snd = {};
 await Promise.all(Object.values(C.candidates).flat().map(async c => {
-  const { parseWav } = await import("./js/birdsong.js?v=12");
+  const { parseWav } = await import("./js/birdsong.js?v=13");
   snd[c.file] = parseWav(await (await fetch(`birds/signs/${c.file}?v=1`)).arrayBuffer()).x;
 }));
 const chosen = {};

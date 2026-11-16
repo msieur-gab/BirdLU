@@ -32,6 +32,13 @@
     <div class="row" id="samples"></div>
     <textarea id="text" aria-label="Sentence"></textarea>
     <label class="check"><input type="checkbox" id="punct"> sing punctuation (. ? ! , ' - :)</label>
+    <div class="row">
+      <span class="h" style="color:var(--muted);font-size:.85rem">Opening and closing:</span>
+      <label class="check"><input type="radio" name="frames" value="none" checked> none</label>
+      <label class="check"><input type="radio" name="frames" value="notes"> nightingale (notes)</label>
+      <label class="check"><input type="radio" name="frames" value="notes-lower"> nightingale (notes, lower)</label>
+      <label class="check"><input type="radio" name="frames" value="chiff"> chiffchaff (today)</label>
+    </div>
     <div class="vers" id="vers"></div>
     <p class="stats" id="readback"></p>
     <p class="lede" id="bylabel">Sound by sound (tap one to hear it alone):</p>
@@ -43,7 +50,7 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing, parseWav, Decoder, readable } from "./js/birdsong.js?v=12";
+import { loadVoice, sing, parseWav, Decoder, readable } from "./js/birdsong.js?v=13";
 const $ = id => document.getElementById(id);
 const V = await loadVoice();
 const INFO = await (await fetch("birds/variants/variants.json?v=2")).json();
@@ -62,6 +69,18 @@ for (const ver of ["trill", "cap", "both", "gesture", "scale"]) {
     snd[c] = parseWav(await (await fetch(`birds/variants/${d.file}?v=2`)).arrayBuffer()).x;
   }));
   voices[ver] = { voice: V.voice, snd, sr: V.sr };
+}
+// opening and closing: none (listening tests), the nightingale picks (nightingale.html), or today's chiffchaff
+const FNG = await (await fetch("birds/frames-ng/frames.json?v=2")).json();
+const wav = async u => parseWav(await (await fetch(u)).arrayBuffer()).x;
+const NG = {};
+for (const k of ["notes", "notes-lower"])
+  NG[k] = { open: await wav(`birds/frames-ng/${FNG.opening.versions[k].file}?v=2`), close: await wav(`birds/frames-ng/${FNG.closing.versions[k].file}?v=2`) };
+function framed(Vo, kind) {
+  if (!NG[kind]) return Vo;   // chiffchaff: the voice's own frames
+  const voice = { ...Vo.voice, frames: { ...Vo.voice.frames, ngopen: { file: "" }, ngclose: { file: "" } },
+    timing: { ...Vo.voice.timing, open_pattern: ["ngopen"], open_period: 0, close_pattern: [{ note: "ngclose", gap: 0, level: 1 }] } };
+  return { voice, sr: Vo.sr, snd: { ...Vo.snd, ngopen: NG[kind].open, ngclose: NG[kind].close } };
 }
 let ctx = null, src = null, pressed = null;
 function stop() {
@@ -99,7 +118,9 @@ for (const [ver, [name, about]] of Object.entries(VERS)) {
   d.querySelector("small").textContent = about;
   const b = d.querySelector("button");
   b.addEventListener("click", () => {
-    const out = sing($("text").value, voices[ver], 1, { punctuation: $("punct").checked });
+    const kind = document.querySelector("input[name=frames]:checked").value;
+    const opts = { punctuation: $("punct").checked };
+    const out = sing($("text").value, framed(voices[ver], kind), 1, { ...opts, frames: kind !== "none" });
     play(out.samples, b);
     // the sentence sound by sound, in this version, to point at the one that hurts
     $("bylabel").textContent = `${name}, sound by sound (tap one to hear it alone; orange = sign):`;
@@ -111,10 +132,13 @@ for (const [ver, [name, about]] of Object.entries(VERS)) {
       sb.addEventListener("click", () => play(voices[ver].snd[m.letter], sb));
       $("bysound").appendChild(sb);
     }
-    // read back on clean sound (no room): a sanity check, not a real test
+    // read back on clean sound (no room): a sanity check, not a real test. The listener needs an opening and
+    // a closing to find a message, so with none the same letters are checked inside the chiffchaff frames.
     setTimeout(() => {
-      dec[ver] ||= new Decoder(voices[ver]);
-      $("readback").textContent = `${name}, read back on clean sound: “${readable(dec[ver].decode(out.samples, V.sr).text)}”`;
+      const fk = kind === "none" ? "chiff" : kind, W = framed(voices[ver], fk);
+      const x = kind === "none" ? sing($("text").value, W, 1, opts).samples : out.samples;
+      const d = dec[ver + "/" + fk] ||= new Decoder(W);
+      $("readback").textContent = `${name}, read back on clean sound${kind === "none" ? " (checked inside the chiffchaff frames)" : ""}: “${readable(d.decode(x, V.sr).text)}”`;
     }, 50);
   });
   $("vers").appendChild(d);
