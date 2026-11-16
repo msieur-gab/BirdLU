@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BirdLU · Score</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=5">
+<style>
+  .scorewrap canvas{display:block;cursor:pointer}
+  .tight{font:500 .9rem var(--mono);margin:0;color:var(--ink)}
+  .tight b{color:var(--warn)}
+  table{border-collapse:collapse;font:400 .85rem var(--mono);font-variant-numeric:tabular-nums}
+  td,th{padding:3px 10px 3px 0;text-align:left;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:500}
+  .tablewrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<main>
+  <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="letters.html">Letters</a><a href="score.html" aria-current="page">Score</a></nav>
+  <header>
+    <h1>Every sound on <em>one staff</em></h1>
+    <p class="lede">Each letter, sign and frame call drawn as its pitch line, on a staff of note names (A4 = 440 Hz). Thicker means louder. Tap a sound to hear it. Digits are the number call # then a letter (1 = # a … 0 = # j), so they sit where those letters sit.</p>
+  </header>
+  <section class="panel" aria-label="Staff">
+    <div class="row">
+      <label class="check"><input type="radio" name="order" value="alpha" checked> a to z</label>
+      <label class="check"><input type="radio" name="order" value="pitch"> low to high</label>
+      <label class="check"><input type="checkbox" id="semis"> every semitone</label>
+    </div>
+    <div class="key">
+      <span><i class="sw" style="background:var(--vowel)"></i>vowel (trill)</span>
+      <span><i class="sw" style="background:var(--short)"></i>consonant</span>
+      <span><i class="sw" style="background:var(--long)"></i>sign</span>
+      <span><i class="sw" style="background:var(--frame)"></i>opening / closing call</span>
+    </div>
+    <div class="scorewrap"><canvas id="staff"></canvas></div>
+    <p class="stats" id="span"></p>
+  </section>
+  <section class="panel" aria-label="Crowded notes">
+    <h2>Sounds sharing a note</h2>
+    <p class="lede">Main pitches less than one semitone apart. Shape and length can still tell them apart, but pitch alone cannot.</p>
+    <div id="crowd"></div>
+  </section>
+  <section class="panel" aria-label="Letter pairs">
+    <h2>Most used letter pairs</h2>
+    <p class="lede">Letters that follow each other inside a word, counted in two public-domain novels per language, and how far apart the two letters sing today (main pitches, in semitones). Tap a pair to hear it. Method in MUSICOLOGY.md.</p>
+    <div class="row" id="langs"></div>
+    <p class="stats" id="pairsum"></p>
+    <div class="tablewrap"><table id="pairs"></table></div>
+  </section>
+  <section class="panel" aria-label="Table">
+    <h2>All sounds</h2>
+    <div class="tablewrap"><table id="table"></table></div>
+  </section>
+</main>
+<script type="module">
+import { loadVoice } from "./js/birdsong.js?v=11";
+const $ = id => document.getElementById(id);
+const S = (await (await fetch("birds/score.json?v=1")).json()).sounds;
+const V = await loadVoice();
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const COLOR = { vowel: "--vowel", consonant: "--short", sign: "--long", frame: "--frame" };
+const NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const midi = hz => 69 + 12 * Math.log2(hz / 440);
+const hzOf = m => 440 * Math.pow(2, (m - 69) / 12);
+const nameOf = m => NAMES[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1);
+
+// staff from the lowest to the highest pitch heard, with a little room
+let lo = Infinity, hi = -Infinity;
+for (const s of Object.values(S)) for (const [, hz] of s.points) { lo = Math.min(lo, hz); hi = Math.max(hi, hz); }
+const M0 = Math.floor(midi(lo)) - 1, M1 = Math.ceil(midi(hi)) + 1;
+const H = 460, TOP = 16, BOT = 34, LEFT = 74, PPS = 260, PAD = 14;   // PPS: pixels per second of sound
+const y = hz => TOP + (M1 - midi(hz)) / (M1 - M0) * (H - TOP - BOT);
+
+let ctx = null, src = null, cols = [];
+async function play(ch) {
+  if (src) { try { src.stop(); } catch (e) {} }
+  if (!ctx) { try { ctx = new AudioContext({ sampleRate: V.sr }); } catch (e) { ctx = new AudioContext(); } }
+  await ctx.resume();
+  const x = V.snd[ch], buf = ctx.createBuffer(1, x.length, V.sr);
+  buf.copyToChannel(x, 0);
+  src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination); src.start();
+}
+
+function draw() {
+  const order = document.querySelector("input[name=order]:checked").value;
+  let keys = Object.keys(S);
+  const rank = { vowel: 0, consonant: 1, sign: 2, frame: 3 };
+  if (order === "pitch") keys.sort((a, b) => S[a].main - S[b].main);
+  else keys.sort((a, b) => rank[S[a].kind] - rank[S[b].kind] || (S[a].kind === "consonant" || S[a].kind === "vowel" ? a.localeCompare(b) : 0));
+  cols = [];
+  let x = LEFT + PAD;
+  for (const k of keys) { const w = Math.max(30, S[k].dur * PPS); cols.push({ k, x, w }); x += w + PAD; }
+  const W = x, cv = $("staff"), dpr = window.devicePixelRatio || 1;
+  cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px";
+  const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = css("--surface"); c.fillRect(0, 0, W, H);
+  // staff lines: every C strong, every semitone faint (optional), note names on the left
+  const semis = $("semis").checked;
+  c.font = "500 11px 'IBM Plex Mono', monospace"; c.textAlign = "right"; c.textBaseline = "middle";
+  for (let m = M0; m <= M1; m++) {
+    const isC = m % 12 === 0, natural = !NAMES[m % 12].includes("#");
+    if (!isC && !(semis || natural)) continue;
+    const yy = y(hzOf(m));
+    c.strokeStyle = css("--line"); c.lineWidth = isC ? 1.5 : semis && !natural ? 0.4 : 0.8;
+    c.globalAlpha = isC ? 1 : 0.7;
+    c.beginPath(); c.moveTo(LEFT, yy); c.lineTo(W, yy); c.stroke();
+    c.globalAlpha = 1;
+    if (isC || natural) {
+      c.fillStyle = isC ? css("--ink") : css("--muted");
+      c.fillText(isC ? `${nameOf(m)} ${Math.round(hzOf(m))}` : nameOf(m), LEFT - 6, yy);
+    }
+  }
+  // each sound's pitch line
+  c.textAlign = "center"; c.textBaseline = "alphabetic";
+  for (const { k, x, w } of cols) {
+    const s = S[k], col = css(COLOR[s.kind]);
+    const scale = Math.max(30, s.dur * PPS) / s.dur;
+    c.strokeStyle = col; c.lineCap = "round";
+    let prev = null;
+    for (const [t, hz, db] of s.points) {
+      // a note's quiet fade carries no clear pitch (the tracker jumps): drawn from -20 dB only
+      if (db < -20) { prev = null; continue; }
+      const px = x + t * scale, py = y(hz);
+      if (prev && t - prev[0] < 0.012 && Math.abs(midi(hz) - midi(prev[1])) < 1.5) {
+        c.lineWidth = 1 + 4 * Math.max(0, 1 + db / 30);
+        c.beginPath(); c.moveTo(x + prev[0] * scale, y(prev[1])); c.lineTo(px, py); c.stroke();
+      }
+      prev = [t, hz];
+    }
+    c.fillStyle = col;
+    c.font = "600 14px 'IBM Plex Mono', monospace";
+    c.fillText(k, x + w / 2, H - 16);
+    c.font = "400 10px 'IBM Plex Mono', monospace"; c.fillStyle = css("--muted");
+    c.fillText(s.main_note, x + w / 2, H - 4);
+  }
+  const span = (midi(hi) - midi(lo)) / 12;
+  $("span").textContent = `Heard from ${Math.round(lo)} Hz (${nameOf(Math.round(midi(lo)))}) to ${Math.round(hi)} Hz (${nameOf(Math.round(midi(hi)))}): ${span.toFixed(1)} octaves. The listener hears 1000–9000 Hz (B5–C#9, 3.2 octaves).`;
+}
+$("staff").addEventListener("click", e => {
+  const r = $("staff").getBoundingClientRect(), x = e.clientX - r.left;
+  const hit = cols.find(cl => x >= cl.x - 6 && x <= cl.x + cl.w + 6);
+  if (hit) play(hit.k);
+});
+document.querySelectorAll("input[name=order], #semis").forEach(el => el.addEventListener("change", draw));
+draw();
+
+// crowded notes: groups whose main pitches lie within a semitone of each other
+const byPitch = Object.keys(S).sort((a, b) => S[a].main - S[b].main);
+const groups = [];
+let g = [byPitch[0]];
+for (let i = 1; i < byPitch.length; i++) {
+  if (midi(S[byPitch[i]].main) - midi(S[g[g.length - 1]].main) < 1) g.push(byPitch[i]);
+  else { if (g.length > 1) groups.push(g); g = [byPitch[i]]; }
+}
+if (g.length > 1) groups.push(g);
+$("crowd").innerHTML = groups.map(gr => `<p class="tight">${gr.map(k => `<b>${k}</b> ${S[k].main_note} ${S[k].main} Hz`).join(" · ")}</p>`).join("");
+
+const rows = byPitch.map(k => { const s = S[k];
+  return `<tr><td><b>${k}</b></td><td>${s.kind}</td><td>${s.main} Hz</td><td>${s.main_note} ${s.cents >= 0 ? "+" : ""}${s.cents}¢</td><td>${s.low_note}–${s.high_note}</td><td>${Math.round(s.dur * 1000)} ms</td></tr>`; });
+// most used letter pairs (lab/bigrams.py) and their pitch distance today
+const BG = await (await fetch("birds/bigrams.json?v=1")).json();
+const CLOSE = 2;   // semitones: closer than this is flagged
+function playPair(a, b) {
+  const x = V.snd[a], z = V.snd[b], gap = Math.round(V.voice.timing.gap_in_word * V.sr);
+  const y = new Float32Array(x.length + gap + z.length);
+  y.set(x, 0); y.set(z, x.length + gap);
+  if (src) { try { src.stop(); } catch (e) {} }
+  (async () => {
+    if (!ctx) { try { ctx = new AudioContext({ sampleRate: V.sr }); } catch (e) { ctx = new AudioContext(); } }
+    await ctx.resume();
+    const buf = ctx.createBuffer(1, y.length, V.sr); buf.copyToChannel(y, 0);
+    src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination); src.start();
+  })();
+}
+let lang = "all";
+function showPairs() {
+  const val = p => lang === "all" ? p.mean : p.by_lang[lang];
+  const list = BG.pairs.filter(p => !p.double).sort((a, b) => val(b) - val(a)).slice(0, 40);
+  const top = BG.pairs.filter(p => !p.double).sort((a, b) => val(b) - val(a)).slice(0, 100);
+  const tot = top.reduce((s, p) => s + val(p), 0), close = top.filter(p => p.semitones < CLOSE).reduce((s, p) => s + val(p), 0);
+  $("pairsum").textContent = `Of the 100 most used pairs (${tot.toFixed(0)}% of all pairs), ${top.filter(p => p.semitones < CLOSE).length} sing less than ${CLOSE} semitones apart today: ${close.toFixed(1)}% of all pairs.`;
+  $("pairs").innerHTML = `<tr><th>pair</th><th>% of pairs</th><th>apart today</th><th></th></tr>` + list.map(p =>
+    `<tr><td><button class="secondary" data-p="${p.pair}" type="button">${p.pair}</button></td><td>${val(p).toFixed(2)}</td>` +
+    `<td${p.semitones < CLOSE ? ' style="color:var(--warn);font-weight:600"' : ""}>${p.semitones.toFixed(1)} st</td>` +
+    `<td>${S[p.pair[0]].main_note} → ${S[p.pair[1]].main_note}</td></tr>`).join("");
+  $("pairs").querySelectorAll("button").forEach(b => b.addEventListener("click", () => playPair(b.dataset.p[0], b.dataset.p[1])));
+}
+for (const l of ["all", ...BG.languages]) {
+  const lab = document.createElement("label");
+  lab.className = "check";
+  lab.innerHTML = `<input type="radio" name="lang" value="${l}"${l === "all" ? " checked" : ""}> ${l === "all" ? "all five" : l}`;
+  lab.querySelector("input").addEventListener("change", () => { lang = l; showPairs(); });
+  $("langs").appendChild(lab);
+}
+showPairs();
+
+$("table").innerHTML = `<tr><th>sound</th><th>kind</th><th>main pitch</th><th>note</th><th>range</th><th>length</th></tr>` + rows.join("");
+</script>
+</body>
+</html>
