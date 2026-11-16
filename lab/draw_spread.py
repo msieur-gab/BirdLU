@@ -23,6 +23,7 @@ from variants import level
 TARGET = float(os.environ.get("TARGET", "0.55"))
 LOW, HIGH = 1100.0, 5500.0
 AZ = "abcdefghijklmnopqrstuvwxyz"
+MOVE = os.environ.get("MOVE")       # e.g. MOVE=".,?!'-:@#" moves only the signs; the letters stay where they are
 
 
 def main(path):
@@ -30,6 +31,8 @@ def main(path):
     doc = json.load(open(path))
     drawn = doc["letters"]
     base = json.load(open(os.path.join(ROOT, "birds", "draw", "models.json")))["letters"]
+    AZ = list(base)                      # letters and signs
+    movable = set(MOVE) if MOVE else set(AZ)
     M = {c: dict(drawn.get(c, base[c])) for c in AZ}
     sr = 44100
     rooms = [room(sr, 0.6), room(sr, 1.0)]
@@ -49,16 +52,20 @@ def main(path):
         return min(lines) >= LOW and max(lines) <= HIGH
 
     P = {c: look(M[c], c) for c in AZ}
-    L = {(a, b): alike(P[a], P[b]) for i, a in enumerate(AZ) for b in AZ[i + 1:]}
+    L = {tuple(sorted((a, b))): alike(P[a], P[b]) for i, a in enumerate(AZ) for b in AZ[i + 1:]}
+    stuck = set()
     worst_of = lambda c: max(v for p, v in L.items() if c in p)
     moved = {}
     print("before:", ", ".join(f"{a}{b} {L[(a, b)]:.2f}" for a, b in sorted(L, key=L.get, reverse=True)[:10]))
-    for _ in range(40):
-        a, b = max(L, key=L.get)
+    for _ in range(60):
+        open_pairs = [p for p in L if p not in stuck and (p[0] in movable or p[1] in movable)]
+        if not open_pairs:
+            break
+        a, b = max(open_pairs, key=L.get)
         if L[(a, b)] <= TARGET:
             break
         best = None
-        for c in (a, b):
+        for c in (x for x in (a, b) if x in movable):
             for k in range(-12, 13):
                 if k == 0 or not fits(M[c], k):
                     continue
@@ -71,7 +78,8 @@ def main(path):
         cost, w, c, k, m, p = best
         if w >= L[(a, b)] - 0.005:
             print(f"   {a}/{b} {L[(a, b)]:.2f}: no move in pitch helps; this pair needs another shape")
-            break
+            stuck.add((a, b))
+            continue
         M[c], P[c] = m, p
         moved[c] = moved.get(c, 0) + k
         for o in AZ:

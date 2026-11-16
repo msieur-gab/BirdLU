@@ -64,6 +64,19 @@ def sign_models():
     return out
 
 
+def accent_call():
+    """The accent call "*" (Gab, 16 Nov: accents "like the numbers"): an accented letter is its plain letter, then
+    this call, then a letter that names the accent by its English name: a acute, g grave, c circumflex, d diaeresis
+    (tréma), t tilde, z cedilla ("little z"). A starting sound for Gab to redraw: one note rising 6 semitones, 70 ms,
+    around 3250 Hz, the place where it is least like the 35 sounds of his version 9 (closest: k 0.58)."""
+    import numpy as np
+    u = np.linspace(0, 1, 48)
+    return dict(vowel=False, sign=True, seed=42, gesture="accent call", notes=1, period=0.07, note_dur=0.07, pitch=3249.0,
+                shape=[round(float(v), 4) for v in np.linspace(-0.25, 0.25, 48)],
+                env=[round(float(v), 3) for v in np.sin(np.pi * u) ** 0.8], overtones=[0.05, 0.02],
+                pitch_drift=0.0, level_drift=0.0, accel=0.0)
+
+
 def words():
     out = {c: {} for c in "abcdefghijklmnopqrstuvwxyz"}
     for lang, books in BOOKS.items():
@@ -87,6 +100,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     M = d_models()
     M.update(sign_models())
+    M["*"] = accent_call()
     json.dump(dict(note="Version D's letters as synthesizer numbers (lab/draw_models.py). shape: octaves from pitch; "
                         "env: loudness 0–1; period, note_dur: seconds; pitch_drift: octaves per note; level_drift: dB per note.",
                    sample_rate=SR, letters=M), open(os.path.join(OUT, "models.json"), "w"), ensure_ascii=False)

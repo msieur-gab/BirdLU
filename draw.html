@@ -48,7 +48,7 @@
   <nav><a class="brand" href="./">BirdLU</a><a href="send-bird.html">Send</a><a href="listen-bird.html">Listen</a><a href="letters.html">Letters</a><a href="draw.html" aria-current="page">Draw</a></nav>
   <header>
     <h1>Draw a <em>bird</em> letter</h1>
-    <p class="lede">The letters of version D on one partition, in alphabetical order, then the signs (a digit is sung as the number call # followed by a letter: 1 = a … 9 = i, 0 = j). Tap a letter to hear it, then redraw its pitch and its loudness below and hear it at once, alone and inside words. Everything is sung by the synthesizer the device will run. Nothing here changes the voice: your drawings stay in this browser until you export them.</p>
+    <p class="lede">The letters of version D on one partition, in alphabetical order, then the signs, the number call # and the accent call *. Tap a letter to hear it, then redraw its pitch and its loudness below and hear it at once, alone and inside words. Everything is sung by the synthesizer the device will run. Nothing here changes the voice: your drawings stay in this browser until you export them.</p>
     <p class="note" id="status">Loading the letters…</p>
   </header>
 
@@ -65,7 +65,10 @@
     <div class="lang" style="grid-template-columns:auto 1fr;align-items:center">
       <h3>Numbers</h3><div class="words" id="digits"></div>
     </div>
-    <p class="small">A digit has no sound of its own: it is the number call <b>#</b> followed by a letter. Tap a digit to hear it; redraw <b>#</b> (last column) or the letter to change it.</p>
+    <div class="lang" style="grid-template-columns:auto 1fr;align-items:center">
+      <h3>Accents</h3><div class="words" id="accents"></div>
+    </div>
+    <p class="small">A digit has no sound of its own: it is the number call <b>#</b> followed by a letter. Tap a digit to hear it; redraw <b>#</b> or the letter to change it. An accent works the same way: the plain letter, then the accent call <b>*</b> (last column), then a letter that names the accent.</p>
   </section>
 
   <section class="panel" aria-label="Draw">
@@ -151,7 +154,12 @@ import { letterSound, contour, SR } from "./js/synth.js?v=1";
 
 const $ = id => document.getElementById(id);
 let AZ = [..."abcdefghijklmnopqrstuvwxyz"];        // then the signs of the voice (. , ? ! ' - : @ #), once loaded
-const SIGNS = [".", ",", "?", "!", "'", "-", ":", "@", "#"];
+const SIGNS = [".", ",", "?", "!", "'", "-", ":", "@", "#", "*"];
+// accents, like the numbers (Gab, 16 Nov): an accented letter is its plain letter, then the accent call "*", then a
+// letter that names the accent by its English name
+const ACCENT = { "\u0301": "a", "\u0300": "g", "\u0302": "c", "\u0308": "d", "\u0303": "t", "\u0327": "z" };
+const ACCENT_NAME = { a: "acute", g: "grave", c: "circumflex", d: "diaeresis (tréma)", t: "tilde", z: "cedilla" };
+const accentCode = text => [...text.toLowerCase().normalize("NFD")].map(ch => ACCENT[ch] ? "*" + ACCENT[ch] : /[\u0300-\u036f]/.test(ch) ? "" : ch).join("");
 const colourOf = c => D[c].vowel ? css("--vowel") : D[c].sign ? css("--long") : css("--short");
 const KEY = "birdlu-draw-v1";
 const LO = 77, HI = 116;                       // the partition: F5 (698 Hz) to G♯8 (6645 Hz), in MIDI notes
@@ -185,7 +193,8 @@ function play(samples) {
 function sungWith(text, who) {
   const s = { ...V.snd };
   for (const c of AZ) s[c] = who === "d" ? sndD[c] : snd(c);
-  return sing(text, { voice: V.voice, snd: s, sr: SR }, 1, { punctuation: $("punct").checked, frames: false });
+  const voice = { ...V.voice, letters: { ...V.voice.letters, "*": { vowel: false, sign: true } } };
+  return sing(accentCode(text), { voice, snd: s, sr: SR }, 1, { punctuation: $("punct").checked, frames: false });
 }
 function singText(text) {
   const who = document.querySelector("input[name=who]:checked").value;
@@ -367,6 +376,7 @@ const PHRASES = {
   ":": ["note: call me", "à midi: gare du nord", "wichtig: morgen"],
   "@": ["gab@home", "write @ noon", "moi@maison"],
   "#": ["18h30", "quai 2", "2026", "room 407", "call 0612", "1 2 3 4 5 6 7 8 9 0"],
+  "*": ["été", "où es-tu", "à bientôt", "château", "Noël", "garçon", "mañana", "über", "perché", "ça va"],
 };
 function words() {
   const box = $("langs"); box.textContent = "";
@@ -378,7 +388,7 @@ function words() {
     const ws = document.createElement("div"); ws.className = "words";
     for (const w of list) {
       const b = document.createElement("button"); b.type = "button"; b.className = "word";
-      for (const chr of w) { const plain = sel === "#" && /[0-9]/.test(chr) ? "#" : chr.normalize("NFD")[0]; const el = plain === sel ? document.createElement("mark") : document.createTextNode(chr); if (plain === sel) el.textContent = chr; b.append(el); }
+      for (const chr of w) { const plain = sel === "#" && /[0-9]/.test(chr) ? "#" : sel === "*" && chr.normalize("NFD").length > 1 ? "*" : chr.normalize("NFD")[0]; const el = plain === sel ? document.createElement("mark") : document.createTextNode(chr); if (plain === sel) el.textContent = chr; b.append(el); }
       b.addEventListener("click", () => singText(w));
       ws.append(b);
     }
@@ -473,6 +483,12 @@ for (const dgt of "1234567890") {
   b.addEventListener("click", () => singText(dgt));
   $("digits").append(b);
 }
+for (const [ch, base, code] of [["é", "e", "a"], ["è", "e", "g"], ["ê", "e", "c"], ["ë", "e", "d"], ["ñ", "n", "t"], ["ç", "c", "z"]]) {
+  const b = document.createElement("button"); b.type = "button"; b.className = "word"; b.title = ACCENT_NAME[code];
+  b.innerHTML = `<mark>${ch}</mark> <span style="color:var(--muted);font-size:.8em">= ${base} * ${code} · ${ACCENT_NAME[code]}</span>`;
+  b.addEventListener("click", () => singText(ch));
+  $("accents").append(b);
+}
 // the test sentences of the Send page and of the conflict check, plus one in Spanish and one in Italian
 for (const t of ["you are not alone on this train", "l'été arrive, où es-tu ?", "meet me at the old bridge at noon", "ich bin gleich wieder da",
                  "Rendez-vous à 18h30, quai n°2 !", "arrive belle Wasser carro little", "the quick brown fox jumps over the lazy dog",
@@ -525,7 +541,7 @@ let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTime
 
 try {
   [D, WORDS, V] = await Promise.all([
-    fetch("birds/draw/models.json?v=2").then(r => r.json()).then(j => j.letters),
+    fetch("birds/draw/models.json?v=3").then(r => r.json()).then(j => j.letters),
     fetch("birds/draw/words.json?v=1").then(r => r.json()),
     loadVoice("birds/voices/nightingale-d/", "vt1"),
   ]);

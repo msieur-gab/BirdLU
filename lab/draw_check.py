@@ -37,6 +37,8 @@ def main(path, name="drawn"):
     sr = v["sample_rate"]
     for ch, m in sorted(drawn.items()):
         y = level(trim(sing(m, seed=m.get("seed", ord(ch)))))
+        if ch not in v["letters"]:       # a sound the base voice does not have yet (the accent call "*")
+            v["letters"][ch] = dict(file=f"sign-{ord(ch):x}.wav", vowel=False, sign=True)
         sf.write(os.path.join(out, v["letters"][ch]["file"]), y, sr, subtype="PCM_16")
         v["letters"][ch].update(dur=round(len(y) / sr, 4), gesture="drawn by Gab")
         print(f"{ch}: {m['notes']} note(s) of {1000 * m['note_dur']:.0f} ms around {m['pitch']:.0f} Hz, {1000 * len(y) / sr:.0f} ms in all")

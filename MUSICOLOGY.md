@@ -590,7 +590,16 @@ within different words in different language, so then I can feel how it sounds, 
 - Next (Gab): numbers, the most common signs and punctuation, then accents. The nine approved signs are on the
   page as synthesizer numbers fitted from their sounds (likeness to the files 0.78–0.93); against version 5's
   letters 16 pairs are above 0.65 (e/- 0.82, b/' 0.82, a/' 0.78, ,/- 0.76 ...), so the signs need redrawing.
-- No real test of version 5 yet.
+- Signs: Gab redrew the nine over versions 6 to 8; version 9 = his 8 with @ one semitone up and the hyphen
+  lengthened to 70 ms (same line, same place): among the 35 sounds no pair above 0.65 (closest #/s, #/@ 0.64;
+  the page's own echo gives @/t 0.66, borderline), presets 0 of 177 wrong in the three conditions.
+  `lab/draw_spread.py` with `MOVE=".,?!'-:@#"` moves only the signs.
+- Numbers stay "# + letter" (1 = a ... 9 = i, 0 = j), a row of digits on the page.
+- Accents (Gab: "like the numbers"): the plain letter, then one accent call `*`, then a letter naming the accent by
+  its English name: a acute, g grave, c circumflex, d diaeresis (tréma), t tilde, z cedilla. Rejected for the call:
+  @, - and ' (they already stand between two letters: "es-tu", "gab@home"). On the Draw page only; Send, Listen
+  and the decoders still use one call per accent (14 Nov) and are to be ported once the sound is approved.
+- No real test of version 5 or 9 yet.
 
 ## Handover, end of 16 Nov (for a fresh session)
 
