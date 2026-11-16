@@ -36,6 +36,9 @@
       <button class="secondary preset" type="button">Rendez-vous à 18h30, quai n°2 !</button>
       <button class="secondary preset" type="button">arrive belle Wasser carro little</button>
       <button class="secondary preset" type="button">the quick brown fox jumps over the lazy dog</button>
+      <button class="secondary preset" type="button">ça va très bien, à bientôt</button>
+      <button class="secondary preset" type="button">mañana por la mañana</button>
+      <button class="secondary preset" type="button">grüße aus köln, schön</button>
     </div>
     <div class="row">
       <button class="primary" id="play" type="button" aria-pressed="false">Play</button>
@@ -59,7 +62,7 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice, sing, Decoder, drawPicture, encodeWav, readable } from "./js/birdsong.js?v=14";
+import { loadVoice, sing, Decoder, drawPicture, encodeWav, readable } from "./js/birdsong.js?v=15";
 const $ = id => document.getElementById(id);
 let SR_PLAY = 44100;
 let V, dec, msg, ctx, src = null, raf = 0, timer = 0, pps = 140;
@@ -118,6 +121,7 @@ async function play() {
 
 try {
   V = VOICE ? await loadVoice(`birds/voices/${VOICE}/`, "vt1") : await loadVoice();
+  if (V.voice.accent_call) $("punct").checked = true;   // a complete test voice (signs, numbers, accents): punctuation sung
   if (VOICE) $("lede-voice").textContent = ` Voice: ${VOICE}.`;
   dec = new Decoder(V);
   SR_PLAY = V.sr;

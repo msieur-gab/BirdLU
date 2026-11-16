@@ -71,7 +71,7 @@
   </section>
 </main>
 <script type="module">
-import { loadVoice } from "./js/birdsong.js?v=14";
+import { loadVoice } from "./js/birdsong.js?v=15";
 const $ = id => document.getElementById(id);
 const S = (await (await fetch("birds/score.json?v=1")).json()).sounds;
 const V = await loadVoice();
@@ -214,7 +214,7 @@ showPairs();
 
 // proposed placement (lab/placement.py): which letter sings which approved sound
 const PL = await (await fetch("birds/placement.json?v=1")).json();
-const { sing, Decoder, readable } = await import("./js/birdsong.js?v=14");
+const { sing, Decoder, readable } = await import("./js/birdsong.js?v=15");
 const propSnd = { ...V.snd };
 for (const [c, from] of Object.entries(PL.sound_of)) if (from) propSnd[c] = V.snd[from];
 const PROP = { voice: V.voice, snd: propSnd, sr: V.sr };

@@ -1,5 +1,5 @@
 {
- "note": "Test voice drawn9: version D with the letters !#',-.:?@abcdefghijklmnopqrstuvwxz drawn by Gab on draw.html. Made by lab/draw_check.py.",
+ "note": "Test voice v9: version D with the letters !#'*,-.:?@abcdefghijklmnopqrstuvwxz drawn by Gab on draw.html. Made by lab/draw_check.py.",
  "sample_rate": 44100,
  "letters": {
   "e": {
@@ -228,6 +228,13 @@
    "sign": true,
    "dur": 0.1732,
    "source": "XC533763 45.13 (Common Blackbird)",
+   "gesture": "drawn by Gab"
+  },
+  "*": {
+   "file": "accent-call.wav",
+   "vowel": false,
+   "accent": true,
+   "dur": 0.0739,
    "gesture": "drawn by Gab"
   }
  },
@@ -469,5 +476,16 @@
   "˙": "̇",
   "˝": "̋",
   "˘": "̆"
+ },
+ "accent_call": {
+  "call": "*",
+  "codes": {
+   "́": "a",
+   "̀": "g",
+   "̂": "c",
+   "̈": "d",
+   "̃": "t",
+   "̧": "z"
+  }
  }
 }

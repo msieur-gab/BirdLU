@@ -21,6 +21,8 @@ from variants import level
 import confusions
 
 BASE = "nightingale-d"
+CALL = "*"      # accents as the numbers are (Gab, 16 Nov): letter, accent call, a letter naming the accent in English
+CODES = {"\u0301": "a", "\u0300": "g", "\u0302": "c", "\u0308": "d", "\u0303": "t", "\u0327": "z"}   # acute grave circumflex diaeresis tilde cedilla
 VOICES = os.path.join(ROOT, "birds", "voices")
 
 
@@ -29,6 +31,9 @@ def main(path, name="drawn"):
     drawn = json.load(open(os.path.expanduser(path)))["letters"]
     if not drawn:
         sys.exit("No drawn letter in that file.")
+    if CALL not in drawn:        # the accent call as the Draw page starts it, until Gab redraws it
+        drawn[CALL] = json.load(open(os.path.join(ROOT, "birds", "draw", "models.json")))["letters"][CALL]
+        print(f"The accent call {CALL} is not in the file: the page's starting sound is used.")
     out = os.path.join(VOICES, name)
     if os.path.exists(out):
         shutil.rmtree(out)
@@ -37,8 +42,9 @@ def main(path, name="drawn"):
     sr = v["sample_rate"]
     for ch, m in sorted(drawn.items()):
         y = level(trim(sing(m, seed=m.get("seed", ord(ch)))))
-        if ch not in v["letters"]:       # a sound the base voice does not have yet (the accent call "*")
-            v["letters"][ch] = dict(file=f"sign-{ord(ch):x}.wav", vowel=False, sign=True)
+        if ch == CALL:                   # heard only after a letter, and followed by a letter that names the accent
+            v["letters"][ch] = dict(file="accent-call.wav", vowel=False, accent=True)
+            v["accent_call"] = dict(call=CALL, codes=CODES)
         sf.write(os.path.join(out, v["letters"][ch]["file"]), y, sr, subtype="PCM_16")
         v["letters"][ch].update(dur=round(len(y) / sr, 4), gesture="drawn by Gab")
         print(f"{ch}: {m['notes']} note(s) of {1000 * m['note_dur']:.0f} ms around {m['pitch']:.0f} Hz, {1000 * len(y) / sr:.0f} ms in all")
@@ -53,12 +59,13 @@ def main(path, name="drawn"):
     L = {}
     for n in (BASE, name):
         vv, snd, sr = load_voice(os.path.join(VOICES, n))
-        L[n] = likeness(snd, sr, [c for c in vv["letters"] if not vv["letters"][c].get("accent")], room(sr, 1.0))   # letters and signs
+        L[n] = likeness(snd, sr, [c for c in vv["letters"] if c in drawn or not vv["letters"][c].get("accent")], room(sr, 1.0))   # letters, signs, accent call
     print(f"\nPairs with a drawn letter, as alike to the decoder through a 1 s echo (above 0.65 is close; D's value in brackets):")
     rows = sorted((p for p in L[name] if p[0] in drawn or p[1] in drawn), key=L[name].get, reverse=True)
     for a, b in rows[:12]:
         flag = "  CLOSE" if L[name][(a, b)] > 0.65 else ""
-        print(f"   {a}/{b}  {L[name][(a, b)]:.2f}  ({L[BASE][(a, b)]:.2f}){flag}")
+        was = f"{L[BASE][(a, b)]:.2f}" if (a, b) in L[BASE] else "new"
+        print(f"   {a}/{b}  {L[name][(a, b)]:.2f}  ({was}){flag}")
     confusions.main([BASE, name])
     print(f"\nTo hear and test it for real: send-bird.html?voice={name} and listen-bird.html?voice={name}")
 

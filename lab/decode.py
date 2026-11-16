@@ -41,6 +41,7 @@ def load_voice(voice_dir=VOICE_DIR):
     VOICE_DIR = voice_dir
     v = json.load(open(os.path.join(VOICE_DIR, "voice.json")))
     set_band(v.get("decoder"))      # the band this voice is heard in (default 48 bands, 1–9 kHz)
+    set_accents(v.get("accent_call"))
     sr = v["sample_rate"]
     snd = {}
     for ch, d in v["letters"].items():
@@ -59,11 +60,22 @@ ACCENTS = {"\u0301": "´", "\u0300": "`", "\u0302": "^", "\u0308": "¨", "\u0303
            "\u030a": "˚", "\u030c": "ˇ", "\u0304": "¯", "\u0328": "˛", "\u0307": "˙", "\u030b": "˝", "\u0306": "˘"}
 MARKS = {v: k for k, v in ACCENTS.items()}
 
+# Accents as the numbers are (Gab, 16 Nov), for a voice that says so (voice.json "accent_call": call, codes): the plain
+# letter, then the one accent call, then a letter that names the accent (é = e * a, ç = c * z). Other voices keep the
+# rule above. Accents the voice has no code for are left out; the letter is still sung.
+CALL, CODES = None, {}
+
+
+def set_accents(cfg=None):
+    global CALL, CODES
+    CALL, CODES = (cfg["call"], dict(cfg["codes"])) if cfg else (None, {})
+
+
 
 def normalize(text):
     out = ""
     for ch in text.lower().replace("ß", "ss").replace("æ", "ae").replace("œ", "oe"):
-        if ch in MARKS:          # a mark typed on its own is not a letter's accent: not sung
+        if ch in MARKS or ch == CALL:          # a mark typed on its own is not a letter's accent: not sung
             continue
         if ch.isdigit() and ch in "0123456789":
             out += "#" + DIGITS[int(ch)]
@@ -71,6 +83,8 @@ def normalize(text):
         for c in unicodedata.normalize("NFD", ch):
             if not unicodedata.combining(c):
                 out += c
+            elif CALL:
+                out += CALL + CODES[c] if c in CODES else ""
             elif c in ACCENTS:
                 out += ACCENTS[c]
     return out
@@ -79,6 +93,9 @@ def normalize(text):
 def readable(text):
     """Decoded text as people write it: "#c" back to "3", "e´" back to "é"."""
     text = re.sub(r"#([a-j])", lambda m: str(DIGITS.index(m.group(1))), text)
+    if CALL:
+        back = {v: k for k, v in CODES.items()}
+        text = re.sub(re.escape(CALL) + r"(.?)", lambda m: back.get(m.group(1), ""), text)
     return unicodedata.normalize("NFC", "".join(MARKS.get(c, c) for c in text))
 
 
@@ -210,6 +227,8 @@ class Decoder:
         self.v = v
         self.letters = list(v["letters"])
         # an accent call can only follow a plain letter (not a word start, a sign or another accent)
+        set_accents(v.get("accent_call"))
+        self.call, self.codes = CALL, set(CODES.values())
         self.accents = {c for c, d in v["letters"].items() if d.get("accent")}
         self.bases = {c for c, d in v["letters"].items() if not d.get("accent") and not d.get("sign")}
         self.tpl = {c: template(snd[c], sr_tpl) for c in self.letters}
@@ -324,6 +343,8 @@ class Decoder:
                 best, prev = NEG, None
                 for sc, lc, p in preds:
                     if ch in self.accents and lc not in self.bases:
+                        continue
+                    if self.call and lc == self.call and ch not in self.codes:     # after the accent call, only a letter that names an accent
                         continue
                     sc2 = sc - repeat_cost if lc == ch else sc
                     if lm is not None:      # how likely ch follows lc in the five languages (lc None: a word start)

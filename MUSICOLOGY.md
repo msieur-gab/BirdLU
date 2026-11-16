@@ -599,7 +599,14 @@ within different words in different language, so then I can feel how it sounds, 
   its English name: a acute, g grave, c circumflex, d diaeresis (tréma), t tilde, z cedilla. Rejected for the call:
   @, - and ' (they already stand between two letters: "es-tu", "gab@home"). On the Draw page only; Send, Listen
   and the decoders still use one call per accent (14 Nov) and are to be ported once the sound is approved.
-- No real test of version 5 or 9 yet.
+- The accent rule is now in the phone code and its twin (`js/birdsong.js`, `lab/decode.py`) for a voice that
+  declares it (voice.json `accent_call`: call and codes); other voices keep the 14 Nov rule. After the call the
+  decoder accepts only a letter that names an accent. Test voice `v9` = D with version 9's letters and signs and
+  the accent call as the page starts it (not redrawn by Gab yet). Ten sentences with punctuation, numbers and
+  accents (three new Send presets: ça va très bien, mañana, grüße), sung and decoded: 0 of 267 sounds wrong
+  clean, with a simulated 0.6 s and 1 s echo, in Python and in the browser. `lab/real_test_any.py <voice> <folder>`
+  scores real recordings with the decoder alone (no word check).
+- No real test of version 9 yet.
 
 ## Handover, end of 16 Nov (for a fresh session)
 

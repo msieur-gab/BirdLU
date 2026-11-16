@@ -46,12 +46,25 @@ export const ACCENTS = { "\u0301": "´", "\u0300": "`", "\u0302": "^", "\u0308":
   "\u030a": "˚", "\u030c": "ˇ", "\u0304": "¯", "\u0328": "˛", "\u0307": "˙", "\u030b": "˝", "\u0306": "˘" };
 const MARKS = Object.fromEntries(Object.entries(ACCENTS).map(([k, v]) => [v, k]));
 
+// Accents as the numbers are (Gab, 16 Nov), for a voice that says so (voice.json "accent_call": call, codes): the plain
+// letter, then the one accent call, then a letter that names the accent (é = e * a, ç = c * z). Other voices keep the
+// rule above. Accents the voice has no code for are left out; the letter is still sung.
+export let CALL = null, CODES = {};
+export function setAccents(cfg) { CALL = cfg ? cfg.call : null; CODES = cfg ? { ...cfg.codes } : {}; }
+
 /** Decoded text as people write it: "#c" back to "3", "e´" back to "é". */
-export const readable = text => [...text.replace(/#([a-j])/g, (_, c) => String(DIGITS.indexOf(c)))]
-  .map(c => MARKS[c] || c).join("").normalize("NFC");
+export const readable = text => {
+  let t = text.replace(/#([a-j])/g, (_, c) => String(DIGITS.indexOf(c)));
+  if (CALL) {
+    const back = Object.fromEntries(Object.entries(CODES).map(([k, v]) => [v, k]));
+    t = t.split(CALL).map((part, i) => i ? (back[part[0]] || "") + part.slice(1) : part).join("");
+  }
+  return [...t].map(c => MARKS[c] || c).join("").normalize("NFC");
+};
 
 export async function loadVoice(base = "birds/voice/", v = "7") {
   const voice = await (await fetch(`${base}voice.json?v=${v}`)).json();
+  setAccents(voice.accent_call);
   const sr = voice.sample_rate;
   const snd = {};
   const load = async (key, file) => {
@@ -71,10 +84,11 @@ export const DIGITS = "jabcdefghi";
 export function normalize(text) {
   let out = "";
   for (const ch of text.toLowerCase().replace(/ß/g, "ss").replace(/æ/g, "ae").replace(/œ/g, "oe")) {
-    if (MARKS[ch]) continue;          // a mark typed on its own is not a letter's accent: not sung
+    if (MARKS[ch] || ch === CALL) continue;          // a mark typed on its own is not a letter's accent: not sung
     if (ch >= "0" && ch <= "9") { out += "#" + DIGITS[+ch]; continue; }
     for (const c of ch.normalize("NFD")) {
       if (!/[\u0300-\u036f]/.test(c)) out += c;
+      else if (CALL) out += CODES[c] ? CALL + CODES[c] : "";
       else if (ACCENTS[c]) out += ACCENTS[c];
     }
   }
@@ -377,6 +391,8 @@ export function dereverb(db, T, rt60, delayS = 0.03, floorDb = 15) {
 export class Decoder {
   constructor({ voice, snd, sr }) {
     setBand(voice.decoder);
+    setAccents(voice.accent_call);
+    this.call = CALL; this.codes = new Set(Object.values(CODES));
     this.voice = voice;
     this.letters = Object.keys(voice.letters);
     // an accent call can only follow a plain letter (not a word start, a sign or another accent)
@@ -485,6 +501,7 @@ export class Decoder {
         const acc = this.accents.has(ch);
         for (const [sc, lc, p] of preds) {
           if (acc && !this.bases.has(lc)) continue;
+          if (lc === this.call && lc !== null && !this.codes.has(ch)) continue;   // after the accent call, only a letter that names an accent
           const sc2 = lc === ch ? sc - repeatCost : sc;
           if (sc2 > best) { best = sc2; prev = p; }
         }
